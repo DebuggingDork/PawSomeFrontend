@@ -1,5 +1,5 @@
 import React from 'react'
-import { Instagram, Twitter, Facebook } from 'lucide-react'
+import { Globe, Share2, Mail } from 'lucide-react'
 
 export const FooterSection: React.FC = () => {
   return (
@@ -42,9 +42,9 @@ export const FooterSection: React.FC = () => {
             <ul className="space-y-3 text-sm text-neutral-400">
               <li><a href="#" className="hover:text-white transition-colors">Breeder Support</a></li>
               <li className="flex gap-4 pt-2">
-                <a href="#" className="hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
-                <a href="#" className="hover:text-white transition-colors"><Facebook className="w-5 h-5" /></a>
-                <a href="#" className="hover:text-white transition-colors"><Twitter className="w-5 h-5" /></a>
+                <a href="#" aria-label="Website" className="hover:text-white transition-colors"><Globe className="w-5 h-5" /></a>
+                <a href="#" aria-label="Share" className="hover:text-white transition-colors"><Share2 className="w-5 h-5" /></a>
+                <a href="#" aria-label="Email" className="hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>
               </li>
             </ul>
           </div>

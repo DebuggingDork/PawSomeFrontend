@@ -1,4 +1,3 @@
-import React from 'react'
 import { HeroSection } from './sections/HeroSection'
 import { ProofPointsSection } from './sections/ProofPointsSection'
 import { PetToggleSection } from './sections/PetToggleSection'
