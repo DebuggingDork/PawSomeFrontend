@@ -25,8 +25,8 @@ export const HeroSection = () => {
         {/* Background - bright, well-lit image */}
         <div className="absolute inset-0 z-0">
           <ParallaxImage
-            src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&brightness=1.1"
-            alt="Happy healthy dogs in bright natural lighting"
+            src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
+            alt="Happy dogs running together"
             className="w-full h-full brightness-110"
           />
           {/* Lighter overlay for better image visibility */}
