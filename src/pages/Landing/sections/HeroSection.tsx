@@ -17,10 +17,10 @@ export const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.6])
 
   return (
-    <section ref={sectionRef} className="relative w-full h-screen min-h-[700px] max-h-[900px] bg-neutral-950">
+    <section ref={sectionRef} className="relative w-full h-screen bg-neutral-950">
       <motion.div
         style={{ scale, borderRadius, opacity }}
-        className="sticky top-0 w-full h-screen min-h-[700px] max-h-[900px] flex flex-col overflow-hidden origin-center will-change-transform"
+        className="sticky top-0 w-full h-screen flex flex-col overflow-hidden origin-center will-change-transform"
       >
         {/* Background - bright image */}
         <div className="absolute inset-0 z-0">
@@ -29,21 +29,25 @@ export const HeroSection = () => {
             alt="Happy dogs running together"
             className="w-full h-full object-cover brightness-110 contrast-105"
           />
-          {/* Stronger gradient overlay on left side */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
+          {/* Premium black overlay on left with subtle fade */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" style={{ backgroundSize: '150% 100%' }} />
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 flex-1 flex items-center pt-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative z-10 flex-1 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
             <HeroEntranceContainer>
               {/* Main headline */}
               <HeroEntranceItem>
-                <h1 className="text-[clamp(3.5rem,8vw,6.5rem)] font-medium leading-[0.95] text-white mb-2 max-w-2xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-                  Find your<br />
-                  <span className="italic text-[#ff6b35]">perfect match</span>
-                </h1>
-                <Heart className="w-12 h-12 mb-6 text-[#ff6b35] fill-[#ff6b35]" />
+                <div className="relative">
+                  <h1 className="text-[clamp(3.5rem,8vw,6.5rem)] font-medium leading-[0.95] text-white mb-6 max-w-2xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                    Find your<br />
+                    <span className="relative inline-block">
+                      <Heart className="absolute -top-3 -left-3 w-10 h-10 text-[#ff6b35] fill-[#ff6b35]" />
+                      <span className="italic text-[#ff6b35]">perfect match</span>
+                    </span>
+                  </h1>
+                </div>
               </HeroEntranceItem>
 
               {/* Sub copy */}
@@ -104,34 +108,34 @@ export const HeroSection = () => {
         </div>
 
         {/* Stats bar at bottom - in containers */}
-        <div className="relative z-20 bg-black/60 backdrop-blur-sm border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
-                <Heart className="w-8 h-8 text-[#ff6b35]" />
+        <div className="relative z-20 bg-black/70 backdrop-blur-sm border-t border-white/10 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
+                <Heart className="w-7 h-7 text-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-lg">10K+</div>
+                  <div className="text-white font-bold text-base">10K+</div>
                   <div className="text-neutral-400 text-xs">Happy Pets</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
-                <MapPin className="w-8 h-8 text-[#ff6b35]" />
+              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
+                <MapPin className="w-7 h-7 text-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-lg">8K+</div>
+                  <div className="text-white font-bold text-base">8K+</div>
                   <div className="text-neutral-400 text-xs">Pet Parents</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
-                <Shield className="w-8 h-8 text-[#ff6b35]" />
+              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
+                <Shield className="w-7 h-7 text-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-lg">100%</div>
+                  <div className="text-white font-bold text-base">100%</div>
                   <div className="text-neutral-400 text-xs">Verified Profiles</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
-                <Heart className="w-8 h-8 text-[#ff6b35] fill-[#ff6b35]" />
+              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
+                <Heart className="w-7 h-7 text-[#ff6b35] fill-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-lg">Daily</div>
+                  <div className="text-white font-bold text-base">Daily</div>
                   <div className="text-neutral-400 text-xs">New Matches</div>
                 </div>
               </div>
