@@ -1,19 +1,43 @@
-import React from 'react'
+import React, { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { ParallaxImage } from '../../../components/animations/ParallaxImage'
 import { ScrollReveal } from '../../../components/animations/ScrollReveal'
 
 export const ProductBannerSection: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+
+  // Horizontal scale from 0.85 to 1 (expands from sides)
+  const scaleX = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1, 0.98])
+  const scaleY = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.99])
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.5, 1, 1, 0.8])
+  const borderRadius = useTransform(scrollYProgress, [0, 0.5, 1], [40, 0, 20])
+
   return (
-    <section className="relative py-36 bg-neutral-950 overflow-hidden border-t border-neutral-900">
-      <div className="absolute inset-0 z-0 opacity-30">
-         <ParallaxImage
-          src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
-          alt="Dogs"
-          className="w-full h-full"
-          offset={60}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/60 via-neutral-950/80 to-neutral-950" />
-      </div>
+    <section ref={sectionRef} className="relative py-36 bg-neutral-950 overflow-hidden border-t border-neutral-900">
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{ 
+          scaleX, 
+          scaleY, 
+          opacity,
+          borderRadius,
+        }}
+      >
+        <div className="relative w-full h-full opacity-30">
+          <ParallaxImage
+            src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
+            alt="Dogs"
+            className="w-full h-full"
+            offset={60}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/60 via-neutral-950/80 to-neutral-950" />
+        </div>
+      </motion.div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <ScrollReveal className="max-w-2xl mx-auto" scale duration={1}>
