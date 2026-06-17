@@ -78,12 +78,13 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(20px) saturate(180%)" : "none",
+        backdropFilter: visible ? "blur(20px) saturate(180%)" : "blur(0px)",
         boxShadow: visible
           ? "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
-          : "none",
+          : "0 0 0 0 rgba(0, 0, 0, 0)",
         width: visible ? "60%" : "100%",
         y: visible ? 20 : 0,
+        borderRadius: visible ? "9999px" : "0px",
       }}
       transition={{
         type: "tween",
@@ -91,14 +92,13 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         ease: [0.4, 0, 0.2, 1],
       }}
       style={{
-        background: visible 
-          ? "rgba(255, 255, 255, 0.1)" 
-          : "transparent",
+        backgroundColor: visible ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0)",
         borderWidth: visible ? "1px" : "0px",
-        borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
+        borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0)",
+        borderStyle: "solid",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full items-center self-start rounded-full px-8 py-4 lg:flex pointer-events-auto transition-all duration-400",
+        "relative z-[60] mx-auto hidden w-full items-center self-start px-8 py-4 lg:flex pointer-events-auto",
         visible ? "max-w-7xl justify-between" : "max-w-none justify-between",
         className,
       )}
