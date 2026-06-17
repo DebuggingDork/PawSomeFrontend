@@ -10,12 +10,12 @@ This is Tinder meets Hinge for pet breeding.
 
 The product should feel:
 
-* Premium
-* Trustworthy
-* Modern
-* Fast
-* Emotional
-* Pet-focused
+- Premium
+- Trustworthy
+- Modern
+- Fast
+- Emotional
+- Pet-focused
 
 Animations should support the experience, not distract from it.
 
@@ -25,19 +25,19 @@ Animations should support the experience, not distract from it.
 
 Initialize and configure:
 
-* React 19
-* TypeScript
-* Vite
-* Tailwind CSS v4
-* React Router v7
-* TanStack Query
-* Zustand
-* Framer Motion
-* GSAP
-* Axios
-* React Hook Form
-* Zod
-* Lucide React
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS v4
+- React Router v7
+- TanStack Query
+- Zustand
+- Framer Motion
+- GSAP
+- Axios
+- React Hook Form
+- Zod
+- Lucide React
 
 Install all required dependencies and configure them properly.
 
@@ -48,17 +48,17 @@ Install all required dependencies and configure them properly.
 src/
 ├── assets/
 ├── components/
-│   ├── common/
-│   ├── layout/
-│   ├── ui/
-│   └── animations/
+│ ├── common/
+│ ├── layout/
+│ ├── ui/
+│ └── animations/
 ├── pages/
-│   ├── Landing/
-│   ├── Auth/
-│   ├── Discover/
-│   ├── Matches/
-│   ├── Chat/
-│   └── Profile/
+│ ├── Landing/
+│ ├── Auth/
+│ ├── Discover/
+│ ├── Matches/
+│ ├── Chat/
+│ └── Profile/
 ├── routes/
 ├── services/
 ├── hooks/
@@ -86,11 +86,11 @@ Sections:
 
 Hero section should include:
 
-* Large pet imagery
-* Strong typography
-* Smooth entrance animations
-* Subtle parallax
-* Premium feel
+- Large pet imagery
+- Strong typography
+- Smooth entrance animations
+- Subtle parallax
+- Premium feel
 
 Use GSAP only where necessary.
 
@@ -102,20 +102,20 @@ Use Framer Motion for most interactions.
 
 Allowed:
 
-* Fade up
-* Stagger reveals
-* Parallax
-* Smooth hover transitions
-* Card lift effects
-* Scroll-triggered animations
-* Smooth page transitions
+- Fade up
+- Stagger reveals
+- Parallax
+- Smooth hover transitions
+- Card lift effects
+- Scroll-triggered animations
+- Smooth page transitions
 
 Avoid:
 
-* Excessive rotations
-* Scroll hijacking
-* Continuous bouncing
-* Heavy 3D effects
+- Excessive rotations
+- Scroll hijacking
+- Continuous bouncing
+- Heavy 3D effects
 
 Animations should remain subtle.
 
@@ -123,14 +123,14 @@ Animations should remain subtle.
 
 ## Code Quality Rules
 
-* Strict TypeScript
-* No any types
-* Reusable components
-* Mobile-first design
-* Accessibility support
-* Proper loading states
-* Proper error states
-* Consistent naming conventions
+- Strict TypeScript
+- No any types
+- Reusable components
+- Mobile-first design
+- Accessibility support
+- Proper loading states
+- Proper error states
+- Consistent naming conventions
 
 Always prioritize maintainability.
 
