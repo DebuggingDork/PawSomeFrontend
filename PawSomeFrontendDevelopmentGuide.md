@@ -17,13 +17,6 @@ The product should feel:
 * Emotional
 * Pet-focused
 
-Avoid:
-
-* Generic SaaS designs
-* Excessive glassmorphism
-* Overwhelming animations
-* Gimmicky UI effects
-
 Animations should support the experience, not distract from it.
 
 ---
@@ -123,7 +116,6 @@ Avoid:
 * Scroll hijacking
 * Continuous bouncing
 * Heavy 3D effects
-* Distracting motion
 
 Animations should remain subtle.
 
@@ -148,7 +140,7 @@ Always prioritize maintainability.
 
 Act like a professional software engineer.
 
-After every meaningful change:
+After every meaningful change:(it can be a very little one also commit ti cuz whne i look back into i need to know the flow of the codebase how it is coded and stuff be clear !!!!!)
 
 Create a git commit.
 
