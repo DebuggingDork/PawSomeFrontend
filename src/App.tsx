@@ -15,6 +15,7 @@ import {
   MobileNavMenu,
   NavbarButton,
 } from './components/ui/resizable-navbar'
+import { GlobalLoader } from './components/ui/GlobalLoader'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { Heart } from 'lucide-react'
@@ -33,6 +34,9 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/* Global Loader - shows loading states from anywhere in the app */}
+      <GlobalLoader />
+      
       <div className="min-h-screen bg-neutral-950 text-white">
         {/* Resizable Glassmorphic Navigation Bar - Fixed overlay */}
         <Navbar>
