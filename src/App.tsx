@@ -6,7 +6,7 @@ import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import { StickyNav } from './components/animations/StickyNav'
-import logoIcon from './assets/icon.png.png'
+import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 
 function App() {

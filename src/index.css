@@ -71,3 +71,8 @@ h1, h2, h3 {
   background: rgba(244, 63, 94, 0.3);
   color: #fff;
 }
+
+/* Radial gradient utility */
+.bg-gradient-radial {
+  background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}

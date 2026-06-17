@@ -28,14 +28,15 @@ export const ProductBannerSection: React.FC = () => {
           borderRadius,
         }}
       >
-        <div className="relative w-full h-full opacity-30">
+        <div className="relative w-full h-full">
           <ParallaxImage
             src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
             alt="Dogs"
             className="w-full h-full"
             offset={60}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/60 via-neutral-950/80 to-neutral-950" />
+          {/* Radial gradient - lighter in center, darker at edges */}
+          <div className="absolute inset-0 bg-gradient-radial from-neutral-950/70 via-neutral-950/80 to-neutral-950/95" />
         </div>
       </motion.div>
 
