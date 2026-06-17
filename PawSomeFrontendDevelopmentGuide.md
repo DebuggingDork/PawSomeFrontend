@@ -146,7 +146,8 @@ Create a git commit.
 
 Examples:
 
-u need not to use exaclty like this commit messages 
+u need not to use exaclty like this commit messages , these are just there for ur reference as a real developer how he/she commits do the same way
+
 git commit -m "feat: initialize project architecture"
 
 git commit -m "feat: create landing page hero section"
