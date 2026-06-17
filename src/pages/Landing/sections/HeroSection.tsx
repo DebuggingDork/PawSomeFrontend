@@ -17,7 +17,7 @@ export const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.6])
 
   return (
-    <section ref={sectionRef} className="relative w-full min-h-screen bg-neutral-950 pt-16">
+    <section ref={sectionRef} className="relative w-full min-h-screen bg-neutral-950">
       <motion.div
         style={{ scale, borderRadius, opacity }}
         className="sticky top-0 w-full min-h-screen flex flex-col overflow-hidden origin-center will-change-transform"
