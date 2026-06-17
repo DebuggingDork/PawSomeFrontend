@@ -61,7 +61,7 @@ function PawsomeFooter() {
   ];
 
   return (
-    <footer className="bg-neutral-950 relative h-fit overflow-hidden">
+    <footer className="bg-neutral-950 relative h-fit overflow-visible border-t border-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-40 relative">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 lg:gap-16 pb-12">
           {/* Brand section */}
@@ -164,9 +164,13 @@ function PawsomeFooter() {
         </div>
       </div>
 
-      {/* Text hover effect - hidden on mobile, visible on large screens */}
-      <div className="lg:flex hidden h-[30rem] -mt-52 -mb-36 pointer-events-none">
-        <TextHoverEffect text="PawSome" className="z-50" />
+      {/* Text hover effect - visible on large screens */}
+      <div className="hidden lg:block absolute inset-0 overflow-visible pointer-events-none">
+        <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-auto">
+          <div className="w-full max-w-4xl h-40">
+            <TextHoverEffect text="PAWSOME" className="z-50" />
+          </div>
+        </div>
       </div>
 
       <FooterBackgroundGradient />
