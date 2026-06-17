@@ -7,8 +7,11 @@ import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import { StickyNav } from './components/animations/StickyNav'
 import pawsomeLogo from './assets/pawsomeLogo.svg'
+import { useSmoothScroll } from './hooks/useSmoothScroll'
 
 function App() {
+  useSmoothScroll()
+
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-neutral-950 text-white flex flex-col">

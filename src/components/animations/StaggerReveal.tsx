@@ -10,7 +10,7 @@ interface StaggerRevealProps {
 export const StaggerRevealContainer: React.FC<StaggerRevealProps> = ({
   children,
   className = '',
-  staggerDelay = 0.15,
+  staggerDelay = 0.12,
 }) => {
   return (
     <motion.div
@@ -22,6 +22,7 @@ export const StaggerRevealContainer: React.FC<StaggerRevealProps> = ({
         visible: {
           transition: {
             staggerChildren: staggerDelay,
+            delayChildren: 0.1,
           },
         },
       }}
@@ -39,13 +40,15 @@ export const StaggerRevealItem: React.FC<{ children: React.ReactNode; className?
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 40, scale: 0.96, filter: 'blur(4px)' },
         visible: {
           opacity: 1,
           y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
           transition: {
-            duration: 0.6,
-            ease: [0.16, 1, 0.3, 1],
+            duration: 0.7,
+            ease: [0.25, 0.46, 0.45, 0.94],
           },
         },
       }}

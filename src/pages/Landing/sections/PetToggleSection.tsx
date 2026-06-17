@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import { ScrollReveal } from '../../../components/animations/ScrollReveal'
 import { AnimatedToggle } from '../../../components/animations/AnimatedToggle'
 import { HoverCard } from '../../../components/animations/HoverCard'
@@ -11,31 +12,45 @@ export const PetToggleSection: React.FC = () => {
   }
 
   return (
-    <section id="pet-toggle" className="py-24 bg-neutral-900 border-t border-neutral-800">
+    <section id="pet-toggle" className="py-28 bg-neutral-900 border-t border-neutral-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-white mb-8">Meet Our Premium Matches</h2>
+        <ScrollReveal className="text-center mb-14" scale>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-10">Meet Our Premium Matches</h2>
           
-          <div className="flex justify-center gap-4">
+          <div className="inline-flex gap-2 p-1.5 bg-neutral-800/60 rounded-full backdrop-blur-sm ring-1 ring-neutral-700/50">
             <button
               onClick={() => handleToggle('dog')}
-              className={`px-8 py-4 rounded-full font-bold transition-all cursor-pointer ${
+              className={`relative px-8 py-3.5 rounded-full font-bold transition-all cursor-pointer ${
                 activeTab === 'dog' 
-                  ? 'bg-pink-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.3)]' 
-                  : 'bg-neutral-800 text-neutral-400 hover:text-white'
+                  ? 'text-white' 
+                  : 'text-neutral-400 hover:text-white'
               }`}
             >
-              For Dogs
+              {activeTab === 'dog' && (
+                <motion.div
+                  layoutId="toggle-pill"
+                  className="absolute inset-0 bg-pink-500 rounded-full shadow-[0_0_20px_rgba(236,72,153,0.3)]"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+                />
+              )}
+              <span className="relative z-10">For Dogs</span>
             </button>
             <button
               onClick={() => handleToggle('cat')}
-              className={`px-8 py-4 rounded-full font-bold transition-all cursor-pointer ${
+              className={`relative px-8 py-3.5 rounded-full font-bold transition-all cursor-pointer ${
                 activeTab === 'cat' 
-                  ? 'bg-violet-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.3)]' 
-                  : 'bg-neutral-800 text-neutral-400 hover:text-white'
+                  ? 'text-white' 
+                  : 'text-neutral-400 hover:text-white'
               }`}
             >
-              For Cats
+              {activeTab === 'cat' && (
+                <motion.div
+                  layoutId="toggle-pill"
+                  className="absolute inset-0 bg-violet-500 rounded-full shadow-[0_0_20px_rgba(139,92,246,0.3)]"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+                />
+              )}
+              <span className="relative z-10">For Cats</span>
             </button>
           </div>
         </ScrollReveal>
