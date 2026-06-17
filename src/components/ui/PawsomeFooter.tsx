@@ -159,8 +159,8 @@ function PawsomeFooter() {
         </div>
       </div>
 
-      {/* Text hover effect - full-width band at the bottom */}
-      <div className="w-full h-32 relative">
+      {/* Text hover effect — full width, fills the entire bottom band */}
+      <div className="w-full h-48 -mb-2">
         <TextHoverEffect text="PAWSOME" />
       </div>
 
