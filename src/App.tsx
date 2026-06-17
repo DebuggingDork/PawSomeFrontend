@@ -14,7 +14,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#faf8f5] text-[#1a3a52] flex flex-col">
+      <div className="min-h-screen bg-neutral-950 text-white flex flex-col">
         {/* Navigation Bar */}
         <StickyNav>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -23,44 +23,44 @@ function App() {
               className="flex items-center gap-3"
             >
               <img src={logoIcon} alt="PawSome" className="h-12 w-12" />
-              <span className="text-2xl font-medium text-[#2d5f4d]" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <span className="text-2xl font-medium text-white" style={{ fontFamily: 'Playfair Display, serif' }}>
                 PawSome
               </span>
             </Link>
             <nav className="flex space-x-6">
               <Link
                 to="/"
-                className="text-sm font-medium text-[#1a3a52]/70 hover:text-[#2d5f4d] transition-colors"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
               >
                 Home
               </Link>
               <Link
                 to="/discover"
-                className="text-sm font-medium text-[#1a3a52]/70 hover:text-[#2d5f4d] transition-colors"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
               >
                 Discover
               </Link>
               <Link
                 to="/matches"
-                className="text-sm font-medium text-[#1a3a52]/70 hover:text-[#2d5f4d] transition-colors"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
               >
                 Matches
               </Link>
               <Link
                 to="/chat"
-                className="text-sm font-medium text-[#1a3a52]/70 hover:text-[#2d5f4d] transition-colors"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
               >
                 Chat
               </Link>
               <Link
                 to="/profile"
-                className="text-sm font-medium text-[#1a3a52]/70 hover:text-[#2d5f4d] transition-colors"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
               >
                 Profile
               </Link>
               <Link
                 to="/auth"
-                className="text-sm font-medium text-[#1a3a52]/70 hover:text-[#2d5f4d] transition-colors"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
               >
                 Sign In
               </Link>
