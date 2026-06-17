@@ -159,13 +159,9 @@ function PawsomeFooter() {
         </div>
       </div>
 
-      {/* Text hover effect - visible on large screens */}
-      <div className="hidden lg:block absolute inset-0 overflow-visible pointer-events-none">
-        <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-auto">
-          <div className="w-full max-w-4xl h-40">
-            <TextHoverEffect text="PAWSOME" className="z-50" />
-          </div>
-        </div>
+      {/* Text hover effect - full-width band at the bottom */}
+      <div className="w-full h-32 relative">
+        <TextHoverEffect text="PAWSOME" />
       </div>
 
       <FooterBackgroundGradient />
