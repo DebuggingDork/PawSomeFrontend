@@ -5,6 +5,7 @@ import DiscoverPage from './pages/Discover'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
+import NavbarTestPage from './pages/NavbarTest'
 import { StickyNav } from './components/animations/StickyNav'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
@@ -77,6 +78,7 @@ function App() {
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/navbar-test" element={<NavbarTestPage />} />
           </Routes>
         </main>
       </div>
