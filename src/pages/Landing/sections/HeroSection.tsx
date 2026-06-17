@@ -22,7 +22,7 @@ export const HeroSection = () => {
         style={{ scale, borderRadius, opacity }}
         className="sticky top-0 w-full h-screen min-h-[700px] flex items-center overflow-hidden origin-center will-change-transform"
       >
-        {/* Background - bright, well-lit image */}
+        {/* Background - bright, well-lit image with dynamic lighting */}
         <div className="absolute inset-0 z-0">
           <ParallaxImage
             src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80"
