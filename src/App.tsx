@@ -6,6 +6,8 @@ import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import { StickyNav } from './components/animations/StickyNav'
+import pawsomeLogo from './assets/pawsomeLogo.svg'
+
 function App() {
   return (
     <BrowserRouter>
@@ -15,9 +17,12 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <Link
               to="/"
-              className="text-xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent"
+              className="flex items-center gap-2"
             >
-              PawSome
+              <img src={pawsomeLogo} alt="PawSome" className="h-10 w-10 rounded-lg" />
+              <span className="text-xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+                PawSome
+              </span>
             </Link>
             <nav className="flex space-x-6">
               <Link
