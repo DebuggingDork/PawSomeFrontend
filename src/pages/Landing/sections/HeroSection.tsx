@@ -17,33 +17,33 @@ export const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.6])
 
   return (
-    <section ref={sectionRef} className="relative w-full h-screen min-h-[700px] bg-neutral-950">
+    <section ref={sectionRef} className="relative w-full h-screen min-h-[700px] max-h-[900px] bg-neutral-950">
       <motion.div
         style={{ scale, borderRadius, opacity }}
-        className="sticky top-0 w-full h-screen min-h-[700px] flex flex-col overflow-hidden origin-center will-change-transform"
+        className="sticky top-0 w-full h-screen min-h-[700px] max-h-[900px] flex flex-col overflow-hidden origin-center will-change-transform"
       >
         {/* Background - bright image */}
         <div className="absolute inset-0 z-0">
           <ParallaxImage
             src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
             alt="Happy dogs running together"
-            className="w-full h-full brightness-110 contrast-105"
+            className="w-full h-full object-cover brightness-110 contrast-105"
           />
           {/* Stronger gradient overlay on left side */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 flex-1 flex items-center pt-16">
+        <div className="relative z-10 flex-1 flex items-center pt-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <HeroEntranceContainer>
               {/* Main headline */}
               <HeroEntranceItem>
-                <h1 className="text-[clamp(3.5rem,8vw,6.5rem)] font-medium leading-[0.95] text-white mb-6 max-w-2xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <h1 className="text-[clamp(3.5rem,8vw,6.5rem)] font-medium leading-[0.95] text-white mb-2 max-w-2xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                   Find your<br />
-                  <span className="italic text-[#ff6b35]">perfect match</span>{' '}
-                  <Heart className="inline-block w-12 h-12 text-[#ff6b35] fill-[#ff6b35]" style={{ transform: 'translateY(-10px)' }} />
+                  <span className="italic text-[#ff6b35]">perfect match</span>
                 </h1>
+                <Heart className="w-12 h-12 mb-6 text-[#ff6b35] fill-[#ff6b35]" />
               </HeroEntranceItem>
 
               {/* Sub copy */}
