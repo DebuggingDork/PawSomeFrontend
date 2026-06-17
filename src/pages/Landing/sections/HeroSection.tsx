@@ -34,7 +34,7 @@ export const HeroSection = () => {
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 flex-1 flex items-center">
+        <div className="relative z-10 flex-1 flex items-center pt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <HeroEntranceContainer>
               {/* Main headline */}
@@ -103,33 +103,33 @@ export const HeroSection = () => {
           </div>
         </div>
 
-        {/* Stats bar at bottom - separate from content */}
+        {/* Stats bar at bottom - in containers */}
         <div className="relative z-20 bg-black/60 backdrop-blur-sm border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="flex items-center gap-3">
-                <Heart className="w-7 h-7 text-[#ff6b35]" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
+                <Heart className="w-8 h-8 text-[#ff6b35]" />
                 <div>
                   <div className="text-white font-bold text-lg">10K+</div>
                   <div className="text-neutral-400 text-xs">Happy Pets</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-7 h-7 text-[#ff6b35]" />
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
+                <MapPin className="w-8 h-8 text-[#ff6b35]" />
                 <div>
                   <div className="text-white font-bold text-lg">8K+</div>
                   <div className="text-neutral-400 text-xs">Pet Parents</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Shield className="w-7 h-7 text-[#ff6b35]" />
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
+                <Shield className="w-8 h-8 text-[#ff6b35]" />
                 <div>
                   <div className="text-white font-bold text-lg">100%</div>
                   <div className="text-neutral-400 text-xs">Verified Profiles</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Heart className="w-7 h-7 text-[#ff6b35] fill-[#ff6b35]" />
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-lg border border-white/10">
+                <Heart className="w-8 h-8 text-[#ff6b35] fill-[#ff6b35]" />
                 <div>
                   <div className="text-white font-bold text-lg">Daily</div>
                   <div className="text-neutral-400 text-xs">New Matches</div>
