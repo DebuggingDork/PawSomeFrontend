@@ -17,10 +17,10 @@ export const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.6])
 
   return (
-    <section ref={sectionRef} className="relative w-full h-screen bg-neutral-950">
+    <section ref={sectionRef} className="relative w-full min-h-screen bg-neutral-950 pt-16">
       <motion.div
         style={{ scale, borderRadius, opacity }}
-        className="sticky top-0 w-full h-screen flex flex-col overflow-hidden origin-center will-change-transform"
+        className="sticky top-0 w-full min-h-screen flex flex-col overflow-hidden origin-center will-change-transform"
       >
         {/* Background - bright image */}
         <div className="absolute inset-0 z-0">
@@ -34,8 +34,8 @@ export const HeroSection = () => {
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 flex-1 flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
+        <div className="relative z-10 flex-1 flex items-center pt-16 pb-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
             <HeroEntranceContainer>
               {/* Main headline */}
               <HeroEntranceItem>
@@ -43,8 +43,32 @@ export const HeroSection = () => {
                   <h1 className="text-[clamp(3.5rem,8vw,6.5rem)] font-medium leading-[0.95] text-white mb-6 max-w-2xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                     Find your<br />
                     <span className="relative inline-block">
-                      <Heart className="absolute -top-3 -left-3 w-10 h-10 text-[#ff6b35] fill-[#ff6b35]" />
                       <span className="italic text-[#ff6b35]">perfect match</span>
+                      {/* Hand-drawn heart SVG - positioned to the right and top of "match" */}
+                      <svg 
+                        className="absolute -top-2 -right-14 w-11 h-11 rotate-12" 
+                        viewBox="0 0 100 100" 
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path 
+                          d="M50,85 C50,85 15,60 15,35 C15,25 20,15 30,15 C40,15 45,22 50,30 C55,22 60,15 70,15 C80,15 85,25 85,35 C85,60 50,85 50,85 Z" 
+                          stroke="#ff6b35" 
+                          strokeWidth="2.5" 
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{
+                            filter: 'url(#rough)',
+                          }}
+                        />
+                        <defs>
+                          <filter id="rough">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" seed="2"/>
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+                          </filter>
+                        </defs>
+                      </svg>
                     </span>
                   </h1>
                 </div>
@@ -108,35 +132,35 @@ export const HeroSection = () => {
         </div>
 
         {/* Stats bar at bottom - in containers */}
-        <div className="relative z-20 bg-black/70 backdrop-blur-sm border-t border-white/10 py-4">
+        <div className="relative z-20 bg-black/70 backdrop-blur-md border-t border-white/10 py-5 pb-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-                <Heart className="w-7 h-7 text-[#ff6b35] shrink-0" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                <Heart className="w-8 h-8 text-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-base">10K+</div>
-                  <div className="text-neutral-400 text-xs">Happy Pets</div>
+                  <div className="text-white font-bold text-lg">10K+</div>
+                  <div className="text-neutral-300 text-xs font-medium">Happy Pets</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-                <MapPin className="w-7 h-7 text-[#ff6b35] shrink-0" />
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                <MapPin className="w-8 h-8 text-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-base">8K+</div>
-                  <div className="text-neutral-400 text-xs">Pet Parents</div>
+                  <div className="text-white font-bold text-lg">8K+</div>
+                  <div className="text-neutral-300 text-xs font-medium">Pet Parents</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-                <Shield className="w-7 h-7 text-[#ff6b35] shrink-0" />
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                <Shield className="w-8 h-8 text-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-base">100%</div>
-                  <div className="text-neutral-400 text-xs">Verified Profiles</div>
+                  <div className="text-white font-bold text-lg">100%</div>
+                  <div className="text-neutral-300 text-xs font-medium">Verified Profiles</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-                <Heart className="w-7 h-7 text-[#ff6b35] fill-[#ff6b35] shrink-0" />
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                <Heart className="w-8 h-8 text-[#ff6b35] fill-[#ff6b35] shrink-0" />
                 <div>
-                  <div className="text-white font-bold text-base">Daily</div>
-                  <div className="text-neutral-400 text-xs">New Matches</div>
+                  <div className="text-white font-bold text-lg">Daily</div>
+                  <div className="text-neutral-300 text-xs font-medium">New Matches</div>
                 </div>
               </div>
             </div>

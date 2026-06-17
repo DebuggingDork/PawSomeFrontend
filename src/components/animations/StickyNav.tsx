@@ -33,9 +33,17 @@ export const StickyNav: React.FC<StickyNavProps> = ({ children }) => {
       }}
       animate={hidden ? 'hidden' : 'visible'}
       transition={{ duration: 0.35, ease: 'easeInOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-neutral-950/95 backdrop-blur-xl border-b border-neutral-800/50 shadow-2xl' : 'bg-transparent'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{
+        background: scrolled 
+          ? 'rgba(255, 255, 255, 0.08)' 
+          : 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.05) 100%)',
+        backdropFilter: scrolled ? 'blur(24px) saturate(180%)' : 'blur(12px) saturate(130%)',
+        WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(180%)' : 'blur(12px) saturate(130%)',
+        borderBottom: scrolled ? '1px solid rgba(255, 255, 255, 0.18)' : '1px solid transparent',
+        boxShadow: scrolled ? '0 8px 32px 0 rgba(0, 0, 0, 0.25)' : 'none',
+        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
     >
       {children}
     </motion.header>
