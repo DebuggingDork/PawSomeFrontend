@@ -27,34 +27,34 @@ export const HeroSection = () => {
           <ParallaxImage
             src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
             alt="Happy dogs running together"
-            className="w-full h-full opacity-30"
+            className="w-full h-full opacity-50"
           />
-          <div className="absolute inset-0 bg-neutral-950/85" />
+          <div className="absolute inset-0 bg-neutral-950/60" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32">
           <HeroEntranceContainer>
-            {/* Eyebrow - removed uppercase, made it playful */}
+            {/* Eyebrow */}
             <HeroEntranceItem>
-              <div className="inline-flex items-center gap-2 mb-8">
+              <div className="inline-flex items-center gap-2 mb-6">
                 <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse" />
-                <p className="text-base font-medium text-pink-400" style={{ fontFamily: 'Space Grotesk, monospace' }}>
+                <p className="text-sm font-medium text-pink-400" style={{ fontFamily: 'Space Grotesk, monospace' }}>
                   Real breeders. Real standards.
                 </p>
               </div>
             </HeroEntranceItem>
 
-            {/* Main headline - unique, bold, asymmetric */}
+            {/* Main headline */}
             <HeroEntranceItem>
-              <h1 className="text-[clamp(3.5rem,9vw,7.5rem)] font-bold leading-[0.9] text-white mb-6 max-w-5xl" style={{ fontFamily: 'Syne, sans-serif' }}>
-                <span className="block text-neutral-500 text-[clamp(1.5rem,4vw,3rem)]">
+              <h1 className="text-[clamp(3rem,8vw,6.5rem)] font-bold leading-[0.95] text-white mb-8 max-w-4xl" style={{ fontFamily: 'Syne, sans-serif' }}>
+                <span className="block text-neutral-400 text-[clamp(1.2rem,3.5vw,2.5rem)] mb-3">
                   Breeding shouldn't be
                 </span>
-                <span className="block mt-2">sketchy</span>
-                <span className="block relative mt-1">
+                <span className="block">sketchy</span>
+                <span className="block relative">
                   <span className="text-pink-500">or shady</span>
                   <svg 
-                    className="absolute -bottom-2 left-0 w-[105%] h-4 text-pink-500/30"
+                    className="absolute -bottom-1 left-0 w-[105%] h-3 text-pink-500/30"
                     viewBox="0 0 300 12"
                     preserveAspectRatio="none"
                   >
@@ -70,63 +70,41 @@ export const HeroSection = () => {
               </h1>
             </HeroEntranceItem>
 
-            {/* Sub copy - authentic, human voice */}
+            {/* Sub copy */}
             <HeroEntranceItem delay={0.15}>
-              <div className="max-w-xl mb-12 space-y-4">
-                <p className="text-xl text-neutral-300 leading-relaxed font-medium">
+              <div className="max-w-xl mb-10 space-y-3">
+                <p className="text-xl text-white leading-relaxed font-medium">
                   We only work with breeders who actually care about their animals.
                 </p>
-                <p className="text-lg text-neutral-400 leading-relaxed">
-                  Health tests? ✓ Genetic screening? ✓ Years of experience? ✓
+                <p className="text-base text-neutral-300 leading-relaxed">
+                  Health tests? ✓ Genetic screening? ✓ Years of experience? ✓<br />
                   Random backyard operation? Hard pass.
                 </p>
               </div>
             </HeroEntranceItem>
 
-            {/* CTAs - bold, no-nonsense */}
+            {/* CTAs */}
             <HeroEntranceItem delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-5 items-start">
+              <div className="flex flex-wrap gap-4">
                 <a
                   href="#pet-toggle"
-                  className="group relative px-8 py-4 bg-pink-500 hover:bg-pink-600 text-white font-bold text-base transition-all cursor-pointer overflow-hidden"
+                  className="group inline-flex items-center gap-2 px-8 py-4 bg-pink-500 hover:bg-pink-600 text-white font-bold text-base transition-colors cursor-pointer"
                   style={{ fontFamily: 'Space Grotesk, monospace' }}
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Find Your Match
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  Find Your Match
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </a>
                 <a
                   href="#how-it-works"
-                  className="group px-8 py-4 border-2 border-neutral-700 hover:border-neutral-500 text-neutral-300 hover:text-white font-semibold text-base transition-all cursor-pointer"
+                  className="inline-flex items-center px-8 py-4 border-2 border-neutral-600 hover:border-neutral-400 text-neutral-200 hover:text-white font-semibold text-base transition-colors cursor-pointer"
                   style={{ fontFamily: 'Space Grotesk, monospace' }}
                 >
-                  <span className="group-hover:translate-x-0.5 inline-block transition-transform">
-                    How it works
-                  </span>
+                  How it works
                 </a>
-              </div>
-            </HeroEntranceItem>
-
-            {/* Trust badge - unique visual element */}
-            <HeroEntranceItem delay={0.45}>
-              <div className="mt-16 inline-flex items-center gap-3 px-5 py-3 bg-neutral-900/50 border border-neutral-800 backdrop-blur-sm">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-neutral-700 border-2 border-neutral-950" />
-                  <div className="w-8 h-8 rounded-full bg-neutral-600 border-2 border-neutral-950" />
-                  <div className="w-8 h-8 rounded-full bg-neutral-700 border-2 border-neutral-950" />
-                </div>
-                <p className="text-sm text-neutral-400">
-                  <span className="text-white font-semibold">2,400+</span> successful matches
-                </p>
               </div>
             </HeroEntranceItem>
           </HeroEntranceContainer>
         </div>
-
-        {/* Bottom fade - subtle solid instead of gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-neutral-950/60 z-10" />
       </motion.div>
     </section>
   )
