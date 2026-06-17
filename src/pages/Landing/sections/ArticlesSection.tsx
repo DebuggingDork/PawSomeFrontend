@@ -1,0 +1,55 @@
+import React from 'react'
+import { ScrollReveal } from '../../../components/animations/ScrollReveal'
+import { HoverZoomImage } from '../../../components/animations/HoverZoomImage'
+import { ArrowRight } from 'lucide-react'
+
+export const ArticlesSection: React.FC = () => {
+  return (
+    <section className="py-24 bg-neutral-950 border-t border-neutral-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-end mb-16">
+          <ScrollReveal>
+            <h2 className="text-4xl font-bold text-white mb-4">Breeding Resources</h2>
+            <p className="text-neutral-400 max-w-xl">Expert advice on responsible breeding, health screening, and finding the perfect match.</p>
+          </ScrollReveal>
+          <ScrollReveal delay={0.2} className="hidden md:block">
+            <button className="flex items-center gap-2 text-pink-500 font-semibold hover:text-pink-400 transition-colors cursor-pointer">
+              View All Articles <ArrowRight className="w-5 h-5" />
+            </button>
+          </ScrollReveal>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            {
+              title: "Understanding Genetic Health Panels",
+              desc: "Why DNA testing is the foundation of ethical breeding.",
+              image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80",
+              delay: 0.1
+            },
+            {
+              title: "Preparing for the First Litter",
+              desc: "A comprehensive guide to ensuring safe delivery and healthy pups.",
+              image: "https://images.unsplash.com/photo-1537151608804-ea6f117398e0?auto=format&fit=crop&q=80",
+              delay: 0.2
+            },
+            {
+              title: "The Importance of Temperament",
+              desc: "How to evaluate psychological traits in potential mates.",
+              image: "https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80",
+              delay: 0.3
+            }
+          ].map((article, index) => (
+            <ScrollReveal key={index} delay={article.delay}>
+              <div className="group cursor-pointer">
+                <HoverZoomImage src={article.image} alt={article.title} className="mb-6" aspectRatio="aspect-[16/10]" />
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-pink-400 transition-colors">{article.title}</h3>
+                <p className="text-neutral-400">{article.desc}</p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
