@@ -91,7 +91,6 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         ease: [0.4, 0, 0.2, 1],
       }}
       style={{
-        minWidth: "900px",
         background: visible 
           ? "rgba(255, 255, 255, 0.1)" 
           : "transparent",
@@ -99,12 +98,14 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl items-center justify-between self-start rounded-full px-8 py-4 lg:flex pointer-events-auto transition-all duration-400",
-        visible ? "flex-row" : "flex-row",
+        "relative z-[60] mx-auto hidden w-full items-center self-start rounded-full px-8 py-4 lg:flex pointer-events-auto transition-all duration-400",
+        visible ? "max-w-7xl justify-between" : "max-w-none justify-between",
         className,
       )}
     >
-      {children}
+      <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+        {children}
+      </div>
     </motion.div>
   );
 };
