@@ -164,19 +164,4 @@ Commit frequently with meaningful commit messages.
 
 ---
 
-## First Tasks
-
-1. Initialize Vite React TypeScript project.
-2. Configure Tailwind CSS v4.
-3. Configure ESLint and Prettier.
-4. Configure React Router.
-5. Configure TanStack Query.
-6. Configure Zustand store.
-7. Create application folder structure.
-8. Create reusable Button component.
-9. Create reusable Container component.
-10. Create Navbar.
-11. Create Landing Page Hero.
-12. Commit after each completed task.
-
 Work incrementally and maintain production-quality code.
