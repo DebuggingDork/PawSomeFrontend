@@ -1,25 +1,78 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router'
+import LandingPage from './pages/Landing'
+import AuthPage from './pages/Auth'
+import DiscoverPage from './pages/Discover'
+import MatchesPage from './pages/Matches'
+import ChatPage from './pages/Chat'
+import ProfilePage from './pages/Profile'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="min-h-screen bg-neutral-900 text-white flex flex-col justify-center items-center p-6">
-      <div className="max-w-md w-full bg-neutral-800 rounded-2xl shadow-xl p-6 border border-neutral-700 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent mb-4">
-          PawSome v4
-        </h1>
-        <p className="text-neutral-400 mb-6">
-          Tailwind CSS v4 is successfully configured with React 19 & Vite.
-        </p>
-        <button
-          onClick={() => setCount((count) => count + 1)}
-          className="px-6 py-3 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white font-medium rounded-xl shadow-lg hover:shadow-pink-500/20 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-        >
-          Count is {count}
-        </button>
+    <BrowserRouter>
+      <div className="min-h-screen bg-neutral-950 text-white flex flex-col">
+        {/* Navigation Bar */}
+        <header className="border-b border-neutral-800 bg-neutral-900/50 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <Link
+              to="/"
+              className="text-xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent"
+            >
+              PawSome
+            </Link>
+            <nav className="flex space-x-6">
+              <Link
+                to="/"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              >
+                Home
+              </Link>
+              <Link
+                to="/discover"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              >
+                Discover
+              </Link>
+              <Link
+                to="/matches"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              >
+                Matches
+              </Link>
+              <Link
+                to="/chat"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              >
+                Chat
+              </Link>
+              <Link
+                to="/profile"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              >
+                Profile
+              </Link>
+              <Link
+                to="/auth"
+                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              >
+                Sign In
+              </Link>
+            </nav>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-grow flex items-center justify-center py-12">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/discover" element={<DiscoverPage />} />
+            <Route path="/matches" element={<MatchesPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Routes>
+        </main>
       </div>
-    </div>
+    </BrowserRouter>
   )
 }
 
