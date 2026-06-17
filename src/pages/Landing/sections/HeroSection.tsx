@@ -22,54 +22,32 @@ export const HeroSection = () => {
         style={{ scale, borderRadius, opacity }}
         className="sticky top-0 w-full h-screen min-h-[700px] flex items-center overflow-hidden origin-center will-change-transform"
       >
-        {/* Background - bright, well-lit image */}
+        {/* Background - NO overlay, bright image */}
         <div className="absolute inset-0 z-0">
           <ParallaxImage
             src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
             alt="Happy dogs running together"
-            className="w-full h-full brightness-110"
+            className="w-full h-full brightness-125 contrast-105"
           />
-          {/* Lighter overlay for better image visibility */}
-          <div className="absolute inset-0 bg-[#faf8f5]/55" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32">
           <HeroEntranceContainer>
-            {/* Main headline - removed eyebrow badge */}
+            {/* Main headline - smaller size */}
             <HeroEntranceItem>
-              <h1 className="text-[clamp(3rem,8vw,6.5rem)] font-medium leading-[0.95] text-[#1a3a52] mb-8 max-w-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-                <span className="block text-[#2d5f4d]/60 text-[clamp(1.2rem,3.5vw,2.5rem)] mb-3">
-                  Breeding shouldn't
+              <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-medium leading-[1] text-[#1a3a52] mb-8 max-w-3xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <span className="block text-[#2d5f4d]/70 text-[clamp(1rem,2.5vw,1.8rem)] mb-3">
+                  Your pet deserves
                 </span>
-                <span className="block">be <span className="italic text-[#e85d2a]">sketchy</span></span>
-                <span className="block relative">
-                  <span className="block">or <span className="italic text-[#e85d2a]">shady</span></span>
-                  <svg 
-                    className="absolute -bottom-1 left-[2.8rem] w-[70%] h-3 text-[#e85d2a]"
-                    viewBox="0 0 300 12"
-                    preserveAspectRatio="none"
-                  >
-                    <path
-                      d="M2,6 Q150,2 298,6"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
+                <span className="block">a trusted <span className="italic text-[#e85d2a]">companion</span></span>
               </h1>
             </HeroEntranceItem>
 
             {/* Sub copy */}
             <HeroEntranceItem delay={0.15}>
-              <div className="max-w-xl mb-10 space-y-3">
-                <p className="text-xl text-[#1a3a52] leading-relaxed font-medium">
-                  We only work with breeders who actually care about their animals.
-                </p>
-                <p className="text-base text-[#2d5f4d] leading-relaxed">
-                  Health tests? ✓ Genetic screening? ✓ Years of experience? ✓<br />
-                  Random backyard operation? Hard pass.
+              <div className="max-w-xl mb-10">
+                <p className="text-lg text-[#1a3a52] leading-relaxed font-medium">
+                  Connect with verified, ethical breeders who prioritize health, temperament, and responsible breeding practices.
                 </p>
               </div>
             </HeroEntranceItem>

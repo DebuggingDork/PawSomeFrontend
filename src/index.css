@@ -8,45 +8,39 @@
   --font-accent: 'Space Grotesk', monospace;
   --font-serif: 'Playfair Display', serif;
   
-  /* Premium & Trusted Color Palette */
-  --color-primary-50: #f0f9f4;
-  --color-primary-100: #dcf2e4;
-  --color-primary-200: #bae5cd;
-  --color-primary-300: #8bd2ad;
-  --color-primary-400: #56b888;
-  --color-primary-500: #2f9b6b;
-  --color-primary-600: #1f7d56;
-  --color-primary-700: #1a6447;
-  --color-primary-800: #17503a;
-  --color-primary-900: #144230;
+  --color-primary-50: #faf5ff;
+  --color-primary-100: #f3e8ff;
+  --color-primary-200: #e9d5ff;
+  --color-primary-300: #d8b4fe;
+  --color-primary-400: #c084fc;
+  --color-primary-500: #a855f7;
+  --color-primary-600: #9333ea;
+  --color-primary-700: #7e22ce;
+  --color-primary-800: #6b21a8;
+  --color-primary-900: #581c87;
   
-  --color-accent-50: #fef6f0;
-  --color-accent-100: #fde8d8;
-  --color-accent-200: #fbcdaf;
-  --color-accent-300: #f8ab7c;
-  --color-accent-400: #f47d47;
-  --color-accent-500: #e85d2a;
-  --color-accent-600: #d94820;
-  --color-accent-700: #b4381d;
-  --color-accent-800: #90301e;
-  --color-accent-900: #742a1c;
-  
-  --color-cream: #faf8f5;
-  --color-cream-dark: #f5f2ed;
-  --color-navy: #1a3a52;
-  --color-forest: #2d5f4d;
+  --color-accent-50: #fff1f2;
+  --color-accent-100: #ffe4e6;
+  --color-accent-200: #fecdd3;
+  --color-accent-300: #fda4af;
+  --color-accent-400: #fb7185;
+  --color-accent-500: #f43f5e;
+  --color-accent-600: #e11d48;
+  --color-accent-700: #be123c;
+  --color-accent-800: #9f1239;
+  --color-accent-900: #881337;
 }
 
 /* Custom global styles */
 html {
   scroll-behavior: smooth;
   font-family: var(--font-sans);
-  background-color: #faf8f5;
+  background-color: #0a0a0a;
 }
 
 body {
-  background-color: #faf8f5;
-  color: #1a3a52;
+  background-color: #0a0a0a;
+  color: #e5e5e5;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -74,8 +68,8 @@ h1, h2, h3 {
 
 /* Selection color */
 ::selection {
-  background: rgba(232, 93, 42, 0.2);
-  color: #1a3a52;
+  background: rgba(244, 63, 94, 0.3);
+  color: #fff;
 }
 
 /* Radial gradient utility */

@@ -22,7 +22,7 @@ function App() {
               to="/"
               className="flex items-center gap-3"
             >
-              <img src={logoIcon} alt="PawSome" className="h-10 w-10" />
+              <img src={logoIcon} alt="PawSome" className="h-12 w-12" />
               <span className="text-2xl font-medium text-[#2d5f4d]" style={{ fontFamily: 'Playfair Display, serif' }}>
                 PawSome
               </span>
