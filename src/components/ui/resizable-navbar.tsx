@@ -8,7 +8,7 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -49,12 +49,7 @@ interface MobileNavMenuProps {
 }
 
 export const Navbar = ({ children, className }: NavbarProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
+  const { scrollY } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -66,10 +61,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   });
 
   return (
-    <motion.div
-      ref={ref}
-      className={cn("absolute inset-x-0 top-0 z-40 w-full", className)}
-    >
+    <div className={cn("fixed inset-x-0 top-0 z-50 w-full pointer-events-none", className)}>
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(
@@ -78,7 +70,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
             )
           : child,
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -103,10 +95,11 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         background: visible 
           ? "rgba(255, 255, 255, 0.1)" 
           : "transparent",
+        borderWidth: visible ? "1px" : "0px",
         borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full px-8 py-4 lg:flex border transition-all duration-700",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full px-8 py-4 lg:flex pointer-events-auto transition-all duration-700",
         className,
       )}
     >
@@ -170,10 +163,11 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         background: visible 
           ? "rgba(255, 255, 255, 0.1)" 
           : "transparent",
+        borderWidth: visible ? "1px" : "0px",
         borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between px-4 py-3 lg:hidden border transition-all duration-700",
+        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between px-4 py-3 lg:hidden pointer-events-auto transition-all duration-700",
         className,
       )}
     >
