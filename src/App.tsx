@@ -27,40 +27,40 @@ function App() {
                 PawSome
               </span>
             </Link>
-            <nav className="flex space-x-6">
+            <nav className="flex items-center space-x-8">
               <Link
                 to="/"
-                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-[#ff6b35] hover:text-[#ff5722] transition-colors"
               >
                 Home
               </Link>
               <Link
                 to="/discover"
-                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-white hover:text-[#ff6b35] transition-colors"
               >
                 Discover
               </Link>
               <Link
                 to="/matches"
-                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-white hover:text-[#ff6b35] transition-colors"
               >
                 Matches
               </Link>
               <Link
                 to="/chat"
-                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-white hover:text-[#ff6b35] transition-colors"
               >
                 Chat
               </Link>
               <Link
                 to="/profile"
-                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-white hover:text-[#ff6b35] transition-colors"
               >
                 Profile
               </Link>
               <Link
                 to="/auth"
-                className="text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+                className="px-6 py-2 text-sm font-medium text-white hover:text-[#ff6b35] border border-white/30 hover:border-[#ff6b35] rounded-full transition-colors"
               >
                 Sign In
               </Link>
