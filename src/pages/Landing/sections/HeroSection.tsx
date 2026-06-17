@@ -22,30 +22,20 @@ export const HeroSection = () => {
         style={{ scale, borderRadius, opacity }}
         className="sticky top-0 w-full h-screen min-h-[700px] flex items-center overflow-hidden origin-center will-change-transform"
       >
-        {/* Background - bright, well-lit image with dynamic lighting */}
+        {/* Background - bright, well-lit image */}
         <div className="absolute inset-0 z-0">
           <ParallaxImage
-            src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80"
+            src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&brightness=1.1"
             alt="Happy healthy dogs in bright natural lighting"
-            className="w-full h-full"
+            className="w-full h-full brightness-110"
           />
-          {/* Light overlay to maintain text readability */}
-          <div className="absolute inset-0 bg-[#faf8f5]/75" />
+          {/* Lighter overlay for better image visibility */}
+          <div className="absolute inset-0 bg-[#faf8f5]/55" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32">
           <HeroEntranceContainer>
-            {/* Eyebrow */}
-            <HeroEntranceItem>
-              <div className="inline-flex items-center gap-2 mb-6">
-                <div className="w-2 h-2 bg-[#2f9b6b] rounded-full animate-pulse" />
-                <p className="text-sm font-medium text-[#2f9b6b]" style={{ fontFamily: 'Space Grotesk, monospace' }}>
-                  Real breeders. Real standards.
-                </p>
-              </div>
-            </HeroEntranceItem>
-
-            {/* Main headline */}
+            {/* Main headline - removed eyebrow badge */}
             <HeroEntranceItem>
               <h1 className="text-[clamp(3rem,8vw,6.5rem)] font-medium leading-[0.95] text-[#1a3a52] mb-8 max-w-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                 <span className="block text-[#2d5f4d]/60 text-[clamp(1.2rem,3.5vw,2.5rem)] mb-3">
