@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Mail,
-  Facebook,
-  Instagram,
-  Twitter,
-  Heart,
-} from "lucide-react";
+import { Mail, Heart, Share2, Globe, Rss, ExternalLink } from "lucide-react";
 import {
   FooterBackgroundGradient,
   TextHoverEffect,
@@ -55,9 +49,10 @@ function PawsomeFooter() {
 
   // Social media icons
   const socialLinks = [
-    { icon: <Facebook size={20} />, label: "Facebook", href: "#" },
-    { icon: <Instagram size={20} />, label: "Instagram", href: "#" },
-    { icon: <Twitter size={20} />, label: "Twitter", href: "#" },
+    { icon: <Globe size={20} />, label: "Website", href: "#" },
+    { icon: <Share2 size={20} />, label: "Share", href: "#" },
+    { icon: <Rss size={20} />, label: "Feed", href: "#" },
+    { icon: <ExternalLink size={20} />, label: "Link", href: "#" },
   ];
 
   return (
