@@ -40,7 +40,7 @@ export default function ResizableNavbarDemo() {
 
   return (
     <div className="relative w-full">
-      <Navbar className="top-0">
+      <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
           {/* PawSome Logo */}
