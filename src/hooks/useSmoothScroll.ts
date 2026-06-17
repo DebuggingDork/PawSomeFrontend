@@ -10,12 +10,9 @@ const STORAGE_KEY = 'pawsome_scroll_y'
 
 /** Reveal #root with a fade once we're at the correct position. */
 function revealPage() {
-  // Dismiss the pre-loader first — it was covering the screen until now
+  // Dismiss the pre-loader and reveal #root in the same JS task — no gap
   const pre = document.getElementById('pre-loader')
   if (pre) pre.style.display = 'none'
-
-  // Then make #root visible — both happen in the same JS task so there
-  // is zero gap between the pre-loader leaving and the page appearing
   const root = document.getElementById('root')
   if (root) root.classList.add('ready')
 }
@@ -24,7 +21,6 @@ export function useSmoothScroll() {
   const { stopLoading } = useLoaderStore()
 
   useEffect(() => {
-
     // ── Step 1: Save position right before the page unloads ──────────────────
     const handleBeforeUnload = () => {
       sessionStorage.setItem(STORAGE_KEY, String(window.scrollY))
@@ -45,11 +41,16 @@ export function useSmoothScroll() {
 
     const rafId = requestAnimationFrame(raf)
 
-    // ── Step 3: Event-driven restoration ─────────────────────────────────────
-    // ScrollTrigger's 'refresh' fires after GSAP has measured all pinned
-    // sections — document height is stable, so scrollTo lands precisely.
-    // We dismiss the loader and reveal the page only at this point, so the
-    // user never sees any flash of wrong content.
+    // ── Step 3: Reliable scroll restoration ──────────────────────────────────
+    // We can't rely on listening to ScrollTrigger's 'refresh' event because
+    // child components (e.g. ScrollPinnedSlider) call ScrollTrigger.refresh()
+    // inside their own useEffects, which fire BEFORE this hook can attach a
+    // listener — so the event is missed entirely.
+    //
+    // Instead: yield two animation frames so all component useEffects have
+    // run and registered their ScrollTrigger instances, then call
+    // ScrollTrigger.refresh() ourselves. This guarantees the DOM height is
+    // fully calculated before we restore the scroll position.
     const savedY = sessionStorage.getItem(STORAGE_KEY)
 
     const finish = (targetY?: number) => {
@@ -64,24 +65,28 @@ export function useSmoothScroll() {
     if (savedY) {
       const targetY = Number(savedY)
 
-      const onRefreshComplete = () => {
-        ScrollTrigger.removeEventListener('refresh', onRefreshComplete)
-        finish(targetY)
-      }
-
-      ScrollTrigger.addEventListener('refresh', onRefreshComplete)
+      // Two rAFs: first yields to let all child useEffects run,
+      // second yields to let their ScrollTrigger.refresh() calls settle.
+      // Then we do a final refresh() and immediately restore position.
+      let rafId2: number
+      rafId2 = requestAnimationFrame(() => {
+        rafId2 = requestAnimationFrame(() => {
+          ScrollTrigger.refresh()
+          finish(targetY)
+        })
+      })
 
       return () => {
-        // Safety net: unmounted before refresh fired — never leave page invisible
-        ScrollTrigger.removeEventListener('refresh', onRefreshComplete)
-        finish()
+        cancelAnimationFrame(rafId2)
+        // Safety net: always reveal so page is never stuck invisible
+        revealPage()
         window.removeEventListener('beforeunload', handleBeforeUnload)
         cancelAnimationFrame(rafId)
         lenis.destroy()
       }
     }
 
-    // No saved position — normal first load, dismiss loader right away
+    // No saved position — normal first load, reveal immediately
     finish()
 
     return () => {
