@@ -46,15 +46,15 @@ export const HeroSection = () => {
 
             {/* Main headline */}
             <HeroEntranceItem>
-              <h1 className="text-[clamp(3rem,8vw,6.5rem)] font-bold leading-[0.95] text-white mb-8 max-w-4xl" style={{ fontFamily: 'Syne, sans-serif' }}>
+              <h1 className="text-[clamp(3rem,8vw,6.5rem)] font-medium leading-[0.95] text-white mb-8 max-w-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>
                 <span className="block text-neutral-400 text-[clamp(1.2rem,3.5vw,2.5rem)] mb-3">
-                  Breeding shouldn't be
+                  Breeding shouldn't
                 </span>
-                <span className="block">sketchy</span>
+                <span className="block">be <span className="italic text-pink-500">sketchy</span></span>
                 <span className="block relative">
-                  <span className="text-pink-500">or shady</span>
+                  <span className="block">or <span className="italic text-pink-500">shady</span></span>
                   <svg 
-                    className="absolute -bottom-1 left-0 w-[105%] h-3 text-pink-500/30"
+                    className="absolute -bottom-1 left-[2.8rem] w-[70%] h-3 text-pink-500"
                     viewBox="0 0 300 12"
                     preserveAspectRatio="none"
                   >

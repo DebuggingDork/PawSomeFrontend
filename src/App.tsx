@@ -6,7 +6,7 @@ import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import { StickyNav } from './components/animations/StickyNav'
-import pawsomeLogo from './assets/pawsomeLogo.svg'
+import logoIcon from './assets/icon.png.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 
 function App() {
@@ -20,10 +20,10 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <Link
               to="/"
-              className="flex items-center gap-2"
+              className="flex items-center gap-3"
             >
-              <img src={pawsomeLogo} alt="PawSome" className="h-10 w-10 rounded-lg" />
-              <span className="text-xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+              <img src={logoIcon} alt="PawSome" className="h-10 w-10" />
+              <span className="text-2xl font-medium text-white" style={{ fontFamily: 'Playfair Display, serif' }}>
                 PawSome
               </span>
             </Link>
