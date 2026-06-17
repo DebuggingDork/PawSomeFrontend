@@ -38,7 +38,8 @@ function App() {
         <Navbar>
           {/* Desktop Navigation */}
           <NavBody>
-            <Link to="/" className="relative z-20 flex items-center gap-2 px-2 py-1">
+            {/* Left: Logo */}
+            <Link to="/" className="relative z-20 flex items-center gap-2 shrink-0">
               <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
               <span
                 className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent drop-shadow-sm"
@@ -48,9 +49,11 @@ function App() {
               </span>
             </Link>
 
+            {/* Center: Nav Items */}
             <NavItems items={navItems} />
 
-            <div className="flex items-center gap-3">
+            {/* Right: Buttons */}
+            <div className="flex items-center gap-3 shrink-0">
               <NavbarButton variant="secondary" as={Link} href="/auth">
                 Sign In
               </NavbarButton>

@@ -86,9 +86,9 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         y: visible ? 20 : 0,
       }}
       transition={{
-        type: "spring",
-        stiffness: 200,
-        damping: 50,
+        type: "tween",
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1],
       }}
       style={{
         minWidth: "900px",
@@ -99,7 +99,8 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full px-8 py-4 lg:flex pointer-events-auto transition-all duration-700",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl items-center justify-between self-start rounded-full px-8 py-4 lg:flex pointer-events-auto transition-all duration-400",
+        visible ? "flex-row" : "flex-row",
         className,
       )}
     >
@@ -115,7 +116,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-1 text-sm font-semibold transition duration-200 lg:flex",
+        "hidden flex-row items-center justify-center space-x-1 text-sm font-semibold transition duration-200 lg:flex",
         className,
       )}
     >
@@ -155,9 +156,9 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         y: visible ? 20 : 0,
       }}
       transition={{
-        type: "spring",
-        stiffness: 200,
-        damping: 50,
+        type: "tween",
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1],
       }}
       style={{
         background: visible 
@@ -167,7 +168,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between px-4 py-3 lg:hidden pointer-events-auto transition-all duration-700",
+        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between px-4 py-3 lg:hidden pointer-events-auto transition-all duration-400",
         className,
       )}
     >
