@@ -9,9 +9,102 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <title>PawSome — Premium Pet Matching</title>
+    <!--
+      1. Disable the browser's built-in scroll restoration so Lenis can own it.
+      2. Hide #root immediately so the user never sees the black flash, the
+         top-of-page flash, or the scroll-jump flash. useSmoothScroll will
+         reveal the page (with a short fade) once the position is restored.
+    -->
+    <script>
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+    </script>
+    <style>
+      /* Keep the page content hidden until Lenis has restored scroll position */
+      #root {
+        visibility: hidden;
+        opacity: 0;
+      }
+      #root.ready {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.25s ease;
+      }
+
+      /* ── Instant pre-React splash screen ───────────────────────────────────
+         Pure HTML/CSS — zero extra network requests (favicon.svg is already
+         fetched for the browser tab). React's MutationObserver (below) hides
+         this the moment #root has children, by which point the Lottie
+         GlobalLoader is already covering the screen.                          */
+      #pre-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #0a0a0a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      /* Logo icon — reuses the favicon already cached by the browser */
+      .pre-loader-icon {
+        width: 88px;
+        height: 88px;
+        animation: logo-pulse 1.8s ease-in-out infinite;
+      }
+
+      /* Wordmark styled to match the navbar gradient */
+      .pre-loader-wordmark {
+        font-family: 'Pacifico', 'Georgia', cursive;
+        font-size: 2rem;
+        background: linear-gradient(90deg, #ff6b35, #ff8c5c, #ff6b35);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 200% auto;
+        animation: shimmer 2s linear infinite;
+      }
+
+      /* Thin loading bar at the bottom of the splash */
+      .pre-loader-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 40%;
+        background: linear-gradient(90deg, #ff6b35, #ff8c5c);
+        border-radius: 0 2px 2px 0;
+        animation: load-bar 1.6s ease-in-out infinite;
+      }
+
+      @keyframes logo-pulse {
+        0%, 100% { transform: scale(1);    opacity: 1;    }
+        50%       { transform: scale(1.08); opacity: 0.85; }
+      }
+      @keyframes shimmer {
+        0%   { background-position: 0%   center; }
+        100% { background-position: 200% center; }
+      }
+      @keyframes load-bar {
+        0%   { left: -40%; width: 40%; }
+        50%  { width: 55%; }
+        100% { left: 100%; width: 40%; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Instant splash — visible before React boots, no extra network needed -->
+    <div id="pre-loader">
+      <img class="pre-loader-icon" src="/iconlarge.png" alt="PawSome" />
+      <span class="pre-loader-wordmark">PawSome</span>
+      <div class="pre-loader-bar"></div>
+    </div>
+
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
