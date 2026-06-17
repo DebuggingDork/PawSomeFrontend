@@ -87,11 +87,11 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(20px) saturate(180%)" : "blur(12px) saturate(130%)",
+        backdropFilter: visible ? "blur(20px) saturate(180%)" : "none",
         boxShadow: visible
           ? "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
-          : "0 1px 3px rgba(0, 0, 0, 0.1)",
-        width: visible ? "50%" : "100%",
+          : "none",
+        width: visible ? "60%" : "100%",
         y: visible ? 20 : 0,
       }}
       transition={{
@@ -100,13 +100,14 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         damping: 50,
       }}
       style={{
-        minWidth: "800px",
+        minWidth: "900px",
         background: visible 
           ? "rgba(255, 255, 255, 0.1)" 
-          : "rgba(255, 255, 255, 0.08)",
+          : "transparent",
+        borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full px-6 py-3 lg:flex border border-white/20",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full px-8 py-4 lg:flex border transition-all duration-700",
         className,
       )}
     >
@@ -122,7 +123,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-semibold transition duration-200 lg:flex lg:space-x-2",
+        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-1 text-sm font-semibold transition duration-200 lg:flex",
         className,
       )}
     >
@@ -130,7 +131,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <a
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-4 py-2 text-white/90 hover:text-[#ff6b35] transition-colors drop-shadow-md"
+          className="relative px-5 py-2 text-white/90 hover:text-[#ff6b35] transition-colors drop-shadow-md"
           key={`link-${idx}`}
           href={item.link}
         >
@@ -151,13 +152,13 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(20px) saturate(180%)" : "blur(12px) saturate(130%)",
+        backdropFilter: visible ? "blur(20px) saturate(180%)" : "none",
         boxShadow: visible
           ? "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
-          : "0 1px 3px rgba(0, 0, 0, 0.1)",
+          : "none",
         width: visible ? "90%" : "100%",
-        paddingRight: visible ? "12px" : "0px",
-        paddingLeft: visible ? "12px" : "0px",
+        paddingRight: visible ? "16px" : "16px",
+        paddingLeft: visible ? "16px" : "16px",
         borderRadius: visible ? "16px" : "2rem",
         y: visible ? 20 : 0,
       }}
@@ -169,10 +170,11 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
       style={{
         background: visible 
           ? "rgba(255, 255, 255, 0.1)" 
-          : "rgba(255, 255, 255, 0.08)",
+          : "transparent",
+        borderColor: visible ? "rgba(255, 255, 255, 0.2)" : "transparent",
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between px-4 py-3 lg:hidden border border-white/20",
+        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between px-4 py-3 lg:hidden border transition-all duration-700",
         className,
       )}
     >

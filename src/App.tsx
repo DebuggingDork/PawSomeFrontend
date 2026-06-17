@@ -29,7 +29,6 @@ function App() {
     { name: 'Discover', link: '/discover' },
     { name: 'Matches', link: '/matches' },
     { name: 'Chat', link: '/chat' },
-    { name: 'Profile', link: '/profile' },
   ]
 
   return (
@@ -39,11 +38,11 @@ function App() {
         <Navbar>
           {/* Desktop Navigation */}
           <NavBody>
-            <Link to="/" className="relative z-20 flex items-center gap-3 px-2 py-1">
+            <Link to="/" className="relative z-20 flex items-center gap-2 px-2 py-1">
               <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
               <span
-                className="text-xl font-medium text-black dark:text-white drop-shadow-sm"
-                style={{ fontFamily: 'Playfair Display, serif' }}
+                className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent drop-shadow-sm"
+                style={{ fontFamily: 'Pacifico, cursive' }}
               >
                 PawSome
               </span>
@@ -51,11 +50,11 @@ function App() {
 
             <NavItems items={navItems} />
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <NavbarButton variant="secondary" as={Link} href="/auth">
                 Sign In
               </NavbarButton>
-              <NavbarButton variant="dark" as={Link} href="/discover">
+              <NavbarButton variant="gradient" as={Link} href="/discover">
                 <Heart className="mr-2 inline h-4 w-4" />
                 Find Matches
               </NavbarButton>
@@ -65,11 +64,11 @@ function App() {
           {/* Mobile Navigation */}
           <MobileNav>
             <MobileNavHeader>
-              <Link to="/" className="flex items-center gap-3">
+              <Link to="/" className="flex items-center gap-2">
                 <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
                 <span
-                  className="text-xl font-medium text-black dark:text-white"
-                  style={{ fontFamily: 'Playfair Display, serif' }}
+                  className="text-xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
+                  style={{ fontFamily: 'Pacifico, cursive' }}
                 >
                   PawSome
                 </span>
@@ -106,7 +105,7 @@ function App() {
                 </NavbarButton>
                 <NavbarButton
                   onClick={() => setIsMobileMenuOpen(false)}
-                  variant="dark"
+                  variant="gradient"
                   className="w-full"
                   as={Link}
                   href="/discover"
