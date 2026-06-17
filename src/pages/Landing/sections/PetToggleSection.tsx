@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { ScrollReveal } from '../../../components/animations/ScrollReveal'
 import { AnimatedToggle } from '../../../components/animations/AnimatedToggle'
 import { HoverCard } from '../../../components/animations/HoverCard'
 
 export const PetToggleSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dog' | 'cat' | null>('dog')
+  // Track whether the section is in view before allowing layoutId animations,
+  // preventing the pill from flying in from (0,0) on page refresh.
+  const toggleRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(toggleRef, { once: true, amount: 0.5 })
 
   const handleToggle = (tab: 'dog' | 'cat') => {
     setActiveTab(prev => (prev === tab ? null : tab))
@@ -17,7 +21,7 @@ export const PetToggleSection: React.FC = () => {
         <ScrollReveal className="text-center mb-14" scale>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-10">Meet Our Premium Matches</h2>
           
-          <div className="inline-flex gap-2 p-1.5 bg-neutral-800/60 rounded-full backdrop-blur-sm ring-1 ring-neutral-700/50">
+          <div ref={toggleRef} className="inline-flex gap-2 p-1.5 bg-neutral-800/60 rounded-full backdrop-blur-sm ring-1 ring-neutral-700/50">
             <button
               onClick={() => handleToggle('dog')}
               className={`relative px-8 py-3.5 rounded-full font-bold transition-all cursor-pointer ${
@@ -26,12 +30,15 @@ export const PetToggleSection: React.FC = () => {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              {activeTab === 'dog' && (
+              {activeTab === 'dog' && isInView && (
                 <motion.div
                   layoutId="toggle-pill"
                   className="absolute inset-0 bg-pink-500 rounded-full shadow-[0_0_20px_rgba(236,72,153,0.3)]"
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                 />
+              )}
+              {activeTab === 'dog' && !isInView && (
+                <div className="absolute inset-0 bg-pink-500 rounded-full shadow-[0_0_20px_rgba(236,72,153,0.3)]" />
               )}
               <span className="relative z-10">For Dogs</span>
             </button>
@@ -43,12 +50,15 @@ export const PetToggleSection: React.FC = () => {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              {activeTab === 'cat' && (
+              {activeTab === 'cat' && isInView && (
                 <motion.div
                   layoutId="toggle-pill"
                   className="absolute inset-0 bg-violet-500 rounded-full shadow-[0_0_20px_rgba(139,92,246,0.3)]"
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                 />
+              )}
+              {activeTab === 'cat' && !isInView && (
+                <div className="absolute inset-0 bg-violet-500 rounded-full shadow-[0_0_20px_rgba(139,92,246,0.3)]" />
               )}
               <span className="relative z-10">For Cats</span>
             </button>

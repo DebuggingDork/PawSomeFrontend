@@ -24,15 +24,15 @@ export const ScrollPinnedSlider: React.FC<ScrollPinnedSliderProps> = ({
 
     // Calculate how far to move horizontally
     const getScrollAmount = () => {
-      // Add padding calculation if necessary, but scrollWidth - clientWidth usually handles it.
-      // Math.max guarantees we don't go positive if content is smaller than screen
       const amount = Math.max(0, wrapper.scrollWidth - window.innerWidth)
       return -amount
     }
 
-    // Only create animation if there's enough content to scroll
-    if (wrapper.scrollWidth > window.innerWidth) {
-      const tween = gsap.to(wrapper, {
+    // Small delay so the DOM has fully painted before measuring
+    const ctx = gsap.context(() => {
+      if (wrapper.scrollWidth <= window.innerWidth) return
+
+      gsap.to(wrapper, {
         x: getScrollAmount,
         ease: 'none',
         scrollTrigger: {
@@ -40,17 +40,28 @@ export const ScrollPinnedSlider: React.FC<ScrollPinnedSliderProps> = ({
           start: 'top top',
           end: () => `+=${Math.abs(getScrollAmount())}`,
           pin: true,
+          pinSpacing: true,
           scrub: 1,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
+          onRefresh: () => {
+            // Reset inline transform so recalculation is clean
+            gsap.set(wrapper, { clearProps: 'x' })
+          },
         },
       })
 
-      return () => {
-        tween.kill()
-        ScrollTrigger.getAll().forEach((t) => t.kill())
-      }
+      // Recalculate all trigger positions after setup
+      ScrollTrigger.refresh()
+    }, containerRef)
+
+    return () => {
+      // ctx.revert() only kills triggers/tweens created inside this context,
+      // leaving all other page ScrollTriggers intact
+      ctx.revert()
     }
-  }, [children])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div ref={containerRef} className={`overflow-hidden h-screen bg-neutral-950 flex flex-col justify-center ${className}`}>
