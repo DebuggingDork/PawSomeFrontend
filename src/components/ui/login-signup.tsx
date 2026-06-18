@@ -146,9 +146,9 @@ export default function LoginCardSection() {
           {/* Footer */}
           <p className="mt-6 text-center text-sm text-neutral-500">
             Don't have an account?{" "}
-            <a href="#" className="text-[#ff6b35] hover:text-[#ff8c5c] transition-colors font-medium">
+            <Link to="/register" className="text-[#ff6b35] hover:text-[#ff8c5c] transition-colors font-medium">
               Create one
-            </a>
+            </Link>
           </p>
         </div>
       </div>
