@@ -1,194 +1,114 @@
 import * as React from "react";
-import { useState, useRef, useEffect } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { useState } from "react";
+import { Link } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff, GitBranch, Globe, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, User, Mail, Lock, ArrowLeft, GitBranch, Globe } from "lucide-react";
 
 export default function RegisterCardSection() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
-
-    const setSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    setSize();
-
-    type P = { x: number; y: number; v: number; o: number };
-    let ps: P[] = [];
-    let raf = 0;
-
-    const make = () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      v: Math.random() * 0.25 + 0.05,
-      o: Math.random() * 0.35 + 0.15,
-    });
-
-    const init = () => {
-      ps = [];
-      const count = Math.floor((canvas.width * canvas.height) / 9000);
-      for (let i = 0; i < count; i++) ps.push(make());
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ps.forEach((p) => {
-        p.y -= p.v;
-        if (p.y < 0) {
-          p.x = Math.random() * canvas.width;
-          p.y = canvas.height + Math.random() * 40;
-          p.v = Math.random() * 0.25 + 0.05;
-          p.o = Math.random() * 0.35 + 0.15;
-        }
-        ctx.fillStyle = `rgba(250,250,250,${p.o})`;
-        ctx.fillRect(p.x, p.y, 0.7, 2.2);
-      });
-      raf = requestAnimationFrame(draw);
-    };
-
-    const onResize = () => {
-      setSize();
-      init();
-    };
-
-    window.addEventListener("resize", onResize);
-    init();
-    raf = requestAnimationFrame(draw);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
   return (
-    <section className="fixed inset-0 z-[100] bg-zinc-950 text-zinc-50">
-      <style>{`
-        .card-animate {
-          opacity: 0;
-          transform: translateY(20px);
-          animation: fadeUp 0.8s cubic-bezier(.22,.61,.36,1) 0.4s forwards;
-        }
-        @keyframes fadeUp {
-          to { opacity: 1; transform: translateY(0); }
-        }
+    <section className="fixed inset-0 z-[100] overflow-hidden">
 
-        .accent-lines{position:absolute;inset:0;pointer-events:none;opacity:.7}
-        .hline,.vline{position:absolute;background:#27272a;will-change:transform,opacity}
-        .hline{left:0;right:0;height:1px;transform:scaleX(0);transform-origin:50% 50%;animation:drawX .8s cubic-bezier(.22,.61,.36,1) forwards}
-        .vline{top:0;bottom:0;width:1px;transform:scaleY(0);transform-origin:50% 0%;animation:drawY .9s cubic-bezier(.22,.61,.36,1) forwards}
-        .hline:nth-child(1){top:18%;animation-delay:.12s}
-        .hline:nth-child(2){top:50%;animation-delay:.22s}
-        .hline:nth-child(3){top:82%;animation-delay:.32s}
-        .vline:nth-child(4){left:22%;animation-delay:.42s}
-        .vline:nth-child(5){left:50%;animation-delay:.54s}
-        .vline:nth-child(6){left:78%;animation-delay:.66s}
-        @keyframes drawX{0%{transform:scaleX(0);opacity:0}60%{opacity:.95}100%{transform:scaleX(1);opacity:.7}}
-        @keyframes drawY{0%{transform:scaleY(0);opacity:0}60%{opacity:.95}100%{transform:scaleY(1);opacity:.7}}
-      `}</style>
-
-      {/* Particles */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-50 mix-blend-screen pointer-events-none"
-      />
-
-      {/* Accent Lines */}
-      <div className="accent-lines">
-        <div className="hline" />
-        <div className="hline" />
-        <div className="hline" />
-        <div className="vline" />
-        <div className="vline" />
-        <div className="vline" />
+      {/* Background pet photo */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-neutral-950/70" />
+        <div className="absolute inset-0 [background:radial-gradient(ellipse_at_center,transparent_30%,rgba(10,10,10,0.6)_100%)]" />
       </div>
 
       {/* Header */}
-      <header className="absolute left-0 right-0 top-0 flex items-center justify-between px-6 py-4 border-b border-zinc-800/80">
-        <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">
-          NOVA
-        </span>
-        <Button
-          variant="outline"
-          className="h-9 rounded-lg border-zinc-800 bg-zinc-900 text-zinc-50 hover:bg-zinc-900/80"
+      <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-5">
+        <span
+          className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
+          style={{ fontFamily: "Pacifico, cursive" }}
         >
-          <span className="mr-2">Contact</span>
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+          PawSome
+        </span>
+
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
+        </Link>
       </header>
 
-      {/* Register Card */}
-      <div className="h-full w-full grid place-items-center px-4">
-        <Card className="card-animate w-full max-w-sm border-zinc-800 bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">Create an account</CardTitle>
-            <CardDescription className="text-zinc-400">
-              Join us in a few seconds
-            </CardDescription>
-          </CardHeader>
+      {/* Centered glass card */}
+      <div className="relative z-10 h-full w-full flex items-center justify-center px-4">
+        <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8 shadow-2xl">
 
-          <CardContent className="grid gap-5">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-zinc-300">
+          {/* Card heading */}
+          <div className="mb-7">
+            <h1
+              className="text-3xl font-semibold text-white mb-1"
+              style={{ fontFamily: "Playfair Display, serif" }}
+            >
+              Create account
+            </h1>
+            <p className="text-sm text-neutral-400">Join PawSome and find your perfect match</p>
+          </div>
+
+          {/* Form */}
+          <div className="space-y-4">
+
+            {/* Full Name */}
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-neutral-300 text-sm">
                 Full Name
               </Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
                 <Input
                   id="name"
                   type="text"
                   placeholder="John Doe"
-                  className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="email" className="text-zinc-300">
+            {/* Email */}
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-neutral-300 text-sm">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
-                  className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="password" className="text-zinc-300">
+            {/* Password */}
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-neutral-300 text-sm">
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="pl-10 pr-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                  className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md text-zinc-400 hover:text-zinc-200"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-neutral-500 hover:text-neutral-300 transition-colors"
                   onClick={() => setShowPassword((v) => !v)}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -196,52 +116,53 @@ export default function RegisterCardSection() {
               </div>
             </div>
 
+            {/* Terms */}
             <div className="flex items-center gap-2">
               <Checkbox
                 id="terms"
-                className="border-zinc-700 data-[state=checked]:bg-zinc-50 data-[state=checked]:text-zinc-900"
+                className="border-white/20 data-[state=checked]:bg-[#ff6b35] data-[state=checked]:border-[#ff6b35]"
               />
-              <Label htmlFor="terms" className="text-zinc-400 text-sm">
-                I agree to the Terms & Privacy
+              <Label htmlFor="terms" className="text-neutral-400 text-sm font-normal">
+                I agree to the{" "}
+                <a href="#" className="text-[#ff6b35] hover:text-[#ff8c5c] transition-colors">
+                  Terms & Privacy
+                </a>
               </Label>
             </div>
 
-            <Button className="w-full h-10 rounded-lg bg-zinc-50 text-zinc-900 hover:bg-zinc-200">
-              Sign Up
+            {/* CTA */}
+            <Button className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all">
+              Create Account
             </Button>
 
-            <div className="relative">
-              <Separator className="bg-zinc-800" />
-              <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-zinc-900/70 px-2 text-[11px] uppercase tracking-widest text-zinc-500">
-                or
-              </span>
+            {/* Divider */}
+            <div className="relative flex items-center gap-3">
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="text-[11px] uppercase tracking-widest text-neutral-500">or</span>
+              <div className="flex-1 h-px bg-white/10" />
             </div>
 
+            {/* Social buttons */}
             <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                className="h-10 rounded-lg border-zinc-800 bg-zinc-950 text-zinc-50 hover:bg-zinc-900/80"
-              >
-                <GitBranch className="h-4 w-4 mr-2" />
+              <button className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
+                <GitBranch className="h-4 w-4" />
                 GitHub
-              </Button>
-              <Button
-                variant="outline"
-                className="h-10 rounded-lg border-zinc-800 bg-zinc-950 text-zinc-50 hover:bg-zinc-900/80"
-              >
-                <Globe className="h-4 w-4 mr-2" />
+              </button>
+              <button className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
+                <Globe className="h-4 w-4" />
                 Google
-              </Button>
+              </button>
             </div>
-          </CardContent>
+          </div>
 
-          <CardFooter className="flex items-center justify-center text-sm text-zinc-400">
-            Already have an account?
-            <a className="ml-1 text-zinc-200 hover:underline" href="#">
-              Log in
+          {/* Footer */}
+          <p className="mt-6 text-center text-sm text-neutral-500">
+            Already have an account?{" "}
+            <a href="#" className="text-[#ff6b35] hover:text-[#ff8c5c] transition-colors font-medium">
+              Sign in
             </a>
-          </CardFooter>
-        </Card>
+          </p>
+        </div>
       </div>
     </section>
   );
