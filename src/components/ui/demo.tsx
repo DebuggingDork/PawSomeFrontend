@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import { Link } from "react-router";
-
+import { Link, useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, User, Mail, Lock, ArrowLeft, GitBranch, Globe } from "lucide-react";
 
 export default function RegisterCardSection() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate("/onboarding/profile");
+  };
 
   return (
     <section className="fixed inset-0 z-[100] overflow-hidden">
@@ -59,7 +64,7 @@ export default function RegisterCardSection() {
           </div>
 
           {/* Form */}
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
 
             {/* Full Name */}
             <div className="space-y-1.5">
@@ -132,7 +137,7 @@ export default function RegisterCardSection() {
             </div>
 
             {/* CTA */}
-            <Button className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all">
+            <Button type="submit" className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all">
               Create Account
             </Button>
 
@@ -154,7 +159,7 @@ export default function RegisterCardSection() {
                 Google
               </button>
             </div>
-          </div>
+          </form>
 
           {/* Footer */}
           <p className="mt-6 text-center text-sm text-neutral-500">
