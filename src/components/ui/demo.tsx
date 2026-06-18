@@ -5,15 +5,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, User, Mail, Lock, ArrowLeft, GitBranch, Globe } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, GitBranch, Globe } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function RegisterCardSection() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
+  const register = useAuthStore((s) => s.register);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/onboarding/profile");
+    setError("");
+    setLoading(true);
+    try {
+      await register(form.email, form.password);
+      navigate("/onboarding/profile");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,22 +81,6 @@ export default function RegisterCardSection() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Full Name */}
-            <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-neutral-300 text-sm">
-                Full Name
-              </Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
-                />
-              </div>
-            </div>
-
             {/* Email */}
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-neutral-300 text-sm">
@@ -93,6 +92,9 @@ export default function RegisterCardSection() {
                   id="email"
                   type="email"
                   placeholder="you@example.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
               </div>
@@ -109,6 +111,9 @@ export default function RegisterCardSection() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required
                   className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
                 <button
@@ -136,9 +141,18 @@ export default function RegisterCardSection() {
               </Label>
             </div>
 
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-red-400 text-center">{error}</p>
+            )}
+
             {/* CTA */}
-            <Button type="submit" className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all">
-              Create Account
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Creating account…" : "Create Account"}
             </Button>
 
             {/* Divider */}
