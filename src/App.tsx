@@ -3,6 +3,7 @@ import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import RegisterPage from './pages/Register'
 import UserDetailsPage from './pages/Onboarding/UserDetails'
+import PetDetailsPage from './pages/Onboarding/PetDetails'
 import DiscoverPage from './pages/Discover'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
@@ -134,6 +135,7 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/onboarding/profile" element={<UserDetailsPage />} />
+            <Route path="/onboarding/pets" element={<PetDetailsPage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
