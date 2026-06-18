@@ -4,43 +4,46 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Camera } from "lucide-react";
+import { api } from "@/lib/api";
 
-type PetType = "dog" | "cat";
+type Species = "dog" | "cat";
 type Gender = "male" | "female";
 
 interface Pet {
   name: string;
-  type: PetType;
+  species: Species;
   breed: string;
-  age: string;
+  age_years: string;
   gender: Gender;
+  bio: string;
   photo: string | null;
+  photoFile: File | null;
 }
 
 const defaultPet = (): Pet => ({
   name: "",
-  type: "dog",
+  species: "dog",
   breed: "",
-  age: "",
+  age_years: "",
   gender: "male",
+  bio: "",
   photo: null,
+  photoFile: null,
 });
 
 export default function PetDetailsPage() {
   const navigate = useNavigate();
   const petCount = parseInt(sessionStorage.getItem("pawsome_pet_count") || "1");
 
-  const [pets, setPets] = useState<Pet[]>(
-    Array.from({ length: petCount }, defaultPet)
-  );
+  const [pets, setPets] = useState<Pet[]>(Array.from({ length: petCount }, defaultPet));
   const [activePet, setActivePet] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const current = pets[activePet];
 
   const updatePet = (field: keyof Pet, value: string) => {
-    setPets((prev) =>
-      prev.map((p, i) => (i === activePet ? { ...p, [field]: value } : p))
-    );
+    setPets((prev) => prev.map((p, i) => (i === activePet ? { ...p, [field]: value } : p)));
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,13 +51,50 @@ export default function PetDetailsPage() {
     if (!file) return;
     const url = URL.createObjectURL(file);
     setPets((prev) =>
-      prev.map((p, i) => (i === activePet ? { ...p, photo: url } : p))
+      prev.map((p, i) => (i === activePet ? { ...p, photo: url, photoFile: file } : p))
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
+    setError("");
+    setLoading(true);
+
+    try {
+      for (const pet of pets) {
+        if (!pet.name) continue;
+
+        // Step 1: Create pet profile
+        const created = await api.post<{ id: string }>("/pets", {
+          name: pet.name,
+          species: pet.species,
+          breed: pet.breed || undefined,
+          age_years: pet.age_years ? parseInt(pet.age_years) : undefined,
+          gender: pet.gender,
+          bio: pet.bio || undefined,
+        });
+
+        // Step 2: Upload photo (3-step) if provided
+        if (pet.photoFile) {
+          const { upload_url, object_key } = await api.post<{
+            upload_url: string;
+            object_key: string;
+          }>(`/pets/${created.id}/photos/presign`, {
+            content_type: pet.photoFile.type,
+          });
+
+          await api.uploadToR2(upload_url, pet.photoFile);
+
+          await api.post(`/pets/${created.id}/photos`, { object_key });
+        }
+      }
+
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save pet details");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -138,22 +178,20 @@ export default function PetDetailsPage() {
                 )}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   className="absolute inset-0 opacity-0 cursor-pointer"
                   onChange={handlePhotoChange}
                 />
               </div>
               <div>
                 <p className="text-sm text-white font-medium">Pet photo</p>
-                <p className="text-xs text-neutral-500">Tap to upload</p>
+                <p className="text-xs text-neutral-500">JPEG, PNG or WebP · max 10 MB</p>
               </div>
             </div>
 
             {/* Pet name */}
             <div className="space-y-1.5">
-              <Label htmlFor="petName" className="text-neutral-300 text-sm">
-                Pet Name
-              </Label>
+              <Label htmlFor="petName" className="text-neutral-300 text-sm">Pet Name</Label>
               <Input
                 id="petName"
                 type="text"
@@ -164,22 +202,22 @@ export default function PetDetailsPage() {
               />
             </div>
 
-            {/* Type */}
+            {/* Species */}
             <div className="space-y-1.5">
               <Label className="text-neutral-300 text-sm">Type</Label>
               <div className="grid grid-cols-2 gap-2">
-                {(["dog", "cat"] as PetType[]).map((t) => (
+                {(["dog", "cat"] as Species[]).map((s) => (
                   <button
-                    key={t}
+                    key={s}
                     type="button"
-                    onClick={() => updatePet("type", t)}
+                    onClick={() => updatePet("species", s)}
                     className={`h-10 rounded-lg border text-sm font-medium transition-all ${
-                      current.type === t
+                      current.species === s
                         ? "border-[#ff6b35] bg-[#ff6b35]/20 text-[#ff6b35]"
                         : "border-white/10 bg-white/5 text-neutral-400 hover:border-white/20 hover:text-white"
                     }`}
                   >
-                    {t === "dog" ? "🐶 Dog" : "🐱 Cat"}
+                    {s === "dog" ? "🐶 Dog" : "🐱 Cat"}
                   </button>
                 ))}
               </div>
@@ -187,9 +225,7 @@ export default function PetDetailsPage() {
 
             {/* Breed */}
             <div className="space-y-1.5">
-              <Label htmlFor="breed" className="text-neutral-300 text-sm">
-                Breed
-              </Label>
+              <Label htmlFor="breed" className="text-neutral-300 text-sm">Breed</Label>
               <Input
                 id="breed"
                 type="text"
@@ -203,17 +239,15 @@ export default function PetDetailsPage() {
             {/* Age + Gender */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="age" className="text-neutral-300 text-sm">
-                  Age (years)
-                </Label>
+                <Label htmlFor="age" className="text-neutral-300 text-sm">Age (years)</Label>
                 <Input
                   id="age"
                   type="number"
                   min="0"
                   max="30"
                   placeholder="3"
-                  value={current.age}
-                  onChange={(e) => updatePet("age", e.target.value)}
+                  value={current.age_years}
+                  onChange={(e) => updatePet("age_years", e.target.value)}
                   className="bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
               </div>
@@ -238,13 +272,32 @@ export default function PetDetailsPage() {
               </div>
             </div>
 
+            {/* Bio */}
+            <div className="space-y-1.5">
+              <Label htmlFor="petBio" className="text-neutral-300 text-sm">Bio</Label>
+              <textarea
+                id="petBio"
+                rows={2}
+                placeholder="Energetic and loves to play fetch!"
+                value={current.bio}
+                onChange={(e) => updatePet("bio", e.target.value)}
+                className="w-full px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35]/20 resize-none"
+              />
+            </div>
+
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-red-400 text-center">{error}</p>
+            )}
+
             {/* Actions */}
             <div className="flex flex-col gap-2 pt-2">
               <Button
                 type="submit"
-                className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all"
+                disabled={loading}
+                className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Continue
+                {loading ? "Saving pets…" : "Continue"}
               </Button>
               <button
                 type="button"
