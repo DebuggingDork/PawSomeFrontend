@@ -7,7 +7,24 @@
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
   --font-accent: 'Space Grotesk', monospace;
   --font-serif: 'Playfair Display', serif;
-  
+
+  /* shadcn/ui color tokens (dark theme) */
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
+  --color-card: #18181b;
+  --color-card-foreground: #fafafa;
+  --color-popover: #18181b;
+  --color-popover-foreground: #fafafa;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+  --color-border: #27272a;
+  --color-input: #27272a;
+  --color-ring: #d4d4d8;
+  --color-secondary: #27272a;
+  --color-secondary-foreground: #fafafa;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #fafafa;
+
   --color-primary-50: #faf5ff;
   --color-primary-100: #f3e8ff;
   --color-primary-200: #e9d5ff;
