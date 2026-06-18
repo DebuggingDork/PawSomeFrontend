@@ -1,14 +1,35 @@
 import * as React from "react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, GitBranch, Globe } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function LoginCardSection() {
+  const navigate = useNavigate();
+  const login = useAuthStore((s) => s.login);
+
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await login(form.email, form.password);
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid credentials");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="fixed inset-0 z-[100] overflow-hidden">
@@ -61,7 +82,7 @@ export default function LoginCardSection() {
           </div>
 
           {/* Form */}
-          <div className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-neutral-300 text-sm">
@@ -73,6 +94,9 @@ export default function LoginCardSection() {
                   id="email"
                   type="email"
                   placeholder="you@example.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
               </div>
@@ -94,6 +118,9 @@ export default function LoginCardSection() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required
                   className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
                 />
                 <button
@@ -118,9 +145,18 @@ export default function LoginCardSection() {
               </Label>
             </div>
 
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-red-400 text-center">{error}</p>
+            )}
+
             {/* CTA */}
-            <Button className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all">
-              Sign In
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Signing in…" : "Sign In"}
             </Button>
 
             {/* Divider */}
@@ -141,7 +177,7 @@ export default function LoginCardSection() {
                 Google
               </button>
             </div>
-          </div>
+          </form>
 
           {/* Footer */}
           <p className="mt-6 text-center text-sm text-neutral-500">
