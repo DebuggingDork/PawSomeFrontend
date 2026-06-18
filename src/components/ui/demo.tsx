@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Link } from "react-router";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ export default function RegisterCardSection() {
       {/* Background pet photo */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80"
+          src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80"
           alt=""
           className="w-full h-full object-cover"
         />
@@ -158,9 +159,9 @@ export default function RegisterCardSection() {
           {/* Footer */}
           <p className="mt-6 text-center text-sm text-neutral-500">
             Already have an account?{" "}
-            <a href="#" className="text-[#ff6b35] hover:text-[#ff8c5c] transition-colors font-medium">
+            <Link to="/auth" className="text-[#ff6b35] hover:text-[#ff8c5c] transition-colors font-medium">
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>
