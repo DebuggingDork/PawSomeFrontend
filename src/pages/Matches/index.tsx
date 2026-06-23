@@ -37,7 +37,7 @@ interface PetDetail {
   age_months: number;
   gender: string;
   photos: Array<{ id: string; url: string; is_primary: boolean }>;
-  owner: { full_name: string | null; occupation: string | null } | null;
+  owner: { id: string; full_name: string | null; occupation: string | null } | null;
 }
 
 function ageLabel(months: number): string {
@@ -73,9 +73,16 @@ export default function MatchesPage() {
 
         // Pending incoming likes (unread NEW_LIKE notifications)
         const likes = notifs.filter(
-          (n) => n.notification_type === "NEW_LIKE" && !n.is_read
+          (n) => n.notification_type === "new_like" && !n.is_read
         );
         setPendingLikes(likes);
+
+        // Mark them as read so the unread badge clears
+        if (likes.length > 0) {
+          api.patch("/matches/notifications/read", {
+            notification_ids: likes.map((n) => n.id),
+          }).catch(() => {});
+        }
 
         // For each match, fetch the other pet's details
         const enriched = await Promise.all(
@@ -324,9 +331,12 @@ export default function MatchesPage() {
                             ) : "Details unavailable"}
                           </p>
                           {pet?.owner?.full_name && (
-                            <p className="text-xs text-neutral-600 mt-0.5">
+                            <Link
+                              to={`/users/${pet.owner.id}`}
+                              className="text-xs text-neutral-500 mt-0.5 hover:text-[#ff6b35] transition-colors"
+                            >
                               {pet.owner.full_name}
-                            </p>
+                            </Link>
                           )}
                         </div>
 

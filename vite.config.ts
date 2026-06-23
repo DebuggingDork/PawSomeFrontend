@@ -11,4 +11,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/auth':         { target: 'http://localhost:8000', changeOrigin: true },
+      '/users':        { target: 'http://localhost:8000', changeOrigin: true },
+      '/pets':         { target: 'http://localhost:8000', changeOrigin: true },
+      '/matches':      { target: 'http://localhost:8000', changeOrigin: true },
+      '/onboarding':   { target: 'http://localhost:8000', changeOrigin: true },
+      '/achievements': { target: 'http://localhost:8000', changeOrigin: true },
+      '/chat': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
+  },
 })

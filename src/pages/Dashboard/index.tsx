@@ -7,6 +7,21 @@ import { useAuthStore } from "@/stores/authStore";
 
 interface UserProfile {
   full_name: string | null;
+  email: string;
+  is_verified: boolean;
+}
+
+interface OnboardingStep {
+  title: string;
+  completed: boolean;
+  required: boolean;
+  action_url: string | null;
+}
+
+interface OnboardingStatus {
+  should_show_wizard: boolean;
+  completion_percentage: number;
+  steps: OnboardingStep[];
 }
 
 export default function DashboardPage() {
@@ -14,22 +29,56 @@ export default function DashboardPage() {
   const { logout } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isVerified, setIsVerified] = useState<boolean>(true);
+  const [resendSent, setResendSent] = useState(false);
   const [petCount, setPetCount] = useState<number | null>(null);
   const [matchCount, setMatchCount] = useState<number | null>(null);
+  const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
 
   useEffect(() => {
     api.get<UserProfile>("/users/me")
-      .then((u) => setUserName(u.full_name))
+      .then((u) => {
+        setUserName(u.full_name);
+        setUserEmail(u.email);
+        setIsVerified(u.is_verified);
+      })
       .catch(() => {});
 
     api.get<unknown[]>("/pets/me")
       .then((pets) => setPetCount(pets.length))
       .catch(() => setPetCount(0));
 
-    api.get<{ total: number }>("/matches/my-matches")
-      .then((res) => setMatchCount(res.total))
+    api.get<unknown[]>("/matches/my-matches")
+      .then((res) => setMatchCount(res.length))
       .catch(() => setMatchCount(0));
+
+    api.get<OnboardingStatus>("/onboarding/status")
+      .then(setOnboarding)
+      .catch(() => {});
   }, []);
+
+  const handleSkipOnboarding = async () => {
+    try {
+      await api.post("/onboarding/skip-optional", {});
+    } catch {
+      // non-critical — dismiss the banner regardless
+    } finally {
+      setOnboardingDismissed(true);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!userEmail) return;
+    try {
+      await api.post("/auth/resend-verification", { email: userEmail }, { auth: false });
+      setResendSent(true);
+    } catch {
+      // silent — endpoint doesn't reveal if email exists
+      setResendSent(true);
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -121,6 +170,25 @@ export default function DashboardPage() {
 
       <main className="mx-auto max-w-7xl px-6 pt-28 pb-16">
 
+        {/* Email verification banner */}
+        {!isVerified && (
+          <div className="mb-8 flex items-center justify-between gap-4 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 px-5 py-4">
+            <p className="text-sm text-yellow-300">
+              Please verify your email address to unlock all features.
+            </p>
+            {resendSent ? (
+              <span className="shrink-0 text-xs text-emerald-400">Email sent ✓</span>
+            ) : (
+              <button
+                onClick={handleResendVerification}
+                className="shrink-0 rounded-full border border-yellow-500/40 px-4 py-1.5 text-xs font-medium text-yellow-300 hover:bg-yellow-500/20 transition-colors"
+              >
+                Resend email
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Welcome hero */}
         <div className="mb-10">
           <p className="text-sm font-medium text-[#ff6b35] uppercase tracking-widest mb-1">
@@ -136,6 +204,44 @@ export default function DashboardPage() {
             Discover pets near you and connect with their owners.
           </p>
         </div>
+
+        {/* Onboarding checklist banner */}
+        {onboarding?.should_show_wizard && !onboardingDismissed && (
+          <div className="mb-8 rounded-2xl border border-[#ff6b35]/30 bg-[#ff6b35]/10 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-semibold text-[#ff6b35]">Complete your setup</p>
+              <span className="text-xs text-neutral-400">{onboarding.completion_percentage}% done</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-white/10 mb-4">
+              <div
+                className="h-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c]"
+                style={{ width: `${onboarding.completion_percentage}%` }}
+              />
+            </div>
+            <ul className="space-y-1.5">
+              {onboarding.steps.filter((s) => s.required && !s.completed).map((step) => (
+                <li key={step.title} className="flex items-center gap-2 text-sm text-neutral-300">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#ff6b35]/60 shrink-0" />
+                  {step.title}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 flex items-center gap-3">
+              <Link
+                to="/profile"
+                className="inline-flex items-center rounded-full bg-[#ff6b35] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#ff5722] transition-colors"
+              >
+                Continue setup →
+              </Link>
+              <button
+                onClick={handleSkipOnboarding}
+                className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+              >
+                Skip for now
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Stats row */}
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">

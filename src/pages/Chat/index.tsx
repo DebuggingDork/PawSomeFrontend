@@ -63,6 +63,12 @@ export default function ChatPage() {
         setMyPetIds(new Set(pets.map((p) => p.id)));
         setMessages(history.messages);
         setHasMore(history.has_more);
+
+        // Mark all loaded messages as read
+        const lastMsg = history.messages[history.messages.length - 1];
+        if (lastMsg) {
+          api.post(`/chat/${matchId}/read`, { message_id: lastMsg.id }).catch(() => {});
+        }
       } catch {
         // show empty chat on error
       } finally {

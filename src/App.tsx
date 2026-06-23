@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router'
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import RegisterPage from './pages/Register'
@@ -10,6 +10,8 @@ import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import MyPetsPage from './pages/MyPets'
+import VerifyEmailPage from './pages/VerifyEmail'
+import UserProfilePage from './pages/UserProfile'
 import {
   Navbar,
   NavBody,
@@ -144,6 +146,9 @@ function AppLayout() {
             <Route path="/chat/:matchId" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-pets" element={<MyPetsPage />} />
+            <Route path="/messages" element={<Navigate to="/matches" replace />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/users/:userId" element={<UserProfilePage />} />
           </Routes>
         </main>
       </div>
