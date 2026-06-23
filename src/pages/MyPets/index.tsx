@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { LogOut, PawPrint, User, MessageCircle, Menu, X, Plus, Trash2, Pencil, Check } from "lucide-react";
+import { LogOut, PawPrint, User, MessageCircle, Menu, X, Plus, Trash2, Pencil, Check, Star } from "lucide-react";
 import logoIcon from "@/assets/icon.png";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -40,6 +40,7 @@ export default function MyPetsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ name: "", breed: "", age_months: "", gender: "", bio: "" });
   const [saving, setSaving] = useState(false);
+  const [photoActingId, setPhotoActingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -77,6 +78,40 @@ export default function MyPetsPage() {
       setError("Failed to save pet");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSetPrimary = async (petId: string, photoId: string) => {
+    setPhotoActingId(photoId);
+    try {
+      await api.patch(`/pets/${petId}/photos/${photoId}/primary`, {});
+      setPets((prev) =>
+        prev.map((p) =>
+          p.id === petId
+            ? { ...p, photos: p.photos.map((ph) => ({ ...ph, is_primary: ph.id === photoId })) }
+            : p
+        )
+      );
+    } catch {
+      setError("Failed to set primary photo");
+    } finally {
+      setPhotoActingId(null);
+    }
+  };
+
+  const handleDeletePhoto = async (petId: string, photoId: string) => {
+    setPhotoActingId(photoId);
+    try {
+      await api.delete(`/pets/${petId}/photos/${photoId}`);
+      setPets((prev) =>
+        prev.map((p) =>
+          p.id === petId ? { ...p, photos: p.photos.filter((ph) => ph.id !== photoId) } : p
+        )
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete photo");
+    } finally {
+      setPhotoActingId(null);
     }
   };
 
@@ -246,6 +281,45 @@ export default function MyPetsPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Photo strip — all photos with set-primary / delete */}
+                  {pet.photos.length > 0 && (
+                    <div className="flex gap-2 px-3 py-2 border-t border-white/5 overflow-x-auto">
+                      {pet.photos.map((photo) => (
+                        <div key={photo.id} className="relative shrink-0 group">
+                          <img
+                            src={photo.url}
+                            alt=""
+                            className={`h-14 w-14 rounded-lg object-cover border-2 ${
+                              photo.is_primary ? "border-[#ff6b35]" : "border-white/10"
+                            }`}
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center gap-0.5 rounded-lg bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {!photo.is_primary && (
+                              <button
+                                onClick={() => handleSetPrimary(pet.id, photo.id)}
+                                disabled={photoActingId === photo.id}
+                                title="Set as primary"
+                                className="rounded p-1 text-yellow-400 hover:bg-white/10 disabled:opacity-50"
+                              >
+                                <Star className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                            {pet.photos.length > 1 && (
+                              <button
+                                onClick={() => handleDeletePhoto(pet.id, photo.id)}
+                                disabled={photoActingId === photo.id}
+                                title="Delete photo"
+                                className="rounded p-1 text-red-400 hover:bg-white/10 disabled:opacity-50"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {/* Info */}
                   <div className="p-4">
