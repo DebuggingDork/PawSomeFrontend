@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { LogOut, PawPrint, User, MessageCircle, Menu, X, Plus, Trash2 } from "lucide-react";
+import { LogOut, PawPrint, User, MessageCircle, Menu, X, Plus, Trash2, Pencil, Check } from "lucide-react";
 import logoIcon from "@/assets/icon.png";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -37,6 +37,9 @@ export default function MyPetsPage() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [fetching, setFetching] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", breed: "", age_months: "", gender: "", bio: "" });
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -45,6 +48,37 @@ export default function MyPetsPage() {
       .catch(() => setError("Failed to load pets"))
       .finally(() => setFetching(false));
   }, []);
+
+  const startEdit = (pet: Pet) => {
+    setEditingId(pet.id);
+    setEditForm({
+      name: pet.name,
+      breed: pet.breed ?? "",
+      age_months: String(pet.age_months),
+      gender: pet.gender,
+      bio: pet.bio ?? "",
+    });
+  };
+
+  const handleSaveEdit = async (petId: string) => {
+    setSaving(true);
+    try {
+      const ageMonths = parseInt(editForm.age_months);
+      const updated = await api.patch<Pet>(`/pets/${petId}`, {
+        name: editForm.name || undefined,
+        breed: editForm.breed || undefined,
+        age_months: isNaN(ageMonths) ? undefined : ageMonths,
+        gender: editForm.gender || undefined,
+        bio: editForm.bio || undefined,
+      });
+      setPets((prev) => prev.map((p) => (p.id === petId ? { ...p, ...updated } : p)));
+      setEditingId(null);
+    } catch {
+      setError("Failed to save pet");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleDelete = async (petId: string) => {
     if (!confirm("Remove this pet? This cannot be undone.")) return;
@@ -215,44 +249,112 @@ export default function MyPetsPage() {
 
                   {/* Info */}
                   <div className="p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h2 className="text-lg font-semibold text-white">{pet.name}</h2>
-                        <p className="text-sm text-neutral-400">
-                          {pet.species === "DOG" ? "Dog" : "Cat"}
-                          {pet.breed ? ` · ${pet.breed}` : ""}
-                        </p>
+                    {editingId === pet.id ? (
+                      <div className="space-y-2.5">
+                        <input
+                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+                          placeholder="Name"
+                          value={editForm.name}
+                          onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                        />
+                        <input
+                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+                          placeholder="Breed"
+                          value={editForm.breed}
+                          onChange={(e) => setEditForm((f) => ({ ...f, breed: e.target.value }))}
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            type="number"
+                            className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+                            placeholder="Age (months)"
+                            value={editForm.age_months}
+                            onChange={(e) => setEditForm((f) => ({ ...f, age_months: e.target.value }))}
+                          />
+                          <select
+                            className="rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+                            value={editForm.gender}
+                            onChange={(e) => setEditForm((f) => ({ ...f, gender: e.target.value }))}
+                          >
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                          </select>
+                        </div>
+                        <textarea
+                          rows={2}
+                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none resize-none"
+                          placeholder="Bio"
+                          value={editForm.bio}
+                          onChange={(e) => setEditForm((f) => ({ ...f, bio: e.target.value }))}
+                        />
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            onClick={() => handleSaveEdit(pet.id)}
+                            disabled={saving}
+                            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] py-2 text-xs font-semibold text-white disabled:opacity-50"
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            {saving ? "Saving…" : "Save"}
+                          </button>
+                          <button
+                            onClick={() => setEditingId(null)}
+                            className="flex flex-1 items-center justify-center rounded-full border border-white/10 py-2 text-xs text-neutral-400 hover:text-white"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-end gap-0.5 shrink-0">
-                        <span className="text-xs text-neutral-500 capitalize">{pet.gender}</span>
-                        <span className="text-xs text-neutral-500">{ageLabel(pet.age_months)}</span>
-                      </div>
-                    </div>
+                    ) : (
+                      <>
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <h2 className="text-lg font-semibold text-white">{pet.name}</h2>
+                            <p className="text-sm text-neutral-400">
+                              {pet.species === "DOG" ? "Dog" : "Cat"}
+                              {pet.breed ? ` · ${pet.breed}` : ""}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end gap-0.5 shrink-0">
+                            <span className="text-xs text-neutral-500 capitalize">{pet.gender}</span>
+                            <span className="text-xs text-neutral-500">{ageLabel(pet.age_months)}</span>
+                          </div>
+                        </div>
 
-                    {pet.bio && (
-                      <p className="mt-2 text-sm text-neutral-500 line-clamp-2">{pet.bio}</p>
+                        {pet.bio && (
+                          <p className="mt-2 text-sm text-neutral-500 line-clamp-2">{pet.bio}</p>
+                        )}
+
+                        <div className="mt-4 flex items-center justify-between">
+                          <span
+                            className={`text-xs px-2.5 py-1 rounded-full border ${
+                              pet.is_active
+                                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                                : "border-white/10 bg-white/5 text-neutral-500"
+                            }`}
+                          >
+                            {pet.is_active ? "Active" : "No photo yet"}
+                          </span>
+
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => startEdit(pet)}
+                              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-neutral-500 transition-all hover:bg-white/10 hover:text-white"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(pet.id)}
+                              disabled={deletingId === pet.id}
+                              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-neutral-500 transition-all hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              {deletingId === pet.id ? "Removing…" : "Remove"}
+                            </button>
+                          </div>
+                        </div>
+                      </>
                     )}
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <span
-                        className={`text-xs px-2.5 py-1 rounded-full border ${
-                          pet.is_active
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                            : "border-white/10 bg-white/5 text-neutral-500"
-                        }`}
-                      >
-                        {pet.is_active ? "Active" : "No photo yet"}
-                      </span>
-
-                      <button
-                        onClick={() => handleDelete(pet.id)}
-                        disabled={deletingId === pet.id}
-                        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-neutral-500 transition-all hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        {deletingId === pet.id ? "Removing…" : "Remove"}
-                      </button>
-                    </div>
                   </div>
                 </div>
               );
