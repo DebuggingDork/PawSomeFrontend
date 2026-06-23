@@ -47,7 +47,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     setTokens(data.access_token, data.refresh_token);
     set({ accessToken: data.access_token, isAuthenticated: true });
 
-    api.get<AuthUser>("/auth/me").then((user) => set({ user })).catch(() => {});
+    try {
+      const user = await api.get<AuthUser>("/auth/me");
+      set({ user });
+    } catch {
+      clearTokens();
+      set({ user: null, accessToken: null, isAuthenticated: false });
+      throw new Error("Login succeeded but failed to load your profile. Please try again.");
+    }
   },
 
   logout: async () => {
