@@ -332,7 +332,8 @@ export default function PetDetailsPage() {
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="w-full h-9 text-sm text-neutral-500 hover:text-neutral-300 transition-colors"
+              disabled={loading}
+              className="w-full h-9 text-sm text-neutral-500 hover:text-neutral-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Skip for now
             </button>
