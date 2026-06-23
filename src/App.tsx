@@ -10,6 +10,7 @@ import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import MyPetsPage from './pages/MyPets'
+import VerifyEmailPage from './pages/VerifyEmail'
 import {
   Navbar,
   NavBody,
@@ -145,6 +146,7 @@ function AppLayout() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-pets" element={<MyPetsPage />} />
             <Route path="/messages" element={<Navigate to="/matches" replace />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
           </Routes>
         </main>
       </div>
