@@ -127,7 +127,8 @@ export default function PetDetailsPage() {
             content_type: pet.photoFile.type,
           });
 
-          await api.uploadToR2(upload_url, pet.photoFile);
+          const r2Res = await api.uploadToR2(upload_url, pet.photoFile);
+          if (!r2Res.ok) throw new Error(`Photo upload failed (${r2Res.status})`);
           await api.post(`/pets/${created.id}/photos`, { object_key });
         }
       }
