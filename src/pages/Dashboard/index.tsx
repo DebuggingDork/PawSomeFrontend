@@ -35,6 +35,7 @@ export default function DashboardPage() {
   const [petCount, setPetCount] = useState<number | null>(null);
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
 
   useEffect(() => {
     api.get<UserProfile>("/users/me")
@@ -57,6 +58,16 @@ export default function DashboardPage() {
       .then(setOnboarding)
       .catch(() => {});
   }, []);
+
+  const handleSkipOnboarding = async () => {
+    try {
+      await api.post("/onboarding/skip-optional", {});
+    } catch {
+      // non-critical — dismiss the banner regardless
+    } finally {
+      setOnboardingDismissed(true);
+    }
+  };
 
   const handleResendVerification = async () => {
     if (!userEmail) return;
@@ -195,7 +206,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Onboarding checklist banner */}
-        {onboarding?.should_show_wizard && (
+        {onboarding?.should_show_wizard && !onboardingDismissed && (
           <div className="mb-8 rounded-2xl border border-[#ff6b35]/30 bg-[#ff6b35]/10 p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-[#ff6b35]">Complete your setup</p>
@@ -215,12 +226,20 @@ export default function DashboardPage() {
                 </li>
               ))}
             </ul>
-            <Link
-              to="/profile"
-              className="mt-4 inline-flex items-center rounded-full bg-[#ff6b35] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#ff5722] transition-colors"
-            >
-              Continue setup →
-            </Link>
+            <div className="mt-4 flex items-center gap-3">
+              <Link
+                to="/profile"
+                className="inline-flex items-center rounded-full bg-[#ff6b35] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#ff5722] transition-colors"
+              >
+                Continue setup →
+              </Link>
+              <button
+                onClick={handleSkipOnboarding}
+                className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+              >
+                Skip for now
+              </button>
+            </div>
           </div>
         )}
 
