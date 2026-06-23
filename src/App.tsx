@@ -11,6 +11,7 @@ import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import MyPetsPage from './pages/MyPets'
 import VerifyEmailPage from './pages/VerifyEmail'
+import UserProfilePage from './pages/UserProfile'
 import {
   Navbar,
   NavBody,
@@ -147,6 +148,7 @@ function AppLayout() {
             <Route path="/my-pets" element={<MyPetsPage />} />
             <Route path="/messages" element={<Navigate to="/matches" replace />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/users/:userId" element={<UserProfilePage />} />
           </Routes>
         </main>
       </div>

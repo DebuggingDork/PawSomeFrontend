@@ -37,7 +37,7 @@ interface PetDetail {
   age_months: number;
   gender: string;
   photos: Array<{ id: string; url: string; is_primary: boolean }>;
-  owner: { full_name: string | null; occupation: string | null } | null;
+  owner: { id: string; full_name: string | null; occupation: string | null } | null;
 }
 
 function ageLabel(months: number): string {
@@ -331,9 +331,12 @@ export default function MatchesPage() {
                             ) : "Details unavailable"}
                           </p>
                           {pet?.owner?.full_name && (
-                            <p className="text-xs text-neutral-600 mt-0.5">
+                            <Link
+                              to={`/users/${pet.owner.id}`}
+                              className="text-xs text-neutral-500 mt-0.5 hover:text-[#ff6b35] transition-colors"
+                            >
                               {pet.owner.full_name}
-                            </p>
+                            </Link>
                           )}
                         </div>
 
