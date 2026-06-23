@@ -77,6 +77,13 @@ export default function MatchesPage() {
         );
         setPendingLikes(likes);
 
+        // Mark them as read so the unread badge clears
+        if (likes.length > 0) {
+          api.patch("/matches/notifications/read", {
+            notification_ids: likes.map((n) => n.id),
+          }).catch(() => {});
+        }
+
         // For each match, fetch the other pet's details
         const enriched = await Promise.all(
           matchList.map(async (m) => {
