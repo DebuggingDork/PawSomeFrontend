@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { User, MapPin, Briefcase, FileText, LogOut, PawPrint, MessageCircle, Menu, X } from "lucide-react";
+import { User, MapPin, Briefcase, FileText, LogOut, PawPrint, MessageCircle, Menu, X, Camera, Trash2 } from "lucide-react";
 import logoIcon from "@/assets/icon.png";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -47,6 +47,7 @@ export default function ProfilePage() {
   const [form, setForm] = useState({ full_name: "", occupation: "", bio: "", address: "" });
   const [fetching, setFetching] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -70,6 +71,46 @@ export default function ProfilePage() {
       .catch(() => setError("Failed to load profile"))
       .finally(() => setFetching(false));
   }, []);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Photo must be 10 MB or smaller.");
+      e.target.value = "";
+      return;
+    }
+    setPhotoUploading(true);
+    setError("");
+    try {
+      const { upload_url, object_key } = await api.post<{ upload_url: string; object_key: string }>(
+        "/users/me/photo/presign",
+        { content_type: file.type }
+      );
+      const r2Res = await api.uploadToR2(upload_url, file);
+      if (!r2Res.ok) throw new Error(`Upload failed (${r2Res.status})`);
+      const updated = await api.post<UserProfile>("/users/me/photo", { object_key });
+      setProfile(updated);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Photo upload failed");
+    } finally {
+      setPhotoUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleDeletePhoto = async () => {
+    setPhotoUploading(true);
+    setError("");
+    try {
+      await api.delete("/users/me/photo");
+      setProfile((prev) => prev ? { ...prev, profile_photo_url: null } : prev);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove photo");
+    } finally {
+      setPhotoUploading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -218,6 +259,37 @@ export default function ProfilePage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* Profile photo */}
+            <div className="flex items-center gap-5">
+              <div className="relative shrink-0">
+                <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-white/10 bg-white/5 flex items-center justify-center">
+                  {profile?.profile_photo_url ? (
+                    <img src={profile.profile_photo_url} alt="Profile" className="h-full w-full object-cover" />
+                  ) : (
+                    <User className="h-8 w-8 text-neutral-500" />
+                  )}
+                </div>
+                <label className={`absolute -bottom-1 -right-1 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-neutral-900 text-white/70 hover:text-white transition-colors ${photoUploading ? "opacity-50 pointer-events-none" : ""}`}>
+                  <Camera className="h-3.5 w-3.5" />
+                  <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoUpload} />
+                </label>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-white">Profile photo</p>
+                <p className="text-xs text-neutral-500 mt-0.5">JPEG, PNG or WebP · max 10 MB</p>
+                {profile?.profile_photo_url && (
+                  <button type="button" onClick={handleDeletePhoto} disabled={photoUploading}
+                    className="mt-1.5 flex items-center gap-1 text-xs text-neutral-500 hover:text-red-400 transition-colors disabled:opacity-50">
+                    <Trash2 className="h-3 w-3" />
+                    {photoUploading ? "Removing…" : "Remove photo"}
+                  </button>
+                )}
+                {photoUploading && !profile?.profile_photo_url && (
+                  <p className="mt-1 text-xs text-[#ff6b35]">Uploading…</p>
+                )}
+              </div>
+            </div>
 
             {/* Full Name */}
             <div className="space-y-1.5">
