@@ -25,7 +25,7 @@ import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { Heart } from 'lucide-react'
 import { useState } from 'react'
 
-const HIDE_LANDING_NAV = ['/dashboard', '/auth', '/register', '/onboarding']
+const HIDE_LANDING_NAV = ['/dashboard', '/auth', '/register', '/onboarding', '/profile', '/my-pets', '/discover', '/matches', '/chat']
 
 function AppLayout() {
   useSmoothScroll()

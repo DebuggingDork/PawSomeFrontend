@@ -1,84 +1,260 @@
-import { useState } from 'react'
-import { useLoaderStore } from '@/store/useLoaderStore'
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { User, MapPin, Briefcase, FileText, LogOut, PawPrint, MessageCircle, Menu, X } from "lucide-react";
+import logoIcon from "@/assets/icon.png";
+import { api } from "@/lib/api";
+import { useAuthStore } from "@/stores/authStore";
 
-function ProfilePage() {
-  const { startLoading, stopLoading } = useLoaderStore()
-  const [petName, setPetName] = useState('Max')
-  const [breed, setBreed] = useState('Golden Retriever')
-
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    startLoading('Updating profile...')
-    
-    // Simulate API call
-    setTimeout(() => {
-      stopLoading()
-      alert('Profile updated successfully!')
-    }, 1500)
-  }
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return
-    
-    startLoading('Uploading image...')
-    
-    // Simulate upload
-    setTimeout(() => {
-      stopLoading()
-    }, 2000)
-  }
-
-  return (
-    <div className="flex flex-col min-h-screen p-6">
-      <div className="max-w-2xl mx-auto w-full">
-        <h2 className="text-3xl font-bold mb-2 text-center">Pet Profile</h2>
-        <p className="text-neutral-400 text-center mb-8">
-          Manage your pet's bio, details, and photos.
-        </p>
-        
-        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-8">
-          <form onSubmit={handleSaveProfile} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Pet Name</label>
-              <input
-                type="text"
-                value={petName}
-                onChange={(e) => setPetName(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Breed</label>
-              <input
-                type="text"
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Upload Photos</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-orange-500 file:text-white hover:file:bg-orange-600"
-              />
-            </div>
-            
-            <button
-              type="submit"
-              className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg transition-all"
-            >
-              Save Profile
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  )
+interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  occupation: string | null;
+  bio: string | null;
+  address: string | null;
+  profile_photo_url: string | null;
 }
 
-export default ProfilePage
+export default function ProfilePage() {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [form, setForm] = useState({ full_name: "", occupation: "", bio: "", address: "" });
+  const [fetching, setFetching] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    api.get<UserProfile>("/users/me")
+      .then((data) => {
+        setProfile(data);
+        setForm({
+          full_name: data.full_name ?? "",
+          occupation: data.occupation ?? "",
+          bio: data.bio ?? "",
+          address: data.address ?? "",
+        });
+      })
+      .catch(() => setError("Failed to load profile"))
+      .finally(() => setFetching(false));
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setSuccess(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSaving(true);
+    try {
+      await api.patch("/users/me", {
+        full_name: form.full_name || null,
+        occupation: form.occupation || null,
+        bio: form.bio || null,
+        address: form.address || null,
+      });
+      setSuccess(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/auth");
+  };
+
+  const navLinks = [
+    { label: "My Pets", icon: PawPrint, href: "/my-pets" },
+    { label: "Messages", icon: MessageCircle, href: "/messages" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-neutral-950 text-white">
+
+      {/* Navbar */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-neutral-950/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <Link to="/dashboard" className="flex items-center gap-2.5">
+            <img src={logoIcon} alt="PawSome" className="h-9 w-9 drop-shadow-lg" />
+            <span
+              className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
+              style={{ fontFamily: "Pacifico, cursive" }}
+            >
+              PawSome
+            </span>
+          </Link>
+
+          <nav className="hidden items-center gap-2 md:flex">
+            {navLinks.map(({ label, icon: Icon, href }) => (
+              <Link
+                key={label}
+                to={href}
+                className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white"
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </Link>
+            ))}
+            <button
+              onClick={handleLogout}
+              className="ml-2 flex items-center gap-1.5 rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
+          </nav>
+
+          <button
+            className="rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white md:hidden"
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {mobileOpen && (
+          <div className="border-t border-white/10 bg-neutral-950/95 px-6 py-4 md:hidden">
+            <div className="flex flex-col gap-1">
+              {navLinks.map(({ label, icon: Icon, href }) => (
+                <Link
+                  key={label}
+                  to={href}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white"
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </Link>
+              ))}
+              <button
+                onClick={handleLogout}
+                className="mt-1 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition-all hover:bg-red-500/10 hover:text-red-400"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className="mx-auto max-w-2xl px-6 pt-28 pb-16">
+
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-xs uppercase tracking-widest text-[#ff6b35] mb-1 font-medium">Account</p>
+          <h1
+            className="text-4xl font-semibold text-white"
+            style={{ fontFamily: "Playfair Display, serif" }}
+          >
+            Your Profile
+          </h1>
+          {profile && (
+            <p className="mt-1 text-sm text-neutral-400">{profile.email}</p>
+          )}
+        </div>
+
+        {fetching ? (
+          <div className="space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-14 rounded-xl bg-white/5 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* Full Name */}
+            <div className="space-y-1.5">
+              <Label htmlFor="full_name" className="text-neutral-300 text-sm">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Input
+                  id="full_name"
+                  name="full_name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={form.full_name}
+                  onChange={handleChange}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
+                />
+              </div>
+            </div>
+
+            {/* Occupation */}
+            <div className="space-y-1.5">
+              <Label htmlFor="occupation" className="text-neutral-300 text-sm">Occupation</Label>
+              <div className="relative">
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Input
+                  id="occupation"
+                  name="occupation"
+                  type="text"
+                  placeholder="Veterinarian"
+                  value={form.occupation}
+                  onChange={handleChange}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
+                />
+              </div>
+            </div>
+
+            {/* Address */}
+            <div className="space-y-1.5">
+              <Label htmlFor="address" className="text-neutral-300 text-sm">Address</Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <Input
+                  id="address"
+                  name="address"
+                  type="text"
+                  placeholder="City, Country"
+                  value={form.address}
+                  onChange={handleChange}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-neutral-600 focus-visible:border-[#ff6b35] focus-visible:ring-[#ff6b35]/20"
+                />
+              </div>
+            </div>
+
+            {/* Bio */}
+            <div className="space-y-1.5">
+              <Label htmlFor="bio" className="text-neutral-300 text-sm">Bio</Label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-3 h-4 w-4 text-neutral-500" />
+                <textarea
+                  id="bio"
+                  name="bio"
+                  rows={4}
+                  placeholder="Dog lover and outdoor enthusiast…"
+                  value={form.bio}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-3 py-2 rounded-md bg-white/5 border border-white/10 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35]/20 resize-none"
+                />
+              </div>
+            </div>
+
+            {error && <p className="text-sm text-red-400">{error}</p>}
+            {success && <p className="text-sm text-emerald-400">Profile saved successfully.</p>}
+
+            <Button
+              type="submit"
+              disabled={saving}
+              className="w-full h-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white font-semibold border-0 shadow-lg shadow-[#ff6b35]/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {saving ? "Saving…" : "Save Profile"}
+            </Button>
+
+          </form>
+        )}
+      </main>
+    </div>
+  );
+}
