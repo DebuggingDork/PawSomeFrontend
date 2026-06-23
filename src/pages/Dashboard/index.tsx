@@ -7,6 +7,8 @@ import { useAuthStore } from "@/stores/authStore";
 
 interface UserProfile {
   full_name: string | null;
+  email: string;
+  is_verified: boolean;
 }
 
 interface OnboardingStep {
@@ -27,13 +29,20 @@ export default function DashboardPage() {
   const { logout } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isVerified, setIsVerified] = useState<boolean>(true);
+  const [resendSent, setResendSent] = useState(false);
   const [petCount, setPetCount] = useState<number | null>(null);
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null);
 
   useEffect(() => {
     api.get<UserProfile>("/users/me")
-      .then((u) => setUserName(u.full_name))
+      .then((u) => {
+        setUserName(u.full_name);
+        setUserEmail(u.email);
+        setIsVerified(u.is_verified);
+      })
       .catch(() => {});
 
     api.get<unknown[]>("/pets/me")
@@ -48,6 +57,17 @@ export default function DashboardPage() {
       .then(setOnboarding)
       .catch(() => {});
   }, []);
+
+  const handleResendVerification = async () => {
+    if (!userEmail) return;
+    try {
+      await api.post("/auth/resend-verification", { email: userEmail }, { auth: false });
+      setResendSent(true);
+    } catch {
+      // silent — endpoint doesn't reveal if email exists
+      setResendSent(true);
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -138,6 +158,25 @@ export default function DashboardPage() {
       </header>
 
       <main className="mx-auto max-w-7xl px-6 pt-28 pb-16">
+
+        {/* Email verification banner */}
+        {!isVerified && (
+          <div className="mb-8 flex items-center justify-between gap-4 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 px-5 py-4">
+            <p className="text-sm text-yellow-300">
+              Please verify your email address to unlock all features.
+            </p>
+            {resendSent ? (
+              <span className="shrink-0 text-xs text-emerald-400">Email sent ✓</span>
+            ) : (
+              <button
+                onClick={handleResendVerification}
+                className="shrink-0 rounded-full border border-yellow-500/40 px-4 py-1.5 text-xs font-medium text-yellow-300 hover:bg-yellow-500/20 transition-colors"
+              >
+                Resend email
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Welcome hero */}
         <div className="mb-10">
