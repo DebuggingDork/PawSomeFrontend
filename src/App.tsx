@@ -141,7 +141,7 @@ function AppLayout() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />
-            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/chat/:matchId" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-pets" element={<MyPetsPage />} />
           </Routes>
