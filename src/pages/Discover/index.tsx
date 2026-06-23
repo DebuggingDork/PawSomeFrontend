@@ -13,6 +13,7 @@ interface MyPet {
 }
 
 interface PetOwner {
+  id: string;
   full_name: string | null;
   occupation: string | null;
   profile_photo_url: string | null;
@@ -304,7 +305,9 @@ export default function DiscoverPage() {
                         </p>
                         {pet.owner?.full_name && (
                           <p className="text-xs text-neutral-500 mb-2">
-                            Owner: {pet.owner.full_name}
+                            <Link to={`/users/${pet.owner.id}`} className="hover:text-[#ff6b35] transition-colors">
+                              {pet.owner.full_name}
+                            </Link>
                             {pet.owner.occupation ? ` · ${pet.owner.occupation}` : ""}
                           </p>
                         )}
