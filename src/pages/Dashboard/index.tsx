@@ -1,15 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { User, PawPrint, MessageCircle, LogOut, Heart, MapPin, Menu, X } from "lucide-react";
 import logoIcon from "@/assets/icon.png";
+import { api } from "@/lib/api";
+import { useAuthStore } from "@/stores/authStore";
+
+interface UserProfile {
+  full_name: string | null;
+}
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [petCount, setPetCount] = useState<number | null>(null);
+  const [matchCount, setMatchCount] = useState<number | null>(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem("pawsome_access_token");
-    localStorage.removeItem("pawsome_refresh_token");
+  useEffect(() => {
+    api.get<UserProfile>("/users/me")
+      .then((u) => setUserName(u.full_name))
+      .catch(() => {});
+
+    api.get<unknown[]>("/pets/me")
+      .then((pets) => setPetCount(pets.length))
+      .catch(() => setPetCount(0));
+
+    api.get<{ total: number }>("/matches/my-matches")
+      .then((res) => setMatchCount(res.total))
+      .catch(() => setMatchCount(0));
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
     navigate("/auth");
   };
 
@@ -19,6 +42,12 @@ export default function DashboardPage() {
     { label: "Messages", icon: MessageCircle, href: "/messages" },
   ];
 
+  const stats = [
+    { label: "My Pets", value: petCount, icon: PawPrint, color: "from-[#ff6b35]/20 to-[#ff8c5c]/10", href: "/my-pets" },
+    { label: "Matches", value: matchCount, icon: Heart, color: "from-purple-500/20 to-purple-600/10", href: "/matches" },
+    { label: "Messages", value: matchCount, icon: MessageCircle, color: "from-blue-500/20 to-blue-600/10", href: "/messages" },
+  ];
+
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
 
@@ -26,7 +55,6 @@ export default function DashboardPage() {
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-neutral-950/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
-          {/* Left: Logo */}
           <Link to="/" className="flex items-center gap-2.5">
             <img src={logoIcon} alt="PawSome" className="h-9 w-9 drop-shadow-lg" />
             <span
@@ -37,7 +65,6 @@ export default function DashboardPage() {
             </span>
           </Link>
 
-          {/* Right: Nav buttons (desktop) */}
           <nav className="hidden items-center gap-2 md:flex">
             {navLinks.map(({ label, icon: Icon, href }) => (
               <Link
@@ -58,7 +85,6 @@ export default function DashboardPage() {
             </button>
           </nav>
 
-          {/* Mobile hamburger */}
           <button
             className="rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white md:hidden"
             onClick={() => setMobileOpen((v) => !v)}
@@ -67,7 +93,6 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Mobile menu */}
         {mobileOpen && (
           <div className="border-t border-white/10 bg-neutral-950/95 px-6 py-4 md:hidden">
             <div className="flex flex-col gap-1">
@@ -94,7 +119,6 @@ export default function DashboardPage() {
         )}
       </header>
 
-      {/* Page content */}
       <main className="mx-auto max-w-7xl px-6 pt-28 pb-16">
 
         {/* Welcome hero */}
@@ -106,7 +130,7 @@ export default function DashboardPage() {
             className="text-4xl font-semibold text-white"
             style={{ fontFamily: "Playfair Display, serif" }}
           >
-            Find your perfect match
+            {userName ? `Hey, ${userName.split(" ")[0]}!` : "Find your perfect match"}
           </h1>
           <p className="mt-2 text-neutral-400">
             Discover pets near you and connect with their owners.
@@ -115,34 +139,44 @@ export default function DashboardPage() {
 
         {/* Stats row */}
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {[
-            { label: "My Pets", value: "—", icon: PawPrint, color: "from-[#ff6b35]/20 to-[#ff8c5c]/10" },
-            { label: "Matches", value: "—", icon: Heart, color: "from-purple-500/20 to-purple-600/10" },
-            { label: "Messages", value: "—", icon: MessageCircle, color: "from-blue-500/20 to-blue-600/10" },
-          ].map(({ label, value, icon: Icon, color }) => (
-            <div
+          {stats.map(({ label, value, icon: Icon, color, href }) => (
+            <Link
               key={label}
-              className={`rounded-2xl border border-white/10 bg-gradient-to-br ${color} p-5 backdrop-blur-sm`}
+              to={href}
+              className={`rounded-2xl border border-white/10 bg-gradient-to-br ${color} p-5 backdrop-blur-sm transition-all hover:border-white/20`}
             >
               <div className="flex items-center justify-between">
                 <p className="text-sm text-neutral-400">{label}</p>
                 <Icon className="h-5 w-5 text-white/30" />
               </div>
-              <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
-            </div>
+              <p className="mt-2 text-3xl font-semibold text-white">
+                {value === null ? (
+                  <span className="inline-block h-8 w-8 animate-pulse rounded bg-white/10" />
+                ) : (
+                  value
+                )}
+              </p>
+            </Link>
           ))}
         </div>
 
         {/* Discover section placeholder */}
         <div>
-          <h2 className="mb-5 text-lg font-semibold text-white">Discover Nearby Pets</h2>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-white">Discover Nearby Pets</h2>
+            <Link
+              to="/discover"
+              className="text-sm text-[#ff6b35] hover:text-[#ff8c5c] transition-colors"
+            >
+              See all →
+            </Link>
+          </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
                 className="group rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-all hover:border-[#ff6b35]/40 hover:bg-white/10"
               >
-                {/* Photo placeholder */}
                 <div className="mb-3 h-40 w-full rounded-xl bg-white/5 animate-pulse" />
                 <div className="flex items-start justify-between">
                   <div>
