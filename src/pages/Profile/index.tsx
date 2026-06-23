@@ -18,11 +18,17 @@ interface UserProfile {
   profile_photo_url: string | null;
 }
 
+interface ProfileCompletion {
+  completion_percentage: number;
+  suggestions: string[];
+}
+
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [completion, setCompletion] = useState<ProfileCompletion | null>(null);
   const [form, setForm] = useState({ full_name: "", occupation: "", bio: "", address: "" });
   const [fetching, setFetching] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -30,9 +36,13 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    api.get<UserProfile>("/users/me")
-      .then((data) => {
+    Promise.all([
+      api.get<UserProfile>("/users/me"),
+      api.get<ProfileCompletion>("/users/me/completion"),
+    ])
+      .then(([data, comp]) => {
         setProfile(data);
+        setCompletion(comp);
         setForm({
           full_name: data.full_name ?? "",
           occupation: data.occupation ?? "",
@@ -163,6 +173,25 @@ export default function ProfilePage() {
             <p className="mt-1 text-sm text-neutral-400">{profile.email}</p>
           )}
         </div>
+
+        {/* Profile completion bar */}
+        {completion && (
+          <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-white">Profile Completion</p>
+              <span className="text-sm font-semibold text-[#ff6b35]">{completion.completion_percentage}%</span>
+            </div>
+            <div className="h-2 w-full rounded-full bg-white/10">
+              <div
+                className="h-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] transition-all"
+                style={{ width: `${completion.completion_percentage}%` }}
+              />
+            </div>
+            {completion.suggestions[0] && (
+              <p className="mt-2.5 text-xs text-neutral-400">{completion.suggestions[0]}</p>
+            )}
+          </div>
+        )}
 
         {fetching ? (
           <div className="space-y-4">
