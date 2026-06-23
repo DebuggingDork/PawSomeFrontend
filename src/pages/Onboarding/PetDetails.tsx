@@ -33,7 +33,8 @@ const defaultPet = (): Pet => ({
 
 export default function PetDetailsPage() {
   const navigate = useNavigate();
-  const petCount = parseInt(sessionStorage.getItem("pawsome_pet_count") || "1");
+  const rawCount = parseInt(sessionStorage.getItem("pawsome_pet_count") || "1");
+  const petCount = isNaN(rawCount) || rawCount < 1 ? 1 : Math.min(rawCount, 10);
 
   const [pets, setPets] = useState<Pet[]>(Array.from({ length: petCount }, defaultPet));
   const [activePet, setActivePet] = useState(0);
@@ -49,6 +50,11 @@ export default function PetDetailsPage() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Photo must be 10 MB or smaller.");
+      e.target.value = "";
+      return;
+    }
     const url = URL.createObjectURL(file);
     setPets((prev) =>
       prev.map((p, i) => (i === activePet ? { ...p, photo: url, photoFile: file } : p))
