@@ -9,6 +9,7 @@ import DiscoverPage from './pages/Discover'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
+import MyPetsPage from './pages/MyPets'
 import {
   Navbar,
   NavBody,
@@ -142,6 +143,7 @@ function AppLayout() {
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/my-pets" element={<MyPetsPage />} />
           </Routes>
         </main>
       </div>
