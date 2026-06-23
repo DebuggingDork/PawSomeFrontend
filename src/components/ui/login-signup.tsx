@@ -168,11 +168,11 @@ export default function LoginCardSection() {
 
             {/* Social buttons */}
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
+              <button type="button" className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
                 <GitBranch className="h-4 w-4" />
                 GitHub
               </button>
-              <button className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
+              <button type="button" className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-colors">
                 <Globe className="h-4 w-4" />
                 Google
               </button>
