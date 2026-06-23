@@ -9,6 +9,19 @@ interface UserProfile {
   full_name: string | null;
 }
 
+interface OnboardingStep {
+  title: string;
+  completed: boolean;
+  required: boolean;
+  action_url: string | null;
+}
+
+interface OnboardingStatus {
+  should_show_wizard: boolean;
+  completion_percentage: number;
+  steps: OnboardingStep[];
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
@@ -16,6 +29,7 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState<string | null>(null);
   const [petCount, setPetCount] = useState<number | null>(null);
   const [matchCount, setMatchCount] = useState<number | null>(null);
+  const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null);
 
   useEffect(() => {
     api.get<UserProfile>("/users/me")
@@ -29,6 +43,10 @@ export default function DashboardPage() {
     api.get<unknown[]>("/matches/my-matches")
       .then((res) => setMatchCount(res.length))
       .catch(() => setMatchCount(0));
+
+    api.get<OnboardingStatus>("/onboarding/status")
+      .then(setOnboarding)
+      .catch(() => {});
   }, []);
 
   const handleLogout = async () => {
@@ -136,6 +154,36 @@ export default function DashboardPage() {
             Discover pets near you and connect with their owners.
           </p>
         </div>
+
+        {/* Onboarding checklist banner */}
+        {onboarding?.should_show_wizard && (
+          <div className="mb-8 rounded-2xl border border-[#ff6b35]/30 bg-[#ff6b35]/10 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-semibold text-[#ff6b35]">Complete your setup</p>
+              <span className="text-xs text-neutral-400">{onboarding.completion_percentage}% done</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-white/10 mb-4">
+              <div
+                className="h-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c]"
+                style={{ width: `${onboarding.completion_percentage}%` }}
+              />
+            </div>
+            <ul className="space-y-1.5">
+              {onboarding.steps.filter((s) => s.required && !s.completed).map((step) => (
+                <li key={step.title} className="flex items-center gap-2 text-sm text-neutral-300">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#ff6b35]/60 shrink-0" />
+                  {step.title}
+                </li>
+              ))}
+            </ul>
+            <Link
+              to="/profile"
+              className="mt-4 inline-flex items-center rounded-full bg-[#ff6b35] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#ff5722] transition-colors"
+            >
+              Continue setup →
+            </Link>
+          </div>
+        )}
 
         {/* Stats row */}
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
