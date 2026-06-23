@@ -26,8 +26,8 @@ export default function DashboardPage() {
       .then((pets) => setPetCount(pets.length))
       .catch(() => setPetCount(0));
 
-    api.get<{ total: number }>("/matches/my-matches")
-      .then((res) => setMatchCount(res.total))
+    api.get<unknown[]>("/matches/my-matches")
+      .then((res) => setMatchCount(res.length))
       .catch(() => setMatchCount(0));
   }, []);
 

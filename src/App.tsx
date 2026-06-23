@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router'
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import RegisterPage from './pages/Register'
@@ -144,6 +144,7 @@ function AppLayout() {
             <Route path="/chat/:matchId" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-pets" element={<MyPetsPage />} />
+            <Route path="/messages" element={<Navigate to="/matches" replace />} />
           </Routes>
         </main>
       </div>

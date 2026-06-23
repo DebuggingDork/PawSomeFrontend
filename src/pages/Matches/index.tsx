@@ -73,7 +73,7 @@ export default function MatchesPage() {
 
         // Pending incoming likes (unread NEW_LIKE notifications)
         const likes = notifs.filter(
-          (n) => n.notification_type === "NEW_LIKE" && !n.is_read
+          (n) => n.notification_type === "new_like" && !n.is_read
         );
         setPendingLikes(likes);
 
