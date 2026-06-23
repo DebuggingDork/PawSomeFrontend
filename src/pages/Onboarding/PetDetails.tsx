@@ -75,16 +75,29 @@ export default function PetDetailsPage() {
       return;
     }
 
+    for (let i = 0; i < pets.length; i++) {
+      const pet = pets[i];
+      if (!pet.name.trim()) {
+        setError(`Pet ${i + 1} is missing a name.`);
+        setLoading(false);
+        return;
+      }
+      const ageMonths = parseInt(pet.age_months);
+      if (!pet.age_months || isNaN(ageMonths) || ageMonths < 1) {
+        setError(`Pet ${i + 1} has an invalid age. Please enter a number of months.`);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       for (const pet of pets) {
-        if (!pet.name) continue;
-
         const ageMonths = parseInt(pet.age_months);
         const created = await api.post<{ id: string }>("/pets", {
           name: pet.name,
           species: pet.species,
           ...(pet.breed ? { breed: pet.breed } : {}),
-          age_months: isNaN(ageMonths) ? 1 : ageMonths,
+          age_months: ageMonths,
           gender: pet.gender,
           ...(pet.bio ? { bio: pet.bio } : {}),
           lat,
