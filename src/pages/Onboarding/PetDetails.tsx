@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +43,14 @@ export default function PetDetailsPage() {
 
   const current = pets[activePet];
 
+  const petsRef = useRef(pets);
+  useEffect(() => { petsRef.current = pets; }, [pets]);
+  useEffect(() => {
+    return () => {
+      petsRef.current.forEach((p) => { if (p.photo) URL.revokeObjectURL(p.photo); });
+    };
+  }, []);
+
   const updatePet = (field: keyof Pet, value: string) => {
     setPets((prev) => prev.map((p, i) => (i === activePet ? { ...p, [field]: value } : p)));
   };
@@ -55,6 +63,7 @@ export default function PetDetailsPage() {
       e.target.value = "";
       return;
     }
+    if (current.photo) URL.revokeObjectURL(current.photo);
     const url = URL.createObjectURL(file);
     setPets((prev) =>
       prev.map((p, i) => (i === activePet ? { ...p, photo: url, photoFile: file } : p))
