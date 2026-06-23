@@ -23,12 +23,27 @@ interface ProfileCompletion {
   suggestions: string[];
 }
 
+interface AchievementBadge {
+  type: string;
+  name: string;
+  description: string;
+  icon: string;
+  earned: boolean;
+}
+
+interface AchievementSummary {
+  total_earned: number;
+  total_available: number;
+  badges: AchievementBadge[];
+}
+
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [completion, setCompletion] = useState<ProfileCompletion | null>(null);
+  const [achievements, setAchievements] = useState<AchievementSummary | null>(null);
   const [form, setForm] = useState({ full_name: "", occupation: "", bio: "", address: "" });
   const [fetching, setFetching] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,10 +54,12 @@ export default function ProfilePage() {
     Promise.all([
       api.get<UserProfile>("/users/me"),
       api.get<ProfileCompletion>("/users/me/completion"),
+      api.get<AchievementSummary>("/achievements/me"),
     ])
-      .then(([data, comp]) => {
+      .then(([data, comp, ach]) => {
         setProfile(data);
         setCompletion(comp);
+        setAchievements(ach);
         setForm({
           full_name: data.full_name ?? "",
           occupation: data.occupation ?? "",
@@ -282,6 +299,36 @@ export default function ProfilePage() {
             </Button>
 
           </form>
+        )}
+
+        {/* Achievements */}
+        {achievements && (
+          <div className="mt-10">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white">Achievements</h2>
+              <span className="text-sm text-neutral-400">
+                {achievements.total_earned} / {achievements.total_available}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {achievements.badges.map((badge) => (
+                <div
+                  key={badge.type}
+                  className={`rounded-2xl border p-4 transition-all ${
+                    badge.earned
+                      ? "border-[#ff6b35]/30 bg-[#ff6b35]/10"
+                      : "border-white/5 bg-white/5 opacity-40"
+                  }`}
+                >
+                  <p className="text-2xl mb-1">{badge.icon}</p>
+                  <p className={`text-sm font-medium ${badge.earned ? "text-white" : "text-neutral-400"}`}>
+                    {badge.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">{badge.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </main>
     </div>
