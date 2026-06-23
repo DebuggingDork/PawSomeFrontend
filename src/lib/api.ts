@@ -23,20 +23,24 @@ async function refreshAccessToken(): Promise<string | null> {
   const { refresh } = getTokens();
   if (!refresh) return null;
 
-  const res = await fetch(`${BASE_URL}/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: refresh }),
-  });
+  try {
+    const res = await fetch(`${BASE_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refresh }),
+    });
 
-  if (!res.ok) {
-    clearTokens();
+    if (!res.ok) {
+      clearTokens();
+      return null;
+    }
+
+    const data = await res.json();
+    setTokens(data.access_token, data.refresh_token);
+    return data.access_token;
+  } catch {
     return null;
   }
-
-  const data = await res.json();
-  setTokens(data.access_token, data.refresh_token);
-  return data.access_token;
 }
 
 interface RequestOptions extends RequestInit {
@@ -70,7 +74,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(err.detail ?? "Request failed");
+    const detail = err.detail;
+    const message = Array.isArray(detail)
+      ? detail.map((e: { loc?: string[]; msg: string }) =>
+          `${e.loc?.slice(1).join(".") ?? "field"}: ${e.msg}`
+        ).join(" | ")
+      : (typeof detail === "string" ? detail : "Request failed");
+    throw new Error(message);
   }
 
   if (res.status === 204) return undefined as T;

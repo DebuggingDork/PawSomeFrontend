@@ -47,8 +47,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     setTokens(data.access_token, data.refresh_token);
     set({ accessToken: data.access_token, isAuthenticated: true });
 
-    const user = await api.get<AuthUser>("/auth/me");
-    set({ user });
+    api.get<AuthUser>("/auth/me").then((user) => set({ user })).catch(() => {});
   },
 
   logout: async () => {
