@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import { useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, LogIn, PawPrint } from 'lucide-react'
+import { Send, PawPrint } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations } from '@/lib/api/matches'
 import { getChatHistory, getChatStatus, connectChatSocket, type ChatSocket } from '@/lib/api/chat'
@@ -10,29 +10,10 @@ import { PetAvatar } from '@/components/chat/PetAvatar'
 import { ChatBubble } from '@/components/chat/ChatBubble'
 import { TypingIndicator } from '@/components/chat/TypingIndicator'
 import { ConversationSidebar } from '@/components/chat/ConversationSidebar'
+import { SignInPrompt } from '@/components/ui/SignInPrompt'
 
 const TYPING_IDLE_MS = 1500
 const TYPING_TIMEOUT_MS = 3000
-
-function SignInPrompt() {
-  return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
-      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/30">
-        <LogIn className="h-7 w-7 text-white" />
-      </div>
-      <h2 className="mb-2 font-display text-2xl font-bold text-white">Sign in to see your chats</h2>
-      <p className="mb-6 max-w-sm text-neutral-400">
-        Your conversations with matched pet owners live here once you're signed in.
-      </p>
-      <Link
-        to="/auth"
-        className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
-      >
-        Sign In
-      </Link>
-    </div>
-  )
-}
 
 function NoConversationSelected() {
   return (
@@ -45,6 +26,7 @@ function NoConversationSelected() {
 
 function ChatPage() {
   const { isAuthenticated, isHydrating, pets } = useAuthStore()
+  const [searchParams] = useSearchParams()
 
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [conversationsLoading, setConversationsLoading] = useState(true)
@@ -77,7 +59,9 @@ function ChatPage() {
         const convos = await getConversations(pets.map((p) => p.id))
         if (cancelled) return
         setConversations(convos)
-        setSelected((current) => current ?? convos[0] ?? null)
+        const requestedMatchId = searchParams.get('match')
+        const requested = requestedMatchId ? convos.find((c) => c.matchId === requestedMatchId) : undefined
+        setSelected((current) => current ?? requested ?? convos[0] ?? null)
       } finally {
         if (!cancelled) setConversationsLoading(false)
       }
@@ -182,7 +166,12 @@ function ChatPage() {
   )
 
   if (!isHydrating && !isAuthenticated) {
-    return <SignInPrompt />
+    return (
+      <SignInPrompt
+        title="Sign in to see your chats"
+        message="Your conversations with matched pet owners live here once you're signed in."
+      />
+    )
   }
 
   const lastMineId = [...messages].reverse().find((m) => m.sender_pet_id === selected?.yourPetId)?.id
