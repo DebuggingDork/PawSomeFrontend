@@ -215,6 +215,7 @@ export interface SwipeInput {
 }
 
 export interface SwipeResult {
+  id: string
   swiper_pet_id: string
   target_pet_id: string
   action: string
