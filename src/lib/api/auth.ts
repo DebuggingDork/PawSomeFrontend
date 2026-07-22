@@ -27,3 +27,11 @@ export function logout(refreshToken: string): Promise<void> {
     body: { refresh_token: refreshToken },
   })
 }
+
+export function resendVerification(email: string): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>('/auth/resend-verification', {
+    method: 'POST',
+    auth: false,
+    body: { email },
+  })
+}

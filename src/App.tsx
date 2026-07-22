@@ -1,10 +1,13 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router'
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router'
+import { useQuery } from '@tanstack/react-query'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import DiscoverPage from './pages/Discover'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
+import OnboardingPage from './pages/Onboarding'
+import { getOnboardingStatus } from './lib/api/onboarding'
 import {
   Navbar,
   NavBody,
@@ -21,6 +24,29 @@ import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { Heart, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
+
+/** Redirects a freshly-authenticated user into /onboarding once per session until required steps are done. */
+function OnboardingGate() {
+  const { isAuthenticated, isHydrating } = useAuthStore()
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const { data: status } = useQuery({
+    queryKey: ['onboarding', 'status'],
+    queryFn: getOnboardingStatus,
+    enabled: isAuthenticated && !isHydrating,
+    staleTime: 60_000,
+  })
+
+  useEffect(() => {
+    if (!status?.should_show_wizard) return
+    if (sessionStorage.getItem('onboarding-dismissed') === '1') return
+    if (location.pathname === '/onboarding' || location.pathname === '/auth') return
+    navigate('/onboarding')
+  }, [status, location.pathname, navigate])
+
+  return null
+}
 
 function App() {
   useSmoothScroll()
@@ -42,6 +68,7 @@ function App() {
     <BrowserRouter>
       {/* Global Loader - shows loading states from anywhere in the app */}
       <GlobalLoader />
+      <OnboardingGate />
       
       <div className="min-h-screen bg-neutral-950 text-white">
         {/* Resizable Glassmorphic Navigation Bar - Fixed overlay */}
@@ -157,6 +184,7 @@ function App() {
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
           </Routes>
         </main>
       </div>
