@@ -18,12 +18,18 @@ import {
 import { GlobalLoader } from './components/ui/GlobalLoader'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
-import { Heart } from 'lucide-react'
-import { useState } from 'react'
+import { Heart, LogOut } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useAuthStore } from './store/useAuthStore'
 
 function App() {
   useSmoothScroll()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { isAuthenticated, hydrate, logout } = useAuthStore()
+
+  useEffect(() => {
+    hydrate()
+  }, [hydrate])
 
   const navItems = [
     { name: 'Home', link: '/' },
@@ -58,12 +64,19 @@ function App() {
 
             {/* Right: Buttons */}
             <div className="flex items-center gap-3">
-              <NavbarButton variant="secondary" as={Link} href="/auth">
-                Sign In
-              </NavbarButton>
-              <NavbarButton variant="gradient" as={Link} href="/discover">
+              {isAuthenticated ? (
+                <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth">
+                  <LogOut className="mr-2 inline h-4 w-4" />
+                  Sign Out
+                </NavbarButton>
+              ) : (
+                <NavbarButton variant="secondary" as={Link} href="/auth">
+                  Sign In
+                </NavbarButton>
+              )}
+              <NavbarButton variant="gradient" as={Link} href={isAuthenticated ? '/chat' : '/discover'}>
                 <Heart className="mr-2 inline h-4 w-4" />
-                Find Matches
+                {isAuthenticated ? 'My Chats' : 'Find Matches'}
               </NavbarButton>
             </div>
           </NavBody>
@@ -102,23 +115,33 @@ function App() {
               ))}
               <div className="flex w-full flex-col gap-4">
                 <NavbarButton
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false)
+                    if (isAuthenticated) logout()
+                  }}
                   variant="secondary"
                   className="w-full"
                   as={Link}
                   href="/auth"
                 >
-                  Sign In
+                  {isAuthenticated ? (
+                    <>
+                      <LogOut className="mr-2 inline h-4 w-4" />
+                      Sign Out
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
                 </NavbarButton>
                 <NavbarButton
                   onClick={() => setIsMobileMenuOpen(false)}
                   variant="gradient"
                   className="w-full"
                   as={Link}
-                  href="/discover"
+                  href={isAuthenticated ? '/chat' : '/discover'}
                 >
                   <Heart className="mr-2 inline h-4 w-4" />
-                  Find Matches
+                  {isAuthenticated ? 'My Chats' : 'Find Matches'}
                 </NavbarButton>
               </div>
             </MobileNavMenu>
