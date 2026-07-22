@@ -1,58 +1,282 @@
-import { useState } from 'react'
-import { useLoaderStore } from '@/store/useLoaderStore'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Send, LogIn, PawPrint } from 'lucide-react'
+import { useAuthStore } from '@/store/useAuthStore'
+import { getConversations } from '@/lib/api/matches'
+import { getChatHistory, getChatStatus, connectChatSocket, type ChatSocket } from '@/lib/api/chat'
+import type { ChatMessage, Conversation } from '@/lib/api/types'
+import { PetAvatar } from '@/components/chat/PetAvatar'
+import { ChatBubble } from '@/components/chat/ChatBubble'
+import { TypingIndicator } from '@/components/chat/TypingIndicator'
+import { ConversationSidebar } from '@/components/chat/ConversationSidebar'
+
+const TYPING_IDLE_MS = 1500
+const TYPING_TIMEOUT_MS = 3000
+
+function SignInPrompt() {
+  return (
+    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
+      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/30">
+        <LogIn className="h-7 w-7 text-white" />
+      </div>
+      <h2 className="mb-2 font-display text-2xl font-bold text-white">Sign in to see your chats</h2>
+      <p className="mb-6 max-w-sm text-neutral-400">
+        Your conversations with matched pet owners live here once you're signed in.
+      </p>
+      <Link
+        to="/auth"
+        className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+      >
+        Sign In
+      </Link>
+    </div>
+  )
+}
+
+function NoConversationSelected() {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-neutral-500">
+      <PawPrint className="h-10 w-10" />
+      <p className="font-medium">Pick a match to start chatting</p>
+    </div>
+  )
+}
 
 function ChatPage() {
-  const { startLoading, stopLoading } = useLoaderStore()
-  const [message, setMessage] = useState('')
-  const [messages, setMessages] = useState<string[]>([])
+  const { isAuthenticated, isHydrating, pets } = useAuthStore()
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!message.trim()) return
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [conversationsLoading, setConversationsLoading] = useState(true)
+  const [selected, setSelected] = useState<Conversation | null>(null)
 
-    startLoading('Sending message...')
-    
-    // Simulate sending message
-    setTimeout(() => {
-      setMessages([...messages, message])
-      setMessage('')
-      stopLoading()
-    }, 1000)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [messagesLoading, setMessagesLoading] = useState(false)
+  const [otherOnline, setOtherOnline] = useState(false)
+  const [otherTyping, setOtherTyping] = useState(false)
+  const [draft, setDraft] = useState('')
+  const [connected, setConnected] = useState(false)
+
+  const socketRef = useRef<ChatSocket | null>(null)
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const remoteTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+
+  // Load the pet-owner's matches once we know who they and their pets are.
+  useEffect(() => {
+    let cancelled = false
+
+    const load = async () => {
+      if (isHydrating || !isAuthenticated || pets.length === 0) {
+        if (!cancelled) setConversationsLoading(false)
+        return
+      }
+
+      setConversationsLoading(true)
+      try {
+        const convos = await getConversations(pets.map((p) => p.id))
+        if (cancelled) return
+        setConversations(convos)
+        setSelected((current) => current ?? convos[0] ?? null)
+      } finally {
+        if (!cancelled) setConversationsLoading(false)
+      }
+    }
+
+    load()
+
+    return () => {
+      cancelled = true
+    }
+  }, [isHydrating, isAuthenticated, pets])
+
+  // Load history + open the live socket whenever the selected match changes.
+  useEffect(() => {
+    if (!selected) return
+
+    let cancelled = false
+
+    const loadHistory = async () => {
+      setMessagesLoading(true)
+      setMessages([])
+      setOtherTyping(false)
+      setConnected(false)
+      try {
+        const history = await getChatHistory(selected.matchId)
+        if (!cancelled) setMessages(history.messages)
+      } finally {
+        if (!cancelled) setMessagesLoading(false)
+      }
+    }
+    loadHistory()
+
+    getChatStatus(selected.matchId)
+      .then((status) => !cancelled && setOtherOnline(status.is_online))
+      .catch(() => {})
+
+    const socket = connectChatSocket(selected.matchId, {
+      onOpen: () => !cancelled && setConnected(true),
+      onClose: () => !cancelled && setConnected(false),
+      onEvent: (event) => {
+        if (cancelled) return
+
+        if (event.type === 'message') {
+          setMessages((prev) => (prev.some((m) => m.id === event.data.id) ? prev : [...prev, event.data]))
+          if (event.data.sender_pet_id !== selected.yourPetId) {
+            socket.sendRead(event.data.id)
+          }
+        } else if (event.type === 'typing') {
+          if (event.data.pet_id !== selected.otherPet.id) return
+          setOtherTyping(event.data.is_typing)
+          if (remoteTypingTimeoutRef.current) clearTimeout(remoteTypingTimeoutRef.current)
+          if (event.data.is_typing) {
+            remoteTypingTimeoutRef.current = setTimeout(() => setOtherTyping(false), TYPING_TIMEOUT_MS)
+          }
+        } else if (event.type === 'read') {
+          if (event.data.pet_id !== selected.otherPet.id) return
+          setMessages((prev) =>
+            prev.map((m) => (m.sender_pet_id === selected.yourPetId ? { ...m, is_read: true } : m)),
+          )
+        }
+      },
+    })
+
+    socketRef.current = socket
+
+    return () => {
+      cancelled = true
+      socket.close()
+      socketRef.current = null
+      if (remoteTypingTimeoutRef.current) clearTimeout(remoteTypingTimeoutRef.current)
+    }
+  }, [selected])
+
+  // Keep the thread scrolled to the latest message.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+  }, [messages, otherTyping])
+
+  const handleDraftChange = useCallback((value: string) => {
+    setDraft(value)
+    const socket = socketRef.current
+    if (!socket) return
+
+    socket.sendTyping(true)
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+    typingTimeoutRef.current = setTimeout(() => socket.sendTyping(false), TYPING_IDLE_MS)
+  }, [])
+
+  const handleSend = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      const content = draft.trim()
+      const socket = socketRef.current
+      if (!content || !socket) return
+
+      socket.sendMessage(content)
+      socket.sendTyping(false)
+      setDraft('')
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+    },
+    [draft],
+  )
+
+  if (!isHydrating && !isAuthenticated) {
+    return <SignInPrompt />
   }
 
+  const lastMineId = [...messages].reverse().find((m) => m.sender_pet_id === selected?.yourPetId)?.id
+
   return (
-    <div className="flex flex-col min-h-screen p-6">
-      <div className="max-w-4xl mx-auto w-full">
-        <h2 className="text-3xl font-bold mb-2 text-center">Pet Chats</h2>
-        <p className="text-neutral-400 text-center mb-8">
-          Connect with other pet owners and discuss details.
-        </p>
-        
-        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 min-h-[400px] mb-4">
-          <div className="space-y-4">
-            {messages.map((msg, idx) => (
-              <div key={idx} className="bg-neutral-800 p-3 rounded-lg">
-                {msg}
+    <div className="px-3 pb-4 pt-24 md:px-6 md:pt-28">
+      <div className="mx-auto flex h-[calc(100vh-7.5rem)] max-w-6xl overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/40 shadow-2xl shadow-black/30 backdrop-blur-sm">
+        <ConversationSidebar
+          conversations={conversations}
+          isLoading={isHydrating || conversationsLoading}
+          selectedMatchId={selected?.matchId ?? null}
+          onSelect={setSelected}
+        />
+
+        <div className="flex flex-1 flex-col">
+          {!selected && <NoConversationSelected />}
+
+          {selected && (
+            <>
+              {/* Conversation header */}
+              <div className="flex flex-shrink-0 items-center gap-3 border-b border-neutral-800/80 px-5 py-3.5">
+                <PetAvatar name={selected.otherPet.name} photoUrl={selected.otherPet.primary_photo_url} online={otherOnline} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold text-white">{selected.otherPet.name}</p>
+                  <p className="truncate text-xs text-neutral-500">
+                    {otherOnline ? 'Online now' : selected.otherPet.breed}
+                  </p>
+                </div>
+                {!connected && (
+                  <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-[11px] text-neutral-400">
+                    Connecting…
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
+
+              {/* Message thread */}
+              <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
+                {messagesLoading && (
+                  <div className="flex h-full items-center justify-center text-sm text-neutral-500">
+                    Loading conversation…
+                  </div>
+                )}
+
+                {!messagesLoading && messages.length === 0 && (
+                  <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-neutral-500">
+                    <PetAvatar name={selected.otherPet.name} photoUrl={selected.otherPet.primary_photo_url} size="lg" />
+                    <p className="font-medium text-neutral-300">You matched with {selected.otherPet.name}!</p>
+                    <p className="text-sm">Say hello 👋</p>
+                  </div>
+                )}
+
+                {messages.map((message) => (
+                  <ChatBubble
+                    key={message.id}
+                    message={message}
+                    isMine={message.sender_pet_id === selected.yourPetId}
+                    showSeen={message.id === lastMineId}
+                  />
+                ))}
+
+                <AnimatePresence>
+                  {otherTyping && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                    >
+                      <TypingIndicator />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Composer */}
+              <form onSubmit={handleSend} className="flex flex-shrink-0 gap-2 border-t border-neutral-800/80 p-4">
+                <input
+                  type="text"
+                  value={draft}
+                  onChange={(e) => handleDraftChange(e.target.value)}
+                  placeholder={`Message ${selected.otherPet.name}...`}
+                  className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={!draft.trim()}
+                  className="flex items-center justify-center rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                  aria-label="Send message"
+                >
+                  <Send className="h-4 w-4" />
+                </button>
+              </form>
+            </>
+          )}
         </div>
-        
-        <form onSubmit={handleSendMessage} className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="flex-1 px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500"
-          />
-          <button
-            type="submit"
-            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg transition-all"
-          >
-            Send
-          </button>
-        </form>
       </div>
     </div>
   )
