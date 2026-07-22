@@ -24,6 +24,7 @@ import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { Heart, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
+import { NotificationBell } from './components/notifications/NotificationBell'
 
 /** Redirects a freshly-authenticated user into /onboarding once per session until required steps are done. */
 function OnboardingGate() {
@@ -91,6 +92,7 @@ function App() {
 
             {/* Right: Buttons */}
             <div className="flex items-center gap-3">
+              {isAuthenticated && <NotificationBell />}
               {isAuthenticated ? (
                 <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth">
                   <LogOut className="mr-2 inline h-4 w-4" />
@@ -120,10 +122,13 @@ function App() {
                   PawSome
                 </span>
               </Link>
-              <MobileNavToggle
-                isOpen={isMobileMenuOpen}
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
+              <div className="flex items-center gap-1">
+                {isAuthenticated && <NotificationBell />}
+                <MobileNavToggle
+                  isOpen={isMobileMenuOpen}
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
+              </div>
             </MobileNavHeader>
 
             <MobileNavMenu
