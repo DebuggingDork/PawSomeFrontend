@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Trash2, User as UserIcon } from 'lucide-react'
+import { Check, Trash2, User as UserIcon } from 'lucide-react'
 import {
   confirmProfilePhoto,
   deleteProfilePhoto,
@@ -11,6 +11,7 @@ import {
 } from '@/lib/api/users'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 export function AccountTab() {
   const queryClient = useQueryClient()
@@ -41,7 +42,7 @@ export function AccountTab() {
   const deletePhotoMutation = useMutation({ mutationFn: deleteProfilePhoto, onSuccess: invalidate })
 
   if (profileQuery.isLoading || !profile) {
-    return <div className="h-64 animate-pulse rounded-2xl bg-neutral-900/60" />
+    return <Skeleton className="h-64" />
   }
 
   const completion = completionQuery.data
@@ -162,9 +163,10 @@ export function AccountTab() {
         <button
           type="submit"
           disabled={updateMutation.isPending || !dirty}
-          className="rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {updateMutation.isPending ? 'Saving…' : 'Save changes'}
+          {updateMutation.isSuccess && !dirty && <Check className="h-4 w-4" />}
+          {updateMutation.isPending ? 'Saving…' : updateMutation.isSuccess && !dirty ? 'Saved' : 'Save changes'}
         </button>
       </form>
     </div>

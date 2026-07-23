@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Star, Trash2, PawPrint } from 'lucide-react'
+import { Star, Trash2, PawPrint, Image as ImageIcon } from 'lucide-react'
 import { listMyPets } from '@/lib/api/pets'
 import { confirmPetPhoto, deletePetPhoto, presignPetPhoto, setPrimaryPhoto } from '@/lib/api/petPhotos'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { PillTabs } from '@/components/ui/PillTabs'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 export function PhotosTab() {
   const queryClient = useQueryClient()
@@ -23,15 +26,15 @@ export function PhotosTab() {
     onSuccess: invalidate,
   })
 
-  if (petsQuery.isLoading) return <div className="h-48 animate-pulse rounded-2xl bg-neutral-900/60" />
+  if (petsQuery.isLoading) return <Skeleton className="h-48" />
 
   if (pets.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-14 text-center text-neutral-500">
-        <PawPrint className="mb-3 h-9 w-9" />
-        <p className="font-medium text-neutral-300">Add a pet first</p>
-        <p className="text-sm">Once you have a pet, you can manage its photos here.</p>
-      </div>
+      <EmptyState
+        icon={PawPrint}
+        title="Add a pet first"
+        description="Once you have a pet, you can manage its photos here."
+      />
     )
   }
 
@@ -40,21 +43,17 @@ export function PhotosTab() {
   return (
     <div>
       {pets.length > 1 && (
-        <div className="mb-5 flex flex-wrap gap-2">
-          {pets.map((pet) => (
-            <button
-              key={pet.id}
-              onClick={() => setSelectedPetId(pet.id)}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                selectedPet?.id === pet.id
-                  ? 'bg-gradient-to-r from-[#ff6b35] to-pink-500 text-white'
-                  : 'bg-neutral-900 text-neutral-400'
-              }`}
-            >
-              {pet.name}
-            </button>
-          ))}
-        </div>
+        <PillTabs
+          layoutId="photos-pet-pill"
+          active={selectedPet?.id ?? pets[0].id}
+          onChange={setSelectedPetId}
+          className="mb-5"
+          tabs={pets.map((pet) => ({ key: pet.id, label: pet.name }))}
+        />
+      )}
+
+      {photos.length === 0 && (
+        <EmptyState icon={ImageIcon} title={`No photos of ${selectedPet?.name} yet`} className="py-10" />
       )}
 
       <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">

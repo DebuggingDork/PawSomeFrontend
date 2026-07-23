@@ -4,6 +4,9 @@ import { Heart, PawPrint, X } from 'lucide-react'
 import { listMyPets } from '@/lib/api/pets'
 import { listFavorites, removeFavorite } from '@/lib/api/favorites'
 import { PetAvatar } from '@/components/chat/PetAvatar'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { PillTabs } from '@/components/ui/PillTabs'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 export function FavoritesTab() {
   const queryClient = useQueryClient()
@@ -23,15 +26,10 @@ export function FavoritesTab() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorites', selectedPet?.id] }),
   })
 
-  if (petsQuery.isLoading) return <div className="h-48 animate-pulse rounded-2xl bg-neutral-900/60" />
+  if (petsQuery.isLoading) return <Skeleton className="h-48" />
 
   if (pets.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-14 text-center text-neutral-500">
-        <PawPrint className="mb-3 h-9 w-9" />
-        <p className="font-medium text-neutral-300">Add a pet first</p>
-      </div>
-    )
+    return <EmptyState icon={PawPrint} title="Add a pet first" />
   }
 
   const favorites = favoritesQuery.data?.items ?? []
@@ -39,38 +37,30 @@ export function FavoritesTab() {
   return (
     <div>
       {pets.length > 1 && (
-        <div className="mb-5 flex flex-wrap gap-2">
-          {pets.map((pet) => (
-            <button
-              key={pet.id}
-              onClick={() => setSelectedPetId(pet.id)}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                selectedPet?.id === pet.id
-                  ? 'bg-gradient-to-r from-[#ff6b35] to-pink-500 text-white'
-                  : 'bg-neutral-900 text-neutral-400'
-              }`}
-            >
-              {pet.name}
-            </button>
-          ))}
-        </div>
+        <PillTabs
+          layoutId="favorites-pet-pill"
+          active={selectedPet?.id ?? pets[0].id}
+          onChange={setSelectedPetId}
+          className="mb-5"
+          tabs={pets.map((pet) => ({ key: pet.id, label: pet.name }))}
+        />
       )}
 
-      {favoritesQuery.isLoading && <div className="h-32 animate-pulse rounded-2xl bg-neutral-900/60" />}
+      {favoritesQuery.isLoading && <Skeleton className="h-32" />}
 
       {!favoritesQuery.isLoading && favorites.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-14 text-center text-neutral-500">
-          <Heart className="mb-3 h-9 w-9" />
-          <p className="font-medium text-neutral-300">No favorites yet</p>
-          <p className="text-sm">Pets {selectedPet?.name} favorites while browsing will show up here.</p>
-        </div>
+        <EmptyState
+          icon={Heart}
+          title="No favorites yet"
+          description={`Pets ${selectedPet?.name} favorites while browsing will show up here.`}
+        />
       )}
 
       <ul className="space-y-3">
         {favorites.map((fav) => (
           <li
             key={fav.id}
-            className="flex items-center gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-3"
+            className="flex items-center gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-3 transition-colors hover:border-neutral-700"
           >
             <PetAvatar name={fav.target_pet.name} photoUrl={fav.target_pet.primary_photo_url} />
             <div className="min-w-0 flex-1">

@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Pencil, PawPrint } from 'lucide-react'
 import { createPet, deletePet, listMyPets, updatePet } from '@/lib/api/pets'
 import { PetForm } from '@/components/profile/PetForm'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Skeleton } from '@/components/ui/Skeleton'
 import type { Pet, PetCreateInput } from '@/lib/api/types'
 
 const MAX_PETS = 5
@@ -81,24 +83,24 @@ export function PetsTab() {
       {petsQuery.isLoading && (
         <div className="space-y-3">
           {Array.from({ length: 2 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-2xl bg-neutral-900/60" />
+            <Skeleton key={i} className="h-24" />
           ))}
         </div>
       )}
 
       {!petsQuery.isLoading && pets.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-14 text-center text-neutral-500">
-          <PawPrint className="mb-3 h-9 w-9" />
-          <p className="font-medium text-neutral-300">No pets yet</p>
-          <p className="text-sm">Add your first pet to start discovering matches.</p>
-        </div>
+        <EmptyState
+          icon={PawPrint}
+          title="No pets yet"
+          description="Add your first pet to start discovering matches."
+        />
       )}
 
       <ul className="space-y-3">
         {pets.map((pet) => (
           <li
             key={pet.id}
-            className="flex items-center gap-4 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4"
+            className="flex items-center gap-4 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 transition-colors hover:border-neutral-700"
           >
             {pet.primary_photo_url ? (
               <img src={pet.primary_photo_url} alt={pet.name} className="h-14 w-14 rounded-xl object-cover" />

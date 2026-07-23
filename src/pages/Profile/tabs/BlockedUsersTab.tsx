@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ShieldOff, User as UserIcon } from 'lucide-react'
 import { listBlocks, removeBlock } from '@/lib/api/blocks'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 export function BlockedUsersTab() {
   const queryClient = useQueryClient()
@@ -11,17 +13,17 @@ export function BlockedUsersTab() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
   })
 
-  if (blocksQuery.isLoading) return <div className="h-32 animate-pulse rounded-2xl bg-neutral-900/60" />
+  if (blocksQuery.isLoading) return <Skeleton className="h-32" />
 
   const blocks = blocksQuery.data?.blocks ?? []
 
   if (blocks.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-14 text-center text-neutral-500">
-        <ShieldOff className="mb-3 h-9 w-9" />
-        <p className="font-medium text-neutral-300">No blocked users</p>
-        <p className="text-sm">Anyone you block will be listed here so you can unblock them later.</p>
-      </div>
+      <EmptyState
+        icon={ShieldOff}
+        title="No blocked users"
+        description="Anyone you block will be listed here so you can unblock them later."
+      />
     )
   }
 
@@ -30,7 +32,7 @@ export function BlockedUsersTab() {
       {blocks.map((block) => (
         <li
           key={block.id}
-          className="flex items-center gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-3"
+          className="flex items-center gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-3 transition-colors hover:border-neutral-700"
         >
           {block.blocked_user.profile_photo_url ? (
             <img src={block.blocked_user.profile_photo_url} alt="" className="h-10 w-10 rounded-full object-cover" />
