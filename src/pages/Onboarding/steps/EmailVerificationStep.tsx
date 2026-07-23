@@ -17,14 +17,10 @@ export function EmailVerificationStep({ email, onSkip }: Props) {
 
   return (
     <div className="text-center">
-      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500">
-        <Mail className="h-6 w-6 text-white" />
+      <div className="mx-auto mb-6 flex items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm text-neutral-300">
+        <Mail className="h-4 w-4 flex-shrink-0 text-[#ff6b35]" />
+        <span className="truncate">{email}</span>
       </div>
-      <h3 className="mb-2 font-display text-xl font-bold text-white">Verify your email</h3>
-      <p className="mb-6 text-sm text-neutral-400">
-        We sent a verification link to <span className="text-neutral-200">{email}</span>. Click it to confirm
-        it's really you.
-      </p>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <button
