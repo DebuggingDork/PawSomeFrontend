@@ -57,7 +57,7 @@ function DiscoverPage() {
   const { activePet } = useAuthStore()
   const queryClient = useQueryClient()
   const [tab, setTab] = useState<Tab>('discover')
-  const [filters, setFilters] = useState<BrowseFilters>({ radius: 50 })
+  const [filters, setFilters] = useState<BrowseFilters>({ radius: 5000 }) // Default to 5000km to show all
   const [deck, setDeck] = useState<BrowseCandidate[]>([])
   const [loadedCandidates, setLoadedCandidates] = useState<BrowseCandidate[] | null>(null)
   const [lastSwipe, setLastSwipe] = useState<{ swipeId: string; candidate: BrowseCandidate } | null>(null)
@@ -65,8 +65,8 @@ function DiscoverPage() {
 
   const browseQuery = useQuery({
     queryKey: ['browse', activePet?.id, filters],
-    queryFn: () => browsePets(activePet!.id, filters),
-    enabled: !!activePet,
+    queryFn: () => browsePets(activePet?.id, filters), // pet_id is now optional
+    enabled: true, // Always enabled, no pet required for simple browsing
     retry: false,
   })
 
@@ -107,6 +107,11 @@ function DiscoverPage() {
   })
 
   const handleSwipe = (candidate: BrowseCandidate, action: 'like' | 'skip') => {
+    if (!activePet) {
+      // If no active pet, just show a message or redirect to onboarding
+      return
+    }
+    
     setDeck((prev) => prev.filter((c) => c.pet.id !== candidate.pet.id))
     swipeMutation.mutate(
       { pet_id: activePet!.id, target_pet_id: candidate.pet.id, action },
@@ -117,7 +122,8 @@ function DiscoverPage() {
     )
   }
 
-  if (!activePet) return <NoPetPrompt />
+  // Remove the "no pet" requirement for browsing
+  // if (!activePet) return <NoPetPrompt />
 
   const locationError =
     browseQuery.error instanceof ApiError && browseQuery.error.status === 400 ? browseQuery.error : null
@@ -146,13 +152,15 @@ function DiscoverPage() {
               <input
                 type="range"
                 min={5}
-                max={500}
-                step={5}
+                max={5000}
+                step={50}
                 value={filters.radius}
                 onChange={(e) => setFilters((f) => ({ ...f, radius: Number(e.target.value) }))}
                 className="accent-[#ff6b35]"
               />
-              <span className="w-14 text-neutral-400">{filters.radius} km</span>
+              <span className="w-20 text-neutral-400">
+                {filters.radius >= 5000 ? 'All' : `${filters.radius} km`}
+              </span>
             </label>
           </div>
 
@@ -165,19 +173,28 @@ function DiscoverPage() {
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (
             <EmptyState
               icon={Heart}
-              title="No pets nearby right now"
-              description="Try widening your search radius."
+              title="No pets available right now"
+              description="Try adjusting your filters or check back later."
             />
           )}
 
           {!locationError && deck.length > 0 && (
-            <SwipeDeck
-              candidates={deck}
-              onSwipe={handleSwipe}
-              onUndo={() => lastSwipe && undoMutation.mutate(lastSwipe.swipeId)}
-              canUndo={!!lastSwipe}
-              undoing={undoMutation.isPending}
-            />
+            <>
+              {!activePet && (
+                <div className="mb-4 rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-center text-sm text-amber-400">
+                  <Link to="/onboarding" className="underline hover:text-amber-300">
+                    Create a pet profile
+                  </Link> to start swiping and matching!
+                </div>
+              )}
+              <SwipeDeck
+                candidates={deck}
+                onSwipe={handleSwipe}
+                onUndo={() => lastSwipe && activePet && undoMutation.mutate(lastSwipe.swipeId)}
+                canUndo={!!lastSwipe && !!activePet}
+                undoing={undoMutation.isPending}
+              />
+            </>
           )}
         </>
       )}

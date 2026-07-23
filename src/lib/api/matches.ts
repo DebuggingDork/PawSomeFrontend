@@ -51,8 +51,12 @@ function toQueryString(params: Record<string, string | number | boolean | undefi
   return search.toString()
 }
 
-export function browsePets(petId: string, filters: BrowseFilters = {}): Promise<BrowsePetsResponse> {
-  const query = toQueryString({ pet_id: petId, ...filters })
+export function browsePets(petId?: string, filters: BrowseFilters = {}): Promise<BrowsePetsResponse> {
+  const params: Record<string, string | number | boolean | undefined> = { ...filters }
+  if (petId) {
+    params.pet_id = petId
+  }
+  const query = toQueryString(params)
   return apiFetch<BrowsePetsResponse>(`/matches/browse?${query}`)
 }
 
