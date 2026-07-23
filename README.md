@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# 🐾 PawSome Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript frontend for **PawSome** — a Tinder-style matchmaking platform for pets. Create a profile, discover nearby pets, swipe, match, and chat in real time.
 
-Currently, two official plugins are available:
+Pairs with the [PawSome backend](https://github.com/DebuggingDork/PawSome-Backend) (FastAPI).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🏗️ Tech Stack
 
-## React Compiler
+| Layer | Choice |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build tool | Vite |
+| Styling | Tailwind CSS + Framer Motion / GSAP |
+| State | Zustand |
+| Data fetching | TanStack Query |
+| Routing | React Router |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📦 Project Structure
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── pages/         # Auth, Onboarding, Discover, Matches, Chat, Profile, Landing, ...
+├── components/    # animations, chat, discover, notifications, profile, safety, ui
+├── store/         # Zustand stores (auth, loader, ...)
+├── hooks/         # shared hooks
+├── lib/           # api client, utils
+└── assets/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
+- Node.js 18+
+- The [backend](https://github.com/DebuggingDork/PawSome-Backend) running locally (or a deployed API URL)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Setup
+
+```bash
+npm install                 # install dependencies
+cp .env.example .env        # fill in your own values
+npm run dev                 # start dev server
 ```
+
+The app is now available at `http://localhost:5174`.
+
+## 🔑 Environment Variables
+
+See [`.env.example`](.env.example) for the full list.
+
+| Variable | Purpose |
+|---|---|
+| `VITE_API_URL` | Base URL of the FastAPI backend, e.g. `http://localhost:8000` |
+| `VITE_WS_URL` | WebSocket origin for real-time chat, usually the same host as `VITE_API_URL` |
+
+> 💡 If requests fail with CORS errors, check that the backend's `CORS_ORIGINS` includes this app's dev URL.
+
+## 📜 Scripts
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format with Prettier |
+| `npm run format:check` | Check formatting without writing |
+
+## 📄 License
+
+Private project — all rights reserved.
