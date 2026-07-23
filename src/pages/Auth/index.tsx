@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, Eye, EyeOff, PawPrint, AlertCircle, ArrowRight } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, PawPrint, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { useLoaderStore } from '@/store/useLoaderStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import * as authApi from '@/lib/api/auth'
@@ -10,7 +10,7 @@ import { setTokens } from '@/lib/api/tokens'
 import { ApiError } from '@/lib/api/client'
 import { PillTabs } from '@/components/ui/PillTabs'
 
-type Mode = 'signin' | 'signup'
+type Mode = 'signin' | 'signup' | 'forgot'
 
 function AuthPage() {
   const navigate = useNavigate()
@@ -23,13 +23,40 @@ function AuthPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   const isSignUp = mode === 'signup'
+  const isForgot = mode === 'forgot'
+
+  const switchMode = (m: Mode) => {
+    setMode(m)
+    setError(null)
+    setResetSent(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
+
+    if (isForgot) {
+      startLoading('Sending reset link...')
+      try {
+        await authApi.forgotPassword(email)
+        setResetSent(true)
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setError(typeof err.detail === 'string' ? err.detail : 'Something went wrong. Please try again.')
+        } else {
+          setError('Could not reach the server. Is the backend running?')
+        }
+      } finally {
+        setSubmitting(false)
+        stopLoading()
+      }
+      return
+    }
+
     startLoading(isSignUp ? 'Creating your account...' : 'Signing you in...')
 
     try {
@@ -75,30 +102,31 @@ function AuthPage() {
               <PawPrint className="h-7 w-7 text-white" fill="white" />
             </div>
             <h2 className="font-display text-2xl font-bold text-white">
-              {isSignUp ? 'Join PawSome' : 'Welcome back'}
+              {isForgot ? 'Reset your password' : isSignUp ? 'Join PawSome' : 'Welcome back'}
             </h2>
             <p className="mt-1 text-sm text-neutral-400">
-              {isSignUp
-                ? 'Create an account to find your pet a perfect match.'
-                : 'Sign in to continue the search for a match.'}
+              {isForgot
+                ? "Enter your email and we'll send you a link to reset it."
+                : isSignUp
+                  ? 'Create an account to find your pet a perfect match.'
+                  : 'Sign in to continue the search for a match.'}
             </p>
           </div>
 
           {/* Mode switcher */}
-          <div className="mb-6 flex justify-center">
-            <PillTabs
-              layoutId="auth-mode-pill"
-              active={mode}
-              onChange={(m) => {
-                setMode(m)
-                setError(null)
-              }}
-              tabs={[
-                { key: 'signin', label: 'Sign In' },
-                { key: 'signup', label: 'Create Account' },
-              ]}
-            />
-          </div>
+          {!isForgot && (
+            <div className="mb-6 flex justify-center">
+              <PillTabs
+                layoutId="auth-mode-pill"
+                active={mode}
+                onChange={(m) => switchMode(m)}
+                tabs={[
+                  { key: 'signin', label: 'Sign In' },
+                  { key: 'signup', label: 'Create Account' },
+                ]}
+              />
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {error && (
@@ -114,60 +142,103 @@ function AuthPage() {
             )}
           </AnimatePresence>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-              <input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
-                required
-                autoComplete="email"
-              />
-            </div>
-
-            <div className="relative">
-              <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
-                required
-                minLength={8}
-                autoComplete={isSignUp ? 'new-password' : 'current-password'}
-              />
+          {isForgot && resetSent ? (
+            <div className="flex flex-col items-center gap-4 py-2 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
+                <CheckCircle2 className="h-6 w-6" />
+              </div>
+              <p className="text-sm text-neutral-300">
+                If an account exists for <span className="font-medium text-white">{email}</span>, a password reset
+                link is on its way. Check your inbox.
+              </p>
               <button
                 type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
-                tabIndex={-1}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => switchMode('signin')}
+                className="text-sm font-medium text-[#ff6b35] hover:text-[#ff8c5c]"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                Back to Sign In
               </button>
             </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
+                  required
+                  autoComplete="email"
+                />
+              </div>
 
-            <motion.button
-              type="submit"
-              disabled={submitting}
-              whileHover={{ scale: submitting ? 1 : 1.01 }}
-              whileTap={{ scale: submitting ? 1 : 0.99 }}
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {submitting ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              ) : (
-                <>
-                  {isSignUp ? 'Create Account' : 'Sign In'}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </>
+              {!isForgot && (
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
+                    required
+                    minLength={8}
+                    autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+                    tabIndex={-1}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               )}
-            </motion.button>
-          </form>
+
+              {mode === 'signin' && (
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => switchMode('forgot')}
+                    className="text-xs font-medium text-neutral-400 hover:text-[#ff6b35]"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+
+              <motion.button
+                type="submit"
+                disabled={submitting}
+                whileHover={{ scale: submitting ? 1 : 1.01 }}
+                whileTap={{ scale: submitting ? 1 : 0.99 }}
+                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {submitting ? (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                ) : (
+                  <>
+                    {isForgot ? 'Send Reset Link' : isSignUp ? 'Create Account' : 'Sign In'}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
+              </motion.button>
+
+              {isForgot && (
+                <button
+                  type="button"
+                  onClick={() => switchMode('signin')}
+                  className="w-full text-center text-sm font-medium text-neutral-400 hover:text-white"
+                >
+                  Back to Sign In
+                </button>
+              )}
+            </form>
+          )}
         </div>
 
         <p className="mt-6 text-center text-xs text-neutral-500">
