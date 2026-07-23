@@ -4,6 +4,7 @@ import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import ResetPasswordPage from './pages/ResetPassword'
 import DiscoverPage from './pages/Discover'
+import CatalogPage from './pages/Catalog'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
@@ -61,6 +62,7 @@ function App() {
 
   const navItems = [
     { name: 'Home', link: '/' },
+    { name: 'Catalog', link: '/catalog' },
     { name: 'Discover', link: '/discover' },
     { name: 'Matches', link: '/matches' },
     { name: 'Chat', link: '/chat' },
@@ -187,6 +189,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/catalog" element={<CatalogPage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
