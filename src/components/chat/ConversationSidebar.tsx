@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { Search, Heart } from 'lucide-react'
 import { PetAvatar } from './PetAvatar'
+import { EmptyState } from '@/components/ui/EmptyState'
 import type { Conversation } from '@/lib/api/types'
 
 function timeAgo(iso: string) {
@@ -67,21 +68,20 @@ export function ConversationSidebar({
         )}
 
         {!isLoading && conversations.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-800/80">
-              <Heart className="h-6 w-6 text-neutral-500" />
-            </div>
-            <p className="mb-1 font-semibold text-white">No matches yet</p>
-            <p className="mb-5 text-sm text-neutral-500">
-              Swipe on some pets to start a conversation.
-            </p>
-            <Link
-              to="/discover"
-              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
-            >
-              Find matches
-            </Link>
-          </div>
+          <EmptyState
+            icon={Heart}
+            title="No matches yet"
+            description="Swipe on some pets to start a conversation."
+            className="h-full px-6"
+            action={
+              <Link
+                to="/discover"
+                className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+              >
+                Find matches
+              </Link>
+            }
+          />
         )}
 
         {!isLoading && conversations.length > 0 && filtered.length === 0 && (

@@ -12,17 +12,13 @@ import { TypingIndicator } from '@/components/chat/TypingIndicator'
 import { ConversationSidebar } from '@/components/chat/ConversationSidebar'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 const TYPING_IDLE_MS = 1500
 const TYPING_TIMEOUT_MS = 3000
 
 function NoConversationSelected() {
-  return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-neutral-500">
-      <PawPrint className="h-10 w-10" />
-      <p className="font-medium">Pick a match to start chatting</p>
-    </div>
-  )
+  return <EmptyState icon={PawPrint} title="Pick a match to start chatting" className="h-full" />
 }
 
 function ChatPage() {
