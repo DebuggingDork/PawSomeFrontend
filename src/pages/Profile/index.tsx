@@ -4,11 +4,15 @@ import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { PetsTab } from './tabs/PetsTab'
 import { PhotosTab } from './tabs/PhotosTab'
 import { AccountTab } from './tabs/AccountTab'
+import { PreferencesTab } from './tabs/PreferencesTab'
+import { BadgesTab } from './tabs/BadgesTab'
 
 const TABS = [
   { key: 'pets', label: 'My Pets' },
   { key: 'photos', label: 'Photos' },
   { key: 'account', label: 'Account' },
+  { key: 'preferences', label: 'Preferences' },
+  { key: 'badges', label: 'Badges' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -47,6 +51,8 @@ function ProfilePage() {
       {tab === 'pets' && <PetsTab />}
       {tab === 'photos' && <PhotosTab />}
       {tab === 'account' && <AccountTab />}
+      {tab === 'preferences' && <PreferencesTab />}
+      {tab === 'badges' && <BadgesTab />}
     </div>
   )
 }
