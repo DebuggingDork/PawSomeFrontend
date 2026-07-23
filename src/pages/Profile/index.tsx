@@ -6,6 +6,8 @@ import { PhotosTab } from './tabs/PhotosTab'
 import { AccountTab } from './tabs/AccountTab'
 import { PreferencesTab } from './tabs/PreferencesTab'
 import { BadgesTab } from './tabs/BadgesTab'
+import { FavoritesTab } from './tabs/FavoritesTab'
+import { BlockedUsersTab } from './tabs/BlockedUsersTab'
 
 const TABS = [
   { key: 'pets', label: 'My Pets' },
@@ -13,6 +15,8 @@ const TABS = [
   { key: 'account', label: 'Account' },
   { key: 'preferences', label: 'Preferences' },
   { key: 'badges', label: 'Badges' },
+  { key: 'favorites', label: 'Favorites' },
+  { key: 'blocked', label: 'Blocked Users' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -53,6 +57,8 @@ function ProfilePage() {
       {tab === 'account' && <AccountTab />}
       {tab === 'preferences' && <PreferencesTab />}
       {tab === 'badges' && <BadgesTab />}
+      {tab === 'favorites' && <FavoritesTab />}
+      {tab === 'blocked' && <BlockedUsersTab />}
     </div>
   )
 }
