@@ -6,6 +6,7 @@ import { PartyPopper } from 'lucide-react'
 import { getOnboardingStatus } from '@/lib/api/onboarding'
 import { getMyProfile } from '@/lib/api/users'
 import { listMyPets } from '@/lib/api/pets'
+import { Skeleton } from '@/components/ui/Skeleton'
 import type { OnboardingStep } from '@/lib/api/types'
 import { EmailVerificationStep } from './steps/EmailVerificationStep'
 import { ProfileBasicsStep } from './steps/ProfileBasicsStep'
@@ -65,7 +66,17 @@ function OnboardingPage() {
 
   if (statusQuery.isLoading || !statusQuery.data) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center text-neutral-500">Loading your setup…</div>
+      <div className="relative min-h-screen px-6 py-24">
+        <div className="mx-auto max-w-xl">
+          <Skeleton className="mb-6 h-8 w-48" />
+          <div className="mb-8 flex items-center gap-1.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-1.5 flex-1 rounded-full" />
+            ))}
+          </div>
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
     )
   }
 
@@ -169,7 +180,7 @@ function OnboardingPage() {
                       onSkip={() => skipStep('pet_photos')}
                     />
                   ) : (
-                    <p className="text-sm text-neutral-500">Loading your pet…</p>
+                    <Skeleton className="mx-auto h-52 w-full max-w-[220px]" />
                   )}
                 </>
               )}
