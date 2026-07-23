@@ -29,6 +29,14 @@
   --color-accent-700: #be123c;
   --color-accent-800: #9f1239;
   --color-accent-900: #881337;
+
+  --animate-shimmer: shimmer 1.6s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Custom global styles */
