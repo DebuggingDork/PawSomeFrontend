@@ -1,4 +1,5 @@
 import { PawPrint, MapPin } from 'lucide-react'
+import { SafetyMenu } from '@/components/safety/SafetyMenu'
 import type { BrowseCandidate } from '@/lib/api/types'
 
 function formatAge(months: number) {
@@ -25,6 +26,15 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
         <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-900">
           <PawPrint className="h-20 w-20 text-neutral-700" />
         </div>
+      )}
+
+      {pet.owner?.id && (
+        <SafetyMenu
+          userId={pet.owner.id}
+          petId={pet.id}
+          otherName={pet.name}
+          className="absolute right-3 top-3 [&>button]:bg-black/40 [&>button]:backdrop-blur-sm"
+        />
       )}
 
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 pt-16">

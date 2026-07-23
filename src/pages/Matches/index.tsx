@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations } from '@/lib/api/matches'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
+import { SafetyMenu } from '@/components/safety/SafetyMenu'
 
 function timeAgo(iso: string) {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
@@ -68,8 +69,17 @@ function MatchesPage() {
             <Link
               key={conversation.matchId}
               to={`/chat?match=${conversation.matchId}`}
-              className="group flex flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 transition-colors hover:border-[#ff6b35]/60"
+              className="group relative flex flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 transition-colors hover:border-[#ff6b35]/60"
             >
+              {conversation.otherPet.owner?.id && (
+                <SafetyMenu
+                  userId={conversation.otherPet.owner.id}
+                  petId={conversation.otherPet.id}
+                  otherName={conversation.otherPet.name}
+                  className="absolute right-3 top-3"
+                  onBlocked={() => conversationsQuery.refetch()}
+                />
+              )}
               <div className="mb-4 flex items-center gap-3">
                 <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="lg" />
                 <div className="min-w-0">

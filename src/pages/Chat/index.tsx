@@ -11,6 +11,7 @@ import { ChatBubble } from '@/components/chat/ChatBubble'
 import { TypingIndicator } from '@/components/chat/TypingIndicator'
 import { ConversationSidebar } from '@/components/chat/ConversationSidebar'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
+import { SafetyMenu } from '@/components/safety/SafetyMenu'
 
 const TYPING_IDLE_MS = 1500
 const TYPING_TIMEOUT_MS = 3000
@@ -204,6 +205,14 @@ function ChatPage() {
                   <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-[11px] text-neutral-400">
                     Connecting…
                   </span>
+                )}
+                {selected.otherPet.owner?.id && (
+                  <SafetyMenu
+                    userId={selected.otherPet.owner.id}
+                    petId={selected.otherPet.id}
+                    otherName={selected.otherPet.name}
+                    onBlocked={() => setSelected(null)}
+                  />
                 )}
               </div>
 
