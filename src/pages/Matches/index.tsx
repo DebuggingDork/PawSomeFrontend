@@ -6,6 +6,8 @@ import { getConversations } from '@/lib/api/matches'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 function timeAgo(iso: string) {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
@@ -44,23 +46,26 @@ function MatchesPage() {
       {isLoading && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-40 animate-pulse rounded-2xl bg-neutral-900/60" />
+            <Skeleton key={i} className="h-40" />
           ))}
         </div>
       )}
 
       {!isLoading && conversations.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center text-neutral-500">
-          <Heart className="mb-3 h-10 w-10" />
-          <p className="mb-1 font-medium text-neutral-300">No matches yet</p>
-          <p className="mb-5 text-sm">Swipe on some pets to start matching.</p>
-          <Link
-            to="/discover"
-            className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
-          >
-            Find matches
-          </Link>
-        </div>
+        <EmptyState
+          size="lg"
+          icon={Heart}
+          title="No matches yet"
+          description="Swipe on some pets to start matching."
+          action={
+            <Link
+              to="/discover"
+              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+            >
+              Find matches
+            </Link>
+          }
+        />
       )}
 
       {!isLoading && conversations.length > 0 && (
@@ -69,7 +74,7 @@ function MatchesPage() {
             <Link
               key={conversation.matchId}
               to={`/chat?match=${conversation.matchId}`}
-              className="group relative flex flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 transition-colors hover:border-[#ff6b35]/60"
+              className="group relative flex flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:-translate-y-0.5 hover:border-[#ff6b35]/60 hover:shadow-xl"
             >
               {conversation.otherPet.owner?.id && (
                 <SafetyMenu
