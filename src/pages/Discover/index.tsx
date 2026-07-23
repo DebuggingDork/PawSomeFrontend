@@ -7,43 +7,49 @@ import { ApiError } from '@/lib/api/client'
 import { browsePets, swipe as swipeApi, undoSwipe, getNotifications, acceptLike, rejectLike } from '@/lib/api/matches'
 import { SwipeDeck } from '@/components/discover/SwipeDeck'
 import { LikesReceivedList } from '@/components/discover/LikesReceivedList'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { PillTabs } from '@/components/ui/PillTabs'
+import { Skeleton } from '@/components/ui/Skeleton'
 import type { BrowseCandidate, BrowseFilters } from '@/lib/api/types'
 
 type Tab = 'discover' | 'likes'
 
 function NoPetPrompt() {
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
-      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/30">
-        <PawPrint className="h-7 w-7 text-white" />
-      </div>
-      <h2 className="mb-2 font-display text-2xl font-bold text-white">Add a pet to start discovering</h2>
-      <p className="mb-6 max-w-sm text-neutral-400">
-        You'll need a pet profile with at least one photo before you can browse and swipe.
-      </p>
-      <Link
-        to="/onboarding"
-        className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
-      >
-        Create pet profile
-      </Link>
+    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6">
+      <EmptyState
+        size="lg"
+        icon={PawPrint}
+        title="Add a pet to start discovering"
+        description="You'll need a pet profile with at least one photo before you can browse and swipe."
+        action={
+          <Link
+            to="/onboarding"
+            className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+          >
+            Create pet profile
+          </Link>
+        }
+      />
     </div>
   )
 }
 
 function LocationNeededPrompt() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center text-neutral-500">
-      <MapPinOff className="mb-3 h-10 w-10" />
-      <p className="mb-1 font-medium text-neutral-300">Set your location to see nearby pets</p>
-      <p className="mb-5 text-sm">Discover uses distance to find matches close to you.</p>
-      <Link
-        to="/profile"
-        className="rounded-full border border-neutral-800 px-5 py-2 text-sm font-semibold text-white hover:border-[#ff6b35]"
-      >
-        Update location
-      </Link>
-    </div>
+    <EmptyState
+      icon={MapPinOff}
+      title="Set your location to see nearby pets"
+      description="Discover uses distance to find matches close to you."
+      action={
+        <Link
+          to="/profile"
+          className="rounded-full border border-neutral-800 px-5 py-2 text-sm font-semibold text-white hover:border-[#ff6b35]"
+        >
+          Update location
+        </Link>
+      }
+    />
   )
 }
 
@@ -120,22 +126,15 @@ function DiscoverPage() {
     <div className="mx-auto max-w-2xl px-6 pb-16 pt-24 md:pt-28">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-white">Discover</h1>
-        <div className="flex rounded-full bg-neutral-900 p-1 text-sm font-semibold">
-          {(['discover', 'likes'] as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`rounded-full px-4 py-1.5 transition-colors ${
-                tab === t ? 'bg-gradient-to-r from-[#ff6b35] to-pink-500 text-white' : 'text-neutral-400'
-              }`}
-            >
-              {t === 'discover' ? 'Discover' : 'Likes you'}
-              {t === 'likes' && likes.length > 0 && (
-                <span className="ml-1.5 rounded-full bg-white/20 px-1.5 text-xs">{likes.length}</span>
-              )}
-            </button>
-          ))}
-        </div>
+        <PillTabs
+          layoutId="discover-tab-pill"
+          active={tab}
+          onChange={setTab}
+          tabs={[
+            { key: 'discover', label: 'Discover' },
+            { key: 'likes', label: 'Likes you', badge: likes.length },
+          ]}
+        />
       </div>
 
       {tab === 'discover' && (
@@ -160,15 +159,15 @@ function DiscoverPage() {
           {locationError && <LocationNeededPrompt />}
 
           {!locationError && browseQuery.isLoading && (
-            <div className="flex h-96 items-center justify-center text-neutral-500">Finding pets nearby…</div>
+            <Skeleton className="mx-auto h-96 w-full max-w-sm" />
           )}
 
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 text-center text-neutral-500">
-              <Heart className="mb-3 h-10 w-10" />
-              <p className="font-medium text-neutral-300">No pets nearby right now</p>
-              <p className="text-sm">Try widening your search radius.</p>
-            </div>
+            <EmptyState
+              icon={Heart}
+              title="No pets nearby right now"
+              description="Try widening your search radius."
+            />
           )}
 
           {!locationError && deck.length > 0 && (

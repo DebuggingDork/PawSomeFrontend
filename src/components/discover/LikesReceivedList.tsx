@@ -1,5 +1,7 @@
 import { Heart, X } from 'lucide-react'
 import { PetAvatar } from '@/components/chat/PetAvatar'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Skeleton } from '@/components/ui/Skeleton'
 import type { NotificationWithDetails } from '@/lib/api/types'
 
 interface LikesReceivedListProps {
@@ -15,20 +17,14 @@ export function LikesReceivedList({ likes, isLoading, onAccept, onReject, respon
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-2xl bg-neutral-900/60" />
+          <Skeleton key={i} className="h-20" />
         ))}
       </div>
     )
   }
 
   if (likes.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-neutral-500">
-        <Heart className="mb-3 h-10 w-10" />
-        <p className="font-medium text-neutral-300">No likes yet</p>
-        <p className="text-sm">Pets that like you will show up here.</p>
-      </div>
-    )
+    return <EmptyState icon={Heart} title="No likes yet" description="Pets that like you will show up here." />
   }
 
   return (

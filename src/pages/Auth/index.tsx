@@ -8,6 +8,7 @@ import * as authApi from '@/lib/api/auth'
 import * as petsApi from '@/lib/api/pets'
 import { setTokens } from '@/lib/api/tokens'
 import { ApiError } from '@/lib/api/client'
+import { PillTabs } from '@/components/ui/PillTabs'
 
 type Mode = 'signin' | 'signup'
 
@@ -84,29 +85,19 @@ function AuthPage() {
           </div>
 
           {/* Mode switcher */}
-          <div className="relative mb-6 grid grid-cols-2 rounded-xl bg-neutral-950/60 p-1 text-sm font-semibold">
-            {(['signin', 'signup'] as Mode[]).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => {
-                  setMode(m)
-                  setError(null)
-                }}
-                className={`relative z-10 rounded-lg py-2 transition-colors ${
-                  mode === m ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
-                }`}
-              >
-                {mode === m && (
-                  <motion.span
-                    layoutId="auth-mode-pill"
-                    className="absolute inset-0 -z-10 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500"
-                    transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
-                  />
-                )}
-                {m === 'signin' ? 'Sign In' : 'Create Account'}
-              </button>
-            ))}
+          <div className="mb-6 flex justify-center">
+            <PillTabs
+              layoutId="auth-mode-pill"
+              active={mode}
+              onChange={(m) => {
+                setMode(m)
+                setError(null)
+              }}
+              tabs={[
+                { key: 'signin', label: 'Sign In' },
+                { key: 'signup', label: 'Create Account' },
+              ]}
+            />
           </div>
 
           <AnimatePresence mode="wait">
