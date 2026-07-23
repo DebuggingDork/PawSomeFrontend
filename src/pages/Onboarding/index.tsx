@@ -147,7 +147,7 @@ function OnboardingPage() {
               {activeStep?.step === 'profile_photo' && (
                 <>
                   <StepHeading title={activeStep.title} description={activeStep.description} required />
-                  <ProfilePhotoStep onSaved={refreshAll} />
+                  <ProfilePhotoStep onSaved={refreshAll} onSkip={() => skipStep('profile_photo')} />
                 </>
               )}
 
@@ -162,7 +162,12 @@ function OnboardingPage() {
                 <>
                   <StepHeading title={activeStep.title} description={activeStep.description} required />
                   {myPet ? (
-                    <PetPhotosStep petId={myPet.id} petName={myPet.name} onSaved={refreshAll} />
+                    <PetPhotosStep
+                      petId={myPet.id}
+                      petName={myPet.name}
+                      onSaved={refreshAll}
+                      onSkip={() => skipStep('pet_photos')}
+                    />
                   ) : (
                     <p className="text-sm text-neutral-500">Loading your pet…</p>
                   )}
