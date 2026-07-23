@@ -1,82 +1,52 @@
 import { useState } from 'react'
-import { useLoaderStore } from '@/store/useLoaderStore'
+import { useAuthStore } from '@/store/useAuthStore'
+import { SignInPrompt } from '@/components/ui/SignInPrompt'
+import { PetsTab } from './tabs/PetsTab'
+import { PhotosTab } from './tabs/PhotosTab'
+import { AccountTab } from './tabs/AccountTab'
+
+const TABS = [
+  { key: 'pets', label: 'My Pets' },
+  { key: 'photos', label: 'Photos' },
+  { key: 'account', label: 'Account' },
+] as const
+
+type TabKey = (typeof TABS)[number]['key']
 
 function ProfilePage() {
-  const { startLoading, stopLoading } = useLoaderStore()
-  const [petName, setPetName] = useState('Max')
-  const [breed, setBreed] = useState('Golden Retriever')
+  const { isAuthenticated, isHydrating } = useAuthStore()
+  const [tab, setTab] = useState<TabKey>('pets')
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    startLoading('Updating profile...')
-    
-    // Simulate API call
-    setTimeout(() => {
-      stopLoading()
-      alert('Profile updated successfully!')
-    }, 1500)
-  }
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return
-    
-    startLoading('Uploading image...')
-    
-    // Simulate upload
-    setTimeout(() => {
-      stopLoading()
-    }, 2000)
+  if (!isHydrating && !isAuthenticated) {
+    return (
+      <SignInPrompt
+        title="Sign in to manage your profile"
+        message="Your pets, photos, preferences, and badges live here."
+      />
+    )
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-6">
-      <div className="max-w-2xl mx-auto w-full">
-        <h2 className="text-3xl font-bold mb-2 text-center">Pet Profile</h2>
-        <p className="text-neutral-400 text-center mb-8">
-          Manage your pet's bio, details, and photos.
-        </p>
-        
-        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-8">
-          <form onSubmit={handleSaveProfile} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Pet Name</label>
-              <input
-                type="text"
-                value={petName}
-                onChange={(e) => setPetName(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Breed</label>
-              <input
-                type="text"
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Upload Photos</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg focus:outline-none focus:border-orange-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-orange-500 file:text-white hover:file:bg-orange-600"
-              />
-            </div>
-            
-            <button
-              type="submit"
-              className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg transition-all"
-            >
-              Save Profile
-            </button>
-          </form>
-        </div>
+    <div className="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-28">
+      <h1 className="mb-6 font-display text-2xl font-bold text-white">Profile</h1>
+
+      <div className="mb-6 flex gap-1 overflow-x-auto rounded-full bg-neutral-900 p-1 text-sm font-semibold">
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`whitespace-nowrap rounded-full px-4 py-2 transition-colors ${
+              tab === t.key ? 'bg-gradient-to-r from-[#ff6b35] to-pink-500 text-white' : 'text-neutral-400'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
+
+      {tab === 'pets' && <PetsTab />}
+      {tab === 'photos' && <PhotosTab />}
+      {tab === 'account' && <AccountTab />}
     </div>
   )
 }
