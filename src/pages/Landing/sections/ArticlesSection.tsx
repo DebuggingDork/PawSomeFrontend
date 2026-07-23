@@ -5,20 +5,20 @@ import { ArrowRight } from 'lucide-react'
 
 const ARTICLES = [
   {
-    title: 'Understanding Genetic Health Panels',
-    desc: 'Why DNA testing is the foundation of ethical breeding.',
+    title: "Reading Your Pet's Body Language",
+    desc: 'How to tell a playdate is going well — and when to step in.',
     image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80',
     direction: 'up' as const,
   },
   {
-    title: 'Preparing for the First Litter',
-    desc: 'A comprehensive guide to ensuring safe delivery and healthy pups.',
+    title: 'Planning the Perfect First Playdate',
+    desc: 'A simple guide to safe, low-stress first meetings between pets.',
     image: 'https://images.unsplash.com/photo-1537151608804-ea6f117398e0?auto=format&fit=crop&q=80',
     direction: 'up' as const,
   },
   {
-    title: 'The Importance of Temperament',
-    desc: 'How to evaluate psychological traits in potential mates.',
+    title: "Understanding Your Pet's Temperament",
+    desc: "What their personality means for the kind of friends they'll click with.",
     image: 'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80',
     direction: 'up' as const,
   },
@@ -30,8 +30,8 @@ export const ArticlesSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-16">
           <ScrollReveal direction="left">
-            <h2 className="text-4xl font-bold text-white mb-4">Breeding Resources</h2>
-            <p className="text-neutral-400 max-w-xl">Expert advice on responsible breeding, health screening, and finding the perfect match.</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Pet Parent Resources</h2>
+            <p className="text-neutral-400 max-w-xl">Tips on socializing your pet, staying safe while meeting new friends, and making the most of every playdate.</p>
           </ScrollReveal>
           <ScrollReveal delay={0.3} direction="right" className="hidden md:block">
             <button className="flex items-center gap-2 text-pink-500 font-semibold hover:text-pink-400 transition-colors cursor-pointer group">

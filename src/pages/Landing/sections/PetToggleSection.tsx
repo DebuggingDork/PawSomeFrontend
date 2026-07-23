@@ -19,7 +19,7 @@ export const PetToggleSection: React.FC = () => {
     <section id="pet-toggle" className="py-28 bg-neutral-900 border-t border-neutral-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="text-center mb-14" scale>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-10">Meet Our Premium Matches</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-10">Pets Near You, Ready to Meet</h2>
           
           <div ref={toggleRef} className="inline-flex gap-2 p-1.5 bg-neutral-800/60 rounded-full backdrop-blur-sm ring-1 ring-neutral-700/50">
             <button
@@ -74,8 +74,8 @@ export const PetToggleSection: React.FC = () => {
                 </div>
                 <div className="p-6">
                   <h4 className="text-lg font-bold text-white mb-1">Golden Retriever</h4>
-                  <p className="text-sm text-pink-500 font-semibold mb-3">DNA Verified</p>
-                  <p className="text-neutral-400 text-sm">Champion bloodline, excellent temperament.</p>
+                  <p className="text-sm text-pink-500 font-semibold mb-3">Verified Profile</p>
+                  <p className="text-neutral-400 text-sm">Friendly, playful, and always up for the dog park.</p>
                 </div>
               </HoverCard>
             ))}
@@ -91,8 +91,8 @@ export const PetToggleSection: React.FC = () => {
                 </div>
                 <div className="p-6">
                   <h4 className="text-lg font-bold text-white mb-1">British Shorthair</h4>
-                  <p className="text-sm text-violet-500 font-semibold mb-3">Health Screened</p>
-                  <p className="text-neutral-400 text-sm">Award-winning lineage, beautiful coat.</p>
+                  <p className="text-sm text-violet-500 font-semibold mb-3">Verified Profile</p>
+                  <p className="text-neutral-400 text-sm">Curious, gentle, and great with new friends.</p>
                 </div>
               </HoverCard>
             ))}

@@ -13,9 +13,9 @@ export const FeaturedProductsSection: React.FC = () => {
              <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/80 to-transparent" />
           </div>
           <div className="relative z-10 max-w-xl">
-            <span className="text-pink-500 font-bold tracking-widest uppercase text-sm mb-4 block">Featured Stud</span>
-            <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">Meet Apollo, the majestic Doberman.</h3>
-            <p className="text-neutral-300 text-lg mb-8">Fully health screened, champion bloodlines, and a perfect temperament for breeding.</p>
+            <span className="text-pink-500 font-bold tracking-widest uppercase text-sm mb-4 block">Featured Pet</span>
+            <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">Meet Apollo, the friendly Doberman.</h3>
+            <p className="text-neutral-300 text-lg mb-8">Loves long walks, dog parks, and making new friends nearby.</p>
             <button className="flex items-center gap-2 text-white font-semibold hover:text-pink-400 transition-colors cursor-pointer">
               View Profile <ArrowRight className="w-5 h-5" />
             </button>
@@ -29,9 +29,9 @@ export const FeaturedProductsSection: React.FC = () => {
              <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/80 to-transparent" />
           </div>
           <div className="relative z-10 max-w-xl">
-            <span className="text-violet-500 font-bold tracking-widest uppercase text-sm mb-4 block">Featured Queen</span>
+            <span className="text-violet-500 font-bold tracking-widest uppercase text-sm mb-4 block">Featured Pet</span>
             <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">Luna, the elegant Maine Coon.</h3>
-            <p className="text-neutral-300 text-lg mb-8">Genetically tested, stunning coat, seeking a worthy partner to continue her lineage.</p>
+            <p className="text-neutral-300 text-lg mb-8">Curious, gentle, and always up for meeting a new furry friend.</p>
             <button className="flex items-center gap-2 text-white font-semibold hover:text-violet-400 transition-colors cursor-pointer">
               View Profile <ArrowRight className="w-5 h-5" />
             </button>
@@ -41,7 +41,7 @@ export const FeaturedProductsSection: React.FC = () => {
         {/* Panel 3: CTA */}
         <div className="w-[85vw] md:w-[40vw] max-w-xl shrink-0 h-[60vh] min-h-[400px] bg-gradient-to-br from-pink-500 to-violet-600 rounded-3xl p-8 md:p-12 flex flex-col justify-center items-center text-center">
           <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to find your match?</h3>
-          <p className="text-white/80 text-lg mb-8">Join the thousands of breeders choosing ethics and quality first.</p>
+          <p className="text-white/80 text-lg mb-8">Join thousands of pet parents finding great companions nearby.</p>
           <button className="px-8 py-4 bg-white text-neutral-950 hover:bg-neutral-100 rounded-full font-bold transition-all transform hover:scale-105 shadow-xl cursor-pointer">
             Create Free Profile
           </button>

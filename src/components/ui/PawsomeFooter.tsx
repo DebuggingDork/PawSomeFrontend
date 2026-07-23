@@ -11,16 +11,16 @@ function PawsomeFooter() {
     {
       title: "Matches",
       links: [
-        { label: "Verified Studs", href: "#" },
-        { label: "Verified Queens", href: "#" },
-        { label: "DNA Health Panels", href: "#" },
+        { label: "Browse Nearby Pets", href: "#" },
+        { label: "How Matching Works", href: "#" },
+        { label: "Safety & Verification", href: "#" },
       ],
     },
     {
       title: "About Us",
       links: [
         { label: "Our Story", href: "#" },
-        { label: "Breeding Oath", href: "#" },
+        { label: "Community Guidelines", href: "#" },
         { label: "FAQ", href: "#" },
       ],
     },
@@ -28,7 +28,7 @@ function PawsomeFooter() {
       title: "Resources",
       links: [
         { label: "Parenting Articles", href: "#" },
-        { label: "Official Registries", href: "#" },
+        { label: "Safety Tips", href: "#" },
         {
           label: "Live Chat",
           href: "#",
@@ -42,7 +42,7 @@ function PawsomeFooter() {
   const contactInfo = [
     {
       icon: <Mail size={18} className="text-[#ff6b35]" />,
-      text: "Breeder Support",
+      text: "Support",
       href: "mailto:hello@pawsome.com",
     },
   ];
@@ -71,8 +71,8 @@ function PawsomeFooter() {
               </span>
             </div>
             <p className="text-sm leading-relaxed text-neutral-400">
-              Find the perfect breeding match for your beloved pet. Connect with
-              verified breeders and pet owners in your area.
+              Find the perfect companion for your pet. Connect with verified,
+              friendly pet parents in your area.
             </p>
           </div>
 

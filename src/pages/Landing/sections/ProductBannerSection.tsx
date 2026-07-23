@@ -42,8 +42,8 @@ export const ProductBannerSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <ScrollReveal className="max-w-2xl mx-auto" scale duration={1}>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">Built for breeders, <br className="hidden sm:block" />by breeders.</h2>
-          <p className="text-xl text-neutral-300 mb-10 leading-relaxed">Download the PawSome app today and join the most trusted community of ethical pet breeders.</p>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">Built for pet parents, <br className="hidden sm:block" />by pet parents.</h2>
+          <p className="text-xl text-neutral-300 mb-10 leading-relaxed">Download the PawSome app today and join a trusted community finding great companions for their pets.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button className="px-8 py-4 bg-white text-neutral-950 hover:bg-neutral-100 rounded-full font-bold transition-all shadow-[0_0_30px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] cursor-pointer">
               Download on App Store

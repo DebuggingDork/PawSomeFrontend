@@ -7,18 +7,18 @@ import { HoverCard } from '../../../components/animations/HoverCard'
 const PROOF_POINTS = [
   {
     icon: <Shield className="w-8 h-8 text-pink-500" />,
-    title: 'Verified Breeders',
-    description: 'Every breeder undergoes strict background checks and identity verification.',
+    title: 'Verified Profiles',
+    description: 'Every pet parent is verified, so you always know who you and your pet are really meeting.',
   },
   {
     icon: <Heart className="w-8 h-8 text-violet-500" />,
-    title: 'Ethical Standards',
-    description: 'We only support responsible breeding practices focusing on animal welfare.',
+    title: 'Built on Trust',
+    description: 'Clear community guidelines keep every conversation and playdate respectful and pet-first.',
   },
   {
     icon: <Activity className="w-8 h-8 text-blue-500" />,
-    title: 'Health Screening',
-    description: 'Mandatory DNA and health panels required before a match is finalized.',
+    title: 'Safety Tools',
+    description: 'Block, report, and manage your matches anytime — your comfort always comes first.',
   },
 ]
 
@@ -32,10 +32,10 @@ export const ProofPointsSection: React.FC = () => {
             Why Choose PawSome
           </h2>
           <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Safety and ethics first.
+            Trust, built in.
           </h3>
           <p className="text-lg text-neutral-400 leading-relaxed">
-            We believe that every new pet deserves the healthiest start. Our strict vetting process ensures you only meet the most responsible partners.
+            We believe every pet deserves great friends and every parent deserves peace of mind. Our verification and safety tools make sure every match feels good.
           </p>
         </ScrollReveal>
 
