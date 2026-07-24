@@ -63,60 +63,49 @@
   }
 }
 
-/* Custom scrollbar — thin, soft rail with PawSome orange thumb */
+/* Page scrolls on html (Lenis). Never allow horizontal overflow. */
 html {
   font-family: var(--font-sans);
   background-color: #0a0a0a;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 107, 53, 0.55) transparent;
+  overflow-x: clip;
+  /* Hide scrollbar chrome — scrolling still works via wheel/trackpad/Lenis */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Lenis owns window scroll; body must not create a second scroll context */
 body {
   background-color: #0a0a0a;
   color: #e5e5e5;
-  overflow-x: hidden;
+  overflow-x: clip;
+  overflow-y: hidden;
+  max-width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  overflow-x: clip;
+  max-width: 100%;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+#root::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 /* Display headings get the editorial font */
 h1, h2, h3 {
   font-family: var(--font-display);
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(38, 38, 38, 0.3);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 107, 53, 0.6) 0%,
-    rgba(255, 140, 92, 0.4) 100%
-  );
-  border-radius: 9999px;
-  border: 1px solid rgba(38, 38, 38, 0.4);
-  background-clip: padding-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 107, 53, 0.85) 0%,
-    rgba(255, 140, 92, 0.65) 100%
-  );
-  border: 1px solid rgba(38, 38, 38, 0.6);
-  background-clip: padding-box;
-}
-
-::-webkit-scrollbar-corner {
-  background: transparent;
 }
 
 /* Selection color */
@@ -128,4 +117,36 @@ h1, h2, h3 {
 /* Radial gradient utility */
 .bg-gradient-radial {
   background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/*
+ * Thin orange scrollbar for nested panels (chat thread, playdates, sidebars).
+ * Pair with `lenis-prevent-scroll` so Lenis does not steal wheel events —
+ * hovering the panel and scrolling with trackpad/wheel must move that panel.
+ */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #ff6b35 transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #ff6b35;
+  border-radius: 9999px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ff8c5c;
+}
+
+.thin-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
 }

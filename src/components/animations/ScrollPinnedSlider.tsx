@@ -64,10 +64,13 @@ export const ScrollPinnedSlider: React.FC<ScrollPinnedSliderProps> = ({
   }, [])
 
   return (
-    <div ref={containerRef} className={`overflow-hidden h-screen bg-neutral-950 flex flex-col justify-center ${className}`}>
+    <div
+      ref={containerRef}
+      className={`w-full min-w-0 max-w-full overflow-hidden h-screen bg-neutral-950 flex flex-col justify-center ${className}`}
+    >
       <div
         ref={wrapperRef}
-        className="flex h-auto w-max will-change-transform items-center px-4 md:px-12 gap-8 py-12"
+        className="flex h-auto w-max max-w-none will-change-transform items-center px-4 md:px-12 gap-8 py-12"
       >
         {children}
       </div>

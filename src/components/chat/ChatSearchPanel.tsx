@@ -60,7 +60,7 @@ export function ChatSearchPanel({ matchId, onClose, onJumpToMessage }: ChatSearc
       </form>
 
       {results && (
-        <div className="mt-2 max-h-48 space-y-1 overflow-y-auto">
+        <div className="thin-scrollbar lenis-prevent-scroll mt-2 max-h-48 space-y-1 overflow-y-auto">
           {results.length === 0 ? (
             <p className="px-1 py-2 text-sm text-neutral-500">No messages found.</p>
           ) : (

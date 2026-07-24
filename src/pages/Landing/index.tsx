@@ -8,7 +8,7 @@ import { FooterSection } from './sections/FooterSection'
 
 function LandingPage() {
   return (
-    <div className="flex flex-col w-full bg-neutral-950 overflow-x-hidden">
+    <div className="flex flex-col w-full max-w-full min-w-0 bg-neutral-950 overflow-x-clip">
       <HeroSection />
       <ProofPointsSection />
       <PetToggleSection />

@@ -193,7 +193,10 @@ function ChatPage() {
               )}
 
               {/* Message thread */}
-              <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
+              <div
+                ref={scrollRef}
+                className="thin-scrollbar lenis-prevent-scroll flex-1 space-y-3 overflow-y-auto px-5 py-4"
+              >
                 {messagesLoading && (
                   <div className="flex h-full items-center justify-center text-sm text-neutral-500">
                     Loading conversation…

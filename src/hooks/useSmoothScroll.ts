@@ -32,6 +32,9 @@ export function useSmoothScroll() {
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       touchMultiplier: 2,
+      wheelMultiplier: 1,
+      // Prevent Lenis from creating a second scroll context
+      prevent: (node: any) => node.classList?.contains('lenis-prevent-scroll'),
     })
 
     function raf(time: number) {

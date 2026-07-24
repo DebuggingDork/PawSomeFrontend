@@ -52,7 +52,7 @@ export function ConversationSidebar({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="thin-scrollbar lenis-prevent-scroll flex-1 overflow-y-auto">
         {isLoading && (
           <div className="space-y-1 p-2">
             {Array.from({ length: 5 }).map((_, i) => (

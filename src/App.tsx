@@ -134,7 +134,7 @@ function App() {
       <OnboardingGate />
       <SessionExpiryWatcher />
       
-      <div className="min-h-screen bg-neutral-950 text-white">
+      <div className="min-h-screen w-full max-w-full overflow-x-clip bg-neutral-950 text-white">
         {/* Sticky Navigation Bar — full-bleed translucent glass */}
         <Navbar>
           {/* Desktop Navigation */}

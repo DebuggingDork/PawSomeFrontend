@@ -82,7 +82,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
       animate={{ height: 'auto', opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
       transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="flex-shrink-0 max-h-80 overflow-y-auto border-b border-neutral-800/80 bg-gradient-to-b from-[#ff6b35]/5 to-transparent p-3"
+      className="thin-scrollbar lenis-prevent-scroll flex-shrink-0 max-h-80 overflow-y-auto border-b border-neutral-800/80 bg-gradient-to-b from-[#ff6b35]/5 to-transparent p-3"
     >
       <div className="mb-3 flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-white">

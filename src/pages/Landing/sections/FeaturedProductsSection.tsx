@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react'
 
 export const FeaturedProductsSection: React.FC = () => {
   return (
-    <section className="bg-neutral-950 border-t border-neutral-900">
+    <section className="bg-neutral-950 border-t border-neutral-900 w-full min-w-0 overflow-hidden">
       <ScrollPinnedSlider>
         {/* Panel 1 */}
         <div className="w-[85vw] md:w-[60vw] max-w-4xl shrink-0 h-[60vh] min-h-[400px] bg-neutral-900 rounded-3xl p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group">
