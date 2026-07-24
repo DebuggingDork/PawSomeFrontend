@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import ResetPasswordPage from './pages/ResetPassword'
+import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
 import CatalogPage from './pages/Catalog'
 import MatchesPage from './pages/Matches'
@@ -189,6 +190,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/catalog" element={<CatalogPage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />

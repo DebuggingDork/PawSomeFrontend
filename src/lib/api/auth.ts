@@ -28,6 +28,14 @@ export function logout(refreshToken: string): Promise<void> {
   })
 }
 
+export function verifyEmail(token: string): Promise<UserResponse> {
+  return apiFetch<UserResponse>('/auth/verify-email', {
+    method: 'POST',
+    auth: false,
+    body: { token },
+  })
+}
+
 export function resendVerification(email: string): Promise<{ message: string }> {
   return apiFetch<{ message: string }>('/auth/resend-verification', {
     method: 'POST',
