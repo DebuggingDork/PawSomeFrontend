@@ -41,9 +41,13 @@ export interface Pet {
   lng?: number
   primary_photo_url?: string | null
   photos?: PetPhoto[]
-  owner?: PetOwner
+  owner?: PetOwner | null
   created_at?: string
   updated_at?: string
+  is_vaccinated: boolean
+  vaccination_date?: string | null
+  is_neutered: boolean
+  is_trained: boolean
 }
 
 export interface PetCreateInput {
@@ -55,6 +59,10 @@ export interface PetCreateInput {
   bio?: string
   lat: number
   lng: number
+  is_vaccinated?: boolean
+  vaccination_date?: string | null
+  is_neutered?: boolean
+  is_trained?: boolean
 }
 
 export type PetUpdateInput = Partial<PetCreateInput>

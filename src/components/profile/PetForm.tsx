@@ -23,6 +23,10 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
   const [bio, setBio] = useState(initial?.bio ?? '')
   const [lat, setLat] = useState<number | null>(initial?.lat ?? null)
   const [lng, setLng] = useState<number | null>(initial?.lng ?? null)
+  const [isVaccinated, setIsVaccinated] = useState(initial?.is_vaccinated ?? false)
+  const [vaccinationDate, setVaccinationDate] = useState(initial?.vaccination_date?.slice(0, 10) ?? '')
+  const [isNeutered, setIsNeutered] = useState(initial?.is_neutered ?? false)
+  const [isTrained, setIsTrained] = useState(initial?.is_trained ?? false)
 
   const canSubmit = name.trim() && breed.trim() && Number(ageMonths) > 0 && lat !== null && lng !== null
 
@@ -40,6 +44,10 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
           bio: bio.trim() || undefined,
           lat: lat as number,
           lng: lng as number,
+          is_vaccinated: isVaccinated,
+          vaccination_date: isVaccinated ? vaccinationDate || null : null,
+          is_neutered: isNeutered,
+          is_trained: isTrained,
         })
       }}
       className="space-y-4 rounded-2xl border border-neutral-800 bg-neutral-950/40 p-5"
@@ -122,6 +130,50 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
       <div>
         <label className="mb-1.5 block text-xs font-medium text-neutral-400">Location</label>
         <LocationPicker latitude={lat} longitude={lng} onChange={(nlat, nlng) => { setLat(nlat); setLng(nlng) }} />
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-xs font-medium text-neutral-400">Health & training</label>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setIsVaccinated((v) => !v)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              isVaccinated ? 'border-[#ff6b35] bg-[#ff6b35]/15 text-[#ff8c5c]' : 'border-neutral-700 text-neutral-400'
+            }`}
+          >
+            Vaccinated
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsNeutered((v) => !v)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              isNeutered ? 'border-[#ff6b35] bg-[#ff6b35]/15 text-[#ff8c5c]' : 'border-neutral-700 text-neutral-400'
+            }`}
+          >
+            Neutered/Spayed
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsTrained((v) => !v)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              isTrained ? 'border-[#ff6b35] bg-[#ff6b35]/15 text-[#ff8c5c]' : 'border-neutral-700 text-neutral-400'
+            }`}
+          >
+            Trained
+          </button>
+        </div>
+        {isVaccinated && (
+          <div className="mt-2">
+            <label className="mb-1.5 block text-xs font-medium text-neutral-400">Vaccination date</label>
+            <input
+              type="date"
+              value={vaccinationDate}
+              onChange={(e) => setVaccinationDate(e.target.value)}
+              className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            />
+          </div>
+        )}
       </div>
 
       <div className="flex gap-3 pt-1">

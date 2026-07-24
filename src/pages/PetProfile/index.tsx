@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Heart, LogIn, PawPrint } from 'lucide-react'
+import { ArrowLeft, Heart, LogIn, PawPrint, ShieldCheck, Scissors, GraduationCap } from 'lucide-react'
 import { getPet } from '@/lib/api/pets'
 import { swipe as swipeApi } from '@/lib/api/matches'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -115,6 +115,29 @@ function PetProfilePage() {
           </button>
         )}
       </div>
+
+      {(pet.is_vaccinated || pet.is_neutered || pet.is_trained) && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {pet.is_vaccinated && (
+            <span className="flex items-center gap-1.5 rounded-full border border-emerald-800 bg-emerald-950/40 px-3 py-1 text-xs font-medium text-emerald-400">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Vaccinated
+            </span>
+          )}
+          {pet.is_neutered && (
+            <span className="flex items-center gap-1.5 rounded-full border border-sky-800 bg-sky-950/40 px-3 py-1 text-xs font-medium text-sky-400">
+              <Scissors className="h-3.5 w-3.5" />
+              Neutered/Spayed
+            </span>
+          )}
+          {pet.is_trained && (
+            <span className="flex items-center gap-1.5 rounded-full border border-violet-800 bg-violet-950/40 px-3 py-1 text-xs font-medium text-violet-400">
+              <GraduationCap className="h-3.5 w-3.5" />
+              Trained
+            </span>
+          )}
+        </div>
+      )}
 
       {pet.bio && <p className="mt-4 whitespace-pre-line text-neutral-300">{pet.bio}</p>}
 
