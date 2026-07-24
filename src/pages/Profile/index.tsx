@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff } from 'lucide-react'
+import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { PillTabs } from '@/components/ui/PillTabs'
@@ -10,12 +10,14 @@ import { PreferencesTab } from './tabs/PreferencesTab'
 import { BadgesTab } from './tabs/BadgesTab'
 import { FavoritesTab } from './tabs/FavoritesTab'
 import { BlockedUsersTab } from './tabs/BlockedUsersTab'
+import { ActivityTab } from './tabs/ActivityTab'
 
 const TABS = [
   { key: 'pets', label: 'My Pets', icon: PawPrint },
   { key: 'photos', label: 'Photos', icon: Image },
   { key: 'account', label: 'Account', icon: User },
   { key: 'preferences', label: 'Preferences', icon: SlidersHorizontal },
+  { key: 'activity', label: 'Activity', icon: BarChart3 },
   { key: 'badges', label: 'Badges', icon: Award },
   { key: 'favorites', label: 'Favorites', icon: Heart },
   { key: 'blocked', label: 'Blocked Users', icon: ShieldOff },
@@ -46,6 +48,7 @@ function ProfilePage() {
       {tab === 'photos' && <PhotosTab />}
       {tab === 'account' && <AccountTab />}
       {tab === 'preferences' && <PreferencesTab />}
+      {tab === 'activity' && <ActivityTab />}
       {tab === 'badges' && <BadgesTab />}
       {tab === 'favorites' && <FavoritesTab />}
       {tab === 'blocked' && <BlockedUsersTab />}
