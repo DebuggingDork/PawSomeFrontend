@@ -5,7 +5,7 @@ import AuthPage from './pages/Auth'
 import ResetPasswordPage from './pages/ResetPassword'
 import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
-import PetsPage from './pages/Pets'
+import CommunityPage from './pages/Community'
 import PetProfilePage from './pages/PetProfile'
 import OwnerProfilePage from './pages/OwnerProfile'
 import MatchesPage from './pages/Matches'
@@ -74,7 +74,7 @@ function App() {
 
   const navItems = [
     { name: 'Home', link: '/' },
-    { name: 'Pets', link: '/pets' },
+    { name: 'Community', link: '/community' },
     { name: 'Discover', link: '/discover' },
     { name: 'Matches', link: '/matches' },
     { name: 'Chat', link: '/chat' },
@@ -221,7 +221,7 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
-            <Route path="/pets" element={<PetsPage />} />
+            <Route path="/community" element={<CommunityPage />} />
             <Route path="/pets/:petId" element={<PetProfilePage />} />
             <Route path="/owners/:userId" element={<OwnerProfilePage />} />
             <Route path="/discover" element={<DiscoverPage />} />

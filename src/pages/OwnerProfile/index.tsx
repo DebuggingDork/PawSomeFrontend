@@ -33,9 +33,9 @@ function OwnerProfilePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-28">
-      <Link to="/pets" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white">
+      <Link to="/community" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white">
         <ArrowLeft className="h-4 w-4" />
-        Back to Pets
+        Back to Community
       </Link>
 
       <div className="mb-8 flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">

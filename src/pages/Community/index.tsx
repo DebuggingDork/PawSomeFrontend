@@ -16,7 +16,7 @@ interface PetFilters {
   breed?: string
 }
 
-function PetsPage() {
+function CommunityPage() {
   const [filters, setFilters] = useState<PetFilters>({})
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
@@ -65,8 +65,10 @@ function PetsPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:pt-28">
       <div className="mb-8">
-        <h1 className="font-display text-3xl font-bold text-white mb-2">Meet the Pets</h1>
-        <p className="text-neutral-400">Say hello to pets nearby looking for playdates and new friends</p>
+        <h1 className="font-display text-3xl font-bold text-white mb-2">Community</h1>
+        <p className="text-neutral-400">
+          Browse every pet on PawSome and their owners. Want to match instead? Head to Discover to swipe.
+        </p>
       </div>
 
       {/* Filters */}
@@ -222,4 +224,4 @@ function PetsPage() {
   )
 }
 
-export default PetsPage
+export default CommunityPage
