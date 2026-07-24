@@ -16,6 +16,7 @@ import ProfilePage from './pages/Profile'
 import OnboardingPage from './pages/Onboarding'
 import OfflinePage from './pages/Offline'
 import ServerErrorPage from './pages/ServerError'
+import MaintenancePage from './pages/Maintenance'
 import { getOnboardingStatus } from './lib/api/onboarding'
 import { onBackendReachable, onBackendUnreachable } from './lib/api/client'
 import { getMyProfile } from './lib/api/users'
@@ -275,6 +276,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/session-expired" element={<SessionExpiredPage />} />
+            <Route path="/maintenance" element={<MaintenancePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
