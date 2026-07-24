@@ -41,12 +41,16 @@ interface MobileNavMenuProps {
   onClose: () => void;
 }
 
-/** Plain fixed sticky bar — solid background throughout, no blur, no
- * shrinking, no hide-on-scroll. Always in the same place, always the
- * same look. */
+/** Full-bleed fixed bar — background spans the viewport; content stays
+ * constrained inside NavBody / MobileNav. */
 export const Navbar = ({ children, className }: NavbarProps) => {
   return (
-    <div className={cn("fixed inset-x-0 top-0 z-50 w-full", className)}>
+    <div
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 w-full border-b border-white/10 bg-neutral-950/95",
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -56,7 +60,7 @@ export const NavBody = ({ children, className }: NavBodyProps) => {
   return (
     <div
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl items-center justify-between border-b border-white/10 bg-neutral-950/95 px-8 py-4 lg:flex",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl items-center justify-between px-8 py-4 lg:flex",
         className,
       )}
     >
@@ -101,7 +105,7 @@ export const MobileNav = ({ children, className }: MobileNavProps) => {
   return (
     <div
       className={cn(
-        "relative z-50 mx-auto flex w-full flex-col items-stretch justify-between border-b border-white/10 bg-neutral-950/95 px-4 py-3 lg:hidden",
+        "relative z-50 mx-auto flex w-full flex-col items-stretch justify-between px-4 py-3 lg:hidden",
         className,
       )}
     >
