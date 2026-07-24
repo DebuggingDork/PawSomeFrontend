@@ -1,13 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useNavScroll } from "@/hooks/useNavScroll";
 import { IconMenu2, IconX } from "@tabler/icons-react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 
 interface NavbarProps {
@@ -49,28 +45,23 @@ interface MobileNavMenuProps {
 }
 
 export const Navbar = ({ children, className }: NavbarProps) => {
-  const { scrollY } = useScroll();
-  const [visible, setVisible] = useState<boolean>(false);
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 100) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  });
+  const { collapsed, hidden } = useNavScroll();
 
   return (
-    <div className={cn("fixed inset-x-0 top-0 z-50 w-full pointer-events-none", className)}>
+    <motion.div
+      animate={{ y: hidden ? "-100%" : 0 }}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className={cn("fixed inset-x-0 top-0 z-50 w-full pointer-events-none", className)}
+    >
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(
               child as React.ReactElement<{ visible?: boolean }>,
-              { visible },
+              { visible: collapsed },
             )
           : child,
       )}
-    </div>
+    </motion.div>
   );
 };
 

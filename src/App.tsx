@@ -24,7 +24,8 @@ import {
 import { GlobalLoader } from './components/ui/GlobalLoader'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
-import { Heart, LogOut } from 'lucide-react'
+import { useNavScroll } from './hooks/useNavScroll'
+import { Heart, LogOut, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { NotificationBell } from './components/notifications/NotificationBell'
@@ -56,6 +57,7 @@ function App() {
   useSmoothScroll()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { isAuthenticated, hydrate, logout } = useAuthStore()
+  const { collapsed } = useNavScroll()
 
   useEffect(() => {
     hydrate()
@@ -83,12 +85,14 @@ function App() {
             {/* Left: Logo */}
             <Link to="/" className="flex items-center gap-2">
               <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
-              <span
-                className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent drop-shadow-sm"
-                style={{ fontFamily: 'Pacifico, cursive' }}
-              >
-                PawSome
-              </span>
+              {!collapsed && (
+                <span
+                  className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent drop-shadow-sm"
+                  style={{ fontFamily: 'Pacifico, cursive' }}
+                >
+                  PawSome
+                </span>
+              )}
             </Link>
 
             {/* Center: Nav Items */}
@@ -97,19 +101,35 @@ function App() {
             {/* Right: Buttons */}
             <div className="flex items-center gap-3">
               {isAuthenticated && <NotificationBell />}
+              {isAuthenticated && (
+                <Link
+                  to="/profile"
+                  title="Profile"
+                  aria-label="Profile"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-[#ff6b35]"
+                >
+                  <User className="h-5 w-5" />
+                </Link>
+              )}
               {isAuthenticated ? (
-                <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth">
-                  <LogOut className="mr-2 inline h-4 w-4" />
-                  Sign Out
+                <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth" title="Sign Out" aria-label="Sign Out">
+                  <LogOut className={collapsed ? 'inline h-4 w-4' : 'mr-2 inline h-4 w-4'} />
+                  {!collapsed && 'Sign Out'}
                 </NavbarButton>
               ) : (
                 <NavbarButton variant="secondary" as={Link} href="/auth">
                   Sign In
                 </NavbarButton>
               )}
-              <NavbarButton variant="gradient" as={Link} href={isAuthenticated ? '/chat' : '/discover'}>
-                <Heart className="mr-2 inline h-4 w-4" />
-                {isAuthenticated ? 'My Chats' : 'Find Matches'}
+              <NavbarButton
+                variant="gradient"
+                as={Link}
+                href={isAuthenticated ? '/chat' : '/discover'}
+                title={isAuthenticated ? 'My Chats' : 'Find Matches'}
+                aria-label={isAuthenticated ? 'My Chats' : 'Find Matches'}
+              >
+                <Heart className={collapsed ? 'inline h-4 w-4' : 'mr-2 inline h-4 w-4'} />
+                {!collapsed && (isAuthenticated ? 'My Chats' : 'Find Matches')}
               </NavbarButton>
             </div>
           </NavBody>
@@ -119,12 +139,14 @@ function App() {
             <MobileNavHeader>
               <Link to="/" className="flex items-center gap-2">
                 <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
-                <span
-                  className="text-xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
-                  style={{ fontFamily: 'Pacifico, cursive' }}
-                >
-                  PawSome
-                </span>
+                {!collapsed && (
+                  <span
+                    className="text-xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
+                    style={{ fontFamily: 'Pacifico, cursive' }}
+                  >
+                    PawSome
+                  </span>
+                )}
               </Link>
               <div className="flex items-center gap-1">
                 {isAuthenticated && <NotificationBell />}
@@ -149,6 +171,15 @@ function App() {
                   <span className="block text-lg font-medium">{item.name}</span>
                 </Link>
               ))}
+              {isAuthenticated && (
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="relative text-neutral-600 dark:text-neutral-300"
+                >
+                  <span className="block text-lg font-medium">Profile</span>
+                </Link>
+              )}
               <div className="flex w-full flex-col gap-4">
                 <NavbarButton
                   onClick={() => {
