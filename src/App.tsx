@@ -14,6 +14,7 @@ import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import OnboardingPage from './pages/Onboarding'
+import OfflinePage from './pages/Offline'
 import { getOnboardingStatus } from './lib/api/onboarding'
 import { getMyProfile } from './lib/api/users'
 import { PetAvatar } from './components/chat/PetAvatar'
@@ -30,6 +31,7 @@ import {
 import { GlobalLoader } from './components/ui/GlobalLoader'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
+import { useOnlineStatus } from './hooks/useOnlineStatus'
 import { Heart, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
@@ -77,6 +79,7 @@ function App() {
   useSmoothScroll()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { isAuthenticated, hydrate, logout } = useAuthStore()
+  const isOnline = useOnlineStatus()
 
   useEffect(() => {
     hydrate()
@@ -96,6 +99,14 @@ function App() {
     { name: 'Matches', link: '/matches' },
     { name: 'Chat', link: '/chat' },
   ]
+
+  if (!isOnline) {
+    return (
+      <div className="min-h-screen bg-neutral-950 text-white">
+        <OfflinePage />
+      </div>
+    )
+  }
 
   return (
     <BrowserRouter>
