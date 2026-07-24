@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Heart, Sparkles, MessageCircle } from 'lucide-react'
+import { Heart, Sparkles, MessageCircle, CalendarClock, CalendarCheck } from 'lucide-react'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import type { NotificationPushEvent } from '@/lib/api/types'
 
@@ -12,13 +12,25 @@ export const NOTIFICATION_TYPE_ICON = {
   new_like: Heart,
   new_match: Sparkles,
   new_message: MessageCircle,
+  playdate_proposed: CalendarClock,
+  playdate_response: CalendarCheck,
 }
 
 export const NOTIFICATION_TYPE_ACCENT = {
   new_like: 'text-[#ff6b35]',
   new_match: 'text-pink-400',
   new_message: 'text-sky-400',
+  playdate_proposed: 'text-amber-400',
+  playdate_response: 'text-emerald-400',
 }
+
+const TOAST_LABELS = {
+  new_match: "It's a match",
+  new_like: 'New like',
+  new_message: 'New message',
+  playdate_proposed: 'Playdate proposed',
+  playdate_response: 'Playdate update',
+} as const
 
 export interface ToastItem {
   id: string
@@ -55,7 +67,7 @@ function Toast({ toast, onDismiss, onClick }: { toast: ToastItem; onDismiss: (id
         <div className="mb-0.5 flex items-center gap-1.5">
           <Icon className={`h-3.5 w-3.5 ${NOTIFICATION_TYPE_ACCENT[data.notification_type]}`} />
           <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-            {data.notification_type === 'new_match' ? "It's a match" : data.notification_type === 'new_like' ? 'New like' : 'New message'}
+            {TOAST_LABELS[data.notification_type]}
           </span>
         </div>
         <p className="truncate text-sm text-neutral-200">{data.message}</p>

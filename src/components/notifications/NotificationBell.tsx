@@ -183,7 +183,7 @@ export function NotificationBell() {
                         </div>
                       )}
 
-                      {(n.notification_type === 'new_match' || n.notification_type === 'new_message') && n.match_id && (
+                      {n.notification_type !== 'new_like' && n.match_id && (
                         <button
                           onClick={() => {
                             if (!n.is_read) markReadMutation.mutate([n.id])
