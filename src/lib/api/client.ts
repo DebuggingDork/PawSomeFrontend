@@ -1,7 +1,21 @@
-import { clearTokens, getAccessToken, getRefreshToken, setTokens } from './tokens'
+import { clearTokens, getAccessToken, getAccessTokenExpiryMs, getRefreshToken, onTokensChanged, setTokens } from './tokens'
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 export const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000'
+
+type SessionExpiredListener = () => void
+const sessionExpiredListeners: SessionExpiredListener[] = []
+
+/** Fired when the refresh token itself turns out to be dead — the caller (useAuthStore)
+ * uses this to flip isAuthenticated immediately instead of leaving stale UI state around
+ * until the next hard reload notices via hydrate(). */
+export function onSessionExpired(cb: SessionExpiredListener): void {
+  sessionExpiredListeners.push(cb)
+}
+
+function notifySessionExpired(): void {
+  sessionExpiredListeners.forEach((cb) => cb())
+}
 
 export class ApiError extends Error {
   status: number
@@ -29,12 +43,20 @@ async function refreshAccessToken(): Promise<string | null> {
       body: JSON.stringify({ refresh_token: refreshToken }),
     })
       .then(async (res) => {
-        if (!res.ok) return null
+        if (!res.ok) {
+          clearTokens()
+          notifySessionExpired()
+          return null
+        }
         const data = await res.json()
         setTokens(data.access_token, data.refresh_token)
         return data.access_token as string
       })
-      .catch(() => null)
+      .catch(() => {
+        clearTokens()
+        notifySessionExpired()
+        return null
+      })
       .finally(() => {
         refreshPromise = null
       })
@@ -42,6 +64,32 @@ async function refreshAccessToken(): Promise<string | null> {
 
   return refreshPromise
 }
+
+const PROACTIVE_REFRESH_MARGIN_MS = 60_000
+let proactiveRefreshTimer: ReturnType<typeof setTimeout> | null = null
+
+/** Refreshes ~60s before the access token actually expires, so a normal browsing
+ * session never hits a reactive 401 in the first place. Rescheduled on every
+ * token change (login, rotation, or logout — where it just clears the timer). */
+function scheduleProactiveRefresh(): void {
+  if (proactiveRefreshTimer) {
+    clearTimeout(proactiveRefreshTimer)
+    proactiveRefreshTimer = null
+  }
+
+  const expiryMs = getAccessTokenExpiryMs()
+  if (expiryMs == null) return
+
+  const delay = expiryMs - Date.now() - PROACTIVE_REFRESH_MARGIN_MS
+  if (delay <= 0) {
+    void refreshAccessToken()
+    return
+  }
+  proactiveRefreshTimer = setTimeout(() => void refreshAccessToken(), delay)
+}
+
+onTokensChanged(scheduleProactiveRefresh)
+scheduleProactiveRefresh()
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown
@@ -78,9 +126,8 @@ export async function apiFetch<T>(
     const newToken = await refreshAccessToken()
     if (newToken) {
       res = await doFetch()
-    } else {
-      clearTokens()
     }
+    // else: refreshAccessToken() already cleared tokens and fired onSessionExpired
   }
 
   if (!res.ok) {

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { clearTokens, getAccessToken } from '@/lib/api/tokens'
+import { onSessionExpired } from '@/lib/api/client'
 import { me } from '@/lib/api/auth'
 import { listMyPets } from '@/lib/api/pets'
 import type { Pet, UserResponse } from '@/lib/api/types'
@@ -21,7 +22,7 @@ interface AuthState {
   hydrate: () => Promise<void>
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   pets: [],
   activePet: null,
@@ -44,21 +45,42 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setActivePet: (activePet) => set({ activePet }),
 
-  hydrate: async () => {
-    if (!get().isHydrating) return
+  hydrate: () => {
+    if (!hydratePromise) {
+      hydratePromise = (async () => {
+        const token = getAccessToken()
+        if (!token) {
+          set({ isHydrating: false })
+          return
+        }
 
-    const token = getAccessToken()
-    if (!token) {
-      set({ isHydrating: false })
-      return
+        try {
+          const [user, pets] = await Promise.all([me(), listMyPets()])
+          set({ user, pets, activePet: pets[0] ?? null, isAuthenticated: true, isHydrating: false })
+        } catch {
+          clearTokens()
+          set({ user: null, pets: [], activePet: null, isAuthenticated: false, isHydrating: false })
+        }
+      })()
     }
-
-    try {
-      const [user, pets] = await Promise.all([me(), listMyPets()])
-      set({ user, pets, activePet: pets[0] ?? null, isAuthenticated: true, isHydrating: false })
-    } catch {
-      clearTokens()
-      set({ user: null, pets: [], activePet: null, isAuthenticated: false, isHydrating: false })
-    }
+    return hydratePromise
   },
 }))
+
+// Cached across calls (not store state) so React 18 StrictMode's double-invoked
+// mount effect can't race hydrate() into running the network calls twice.
+let hydratePromise: Promise<void> | null = null
+
+// The access token can die between requests (refresh token expired/revoked) without
+// any component explicitly calling logout() — sync the UI the moment that happens
+// instead of leaving it showing a stale "signed in" state until the next reload.
+onSessionExpired(() => {
+  clearTokens()
+  useAuthStore.setState({
+    user: null,
+    pets: [],
+    activePet: null,
+    isAuthenticated: false,
+    isHydrating: false,
+  })
+})
