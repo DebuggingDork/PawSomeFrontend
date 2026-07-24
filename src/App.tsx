@@ -7,6 +7,7 @@ import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
 import PetsPage from './pages/Pets'
 import PetProfilePage from './pages/PetProfile'
+import OwnerProfilePage from './pages/OwnerProfile'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
@@ -225,6 +226,7 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/pets" element={<PetsPage />} />
             <Route path="/pets/:petId" element={<PetProfilePage />} />
+            <Route path="/owners/:userId" element={<OwnerProfilePage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
