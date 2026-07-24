@@ -1,4 +1,4 @@
-import { Heart, X } from 'lucide-react'
+import { Heart, Star, X } from 'lucide-react'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -34,11 +34,29 @@ export function LikesReceivedList({ likes, isLoading, onAccept, onReject, respon
         return (
           <li
             key={like.id}
-            className="flex items-center gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-3"
+            className={`flex items-center gap-3 rounded-2xl border p-3 ${
+              like.is_super
+                ? 'border-sky-400/40 bg-sky-400/5'
+                : 'border-neutral-800/80 bg-neutral-900/60'
+            }`}
           >
-            <PetAvatar name={like.other_pet.name} photoUrl={like.other_pet.primary_photo_url} size="lg" />
+            <div className="relative flex-shrink-0">
+              <PetAvatar name={like.other_pet.name} photoUrl={like.other_pet.primary_photo_url} size="lg" />
+              {like.is_super && (
+                <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-sky-400 ring-2 ring-neutral-950">
+                  <Star className="h-2.5 w-2.5 text-neutral-950" fill="currentColor" />
+                </span>
+              )}
+            </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold text-white">{like.other_pet.name}</p>
+              <p className="truncate font-semibold text-white">
+                {like.other_pet.name}
+                {like.is_super && (
+                  <span className="ml-2 rounded-full bg-sky-400/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-400">
+                    Super Woof
+                  </span>
+                )}
+              </p>
               <p className="truncate text-xs text-neutral-500">liked {like.your_pet.name}</p>
             </div>
             <button
