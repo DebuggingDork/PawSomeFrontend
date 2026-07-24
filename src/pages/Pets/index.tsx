@@ -1,22 +1,39 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { PawPrint, Search } from 'lucide-react'
 import { browsePets } from '@/lib/api/pets'
 import { getBreeds } from '@/lib/api/matches'
-import type { BrowsePetsParams } from '@/lib/api/pets'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 
-function PetsPage() {
-  const [filters, setFilters] = useState<BrowsePetsParams>({
-    limit: 20,
-    offset: 0,
-  })
+const PAGE_SIZE = 6
 
-  const { data, isLoading } = useQuery({
+interface PetFilters {
+  species?: 'dog' | 'cat'
+  gender?: 'male' | 'female'
+  breed?: string
+}
+
+function PetsPage() {
+  const [filters, setFilters] = useState<PetFilters>({})
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['pets', 'browse', filters],
-    queryFn: () => browsePets(filters),
+    queryFn: ({ pageParam }) => browsePets({ ...filters, limit: PAGE_SIZE, offset: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const loaded = allPages.reduce((sum, page) => sum + page.items.length, 0)
+      return loaded < lastPage.total ? loaded : undefined
+    },
   })
 
   const breedsQuery = useQuery({
@@ -25,7 +42,25 @@ function PetsPage() {
     staleTime: 5 * 60_000,
   })
 
-  const pets = data?.items ?? []
+  const pets = data?.pages.flatMap((page) => page.items) ?? []
+  const total = data?.pages[0]?.total ?? 0
+
+  // Lazy-load the next page of pets as the sentinel scrolls into view.
+  useEffect(() => {
+    const node = sentinelRef.current
+    if (!node) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage()
+        }
+      },
+      { rootMargin: '400px' },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
   return (
     <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:pt-28">
@@ -107,11 +142,12 @@ function PetsPage() {
       {!isLoading && pets.length > 0 && (
         <>
           <div className="mb-4 text-sm text-neutral-400">
-            Found {data.total} pet{data.total !== 1 ? 's' : ''}
+            Found {total} pet{total !== 1 ? 's' : ''}
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pets.map((pet) => (
-              <div
+              <Link
+                to={`/pets/${pet.id}`}
                 key={pet.id}
                 className="group overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900/50 backdrop-blur transition-all hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20"
               >
@@ -121,6 +157,7 @@ function PetsPage() {
                     <img
                       src={pet.primary_photo_url}
                       alt={pet.name}
+                      loading="lazy"
                       className="h-full w-full object-cover transition-transform group-hover:scale-105"
                     />
                   ) : (
@@ -163,32 +200,21 @@ function PetsPage() {
                     </div>
                   )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
-          {/* Pagination */}
-          {data.total > filters.limit! && (
-            <div className="mt-8 flex justify-center gap-2">
-              <button
-                disabled={filters.offset === 0}
-                onClick={() => setFilters((f) => ({ ...f, offset: Math.max(0, f.offset! - f.limit!) }))}
-                className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-[#ff6b35] disabled:opacity-50 disabled:hover:border-neutral-700"
-              >
-                Previous
-              </button>
-              <span className="flex items-center px-4 text-sm text-neutral-400">
-                Page {Math.floor(filters.offset! / filters.limit!) + 1} of{' '}
-                {Math.ceil(data.total / filters.limit!)}
-              </span>
-              <button
-                disabled={filters.offset! + filters.limit! >= data.total}
-                onClick={() => setFilters((f) => ({ ...f, offset: f.offset! + f.limit! }))}
-                className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-[#ff6b35] disabled:opacity-50 disabled:hover:border-neutral-700"
-              >
-                Next
-              </button>
+          {/* Lazy-load sentinel */}
+          <div ref={sentinelRef} className="h-1" />
+          {isFetchingNextPage && (
+            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-80 rounded-lg" />
+              ))}
             </div>
+          )}
+          {!hasNextPage && pets.length > 0 && (
+            <p className="mt-8 text-center text-sm text-neutral-500">You've reached the end 🐾</p>
           )}
         </>
       )}
