@@ -393,3 +393,12 @@ export type ChatSocketEvent =
   | { type: 'message'; data: ChatMessage }
   | { type: 'typing'; data: { pet_id: string; is_typing: boolean } }
   | { type: 'read'; data: { pet_id: string; message_id: string; read_at: string } }
+  | { type: 'reaction'; data: { message_id: string; user_id: string; emoji: string } }
+  | { type: 'reaction_removed'; data: { message_id: string; user_id: string } }
+  | { type: 'message_deleted'; data: { message_id: string } }
+
+export interface ChatSearchResponse {
+  results: { message: ChatMessage; relevance_score: number }[]
+  total: number
+  query: string
+}

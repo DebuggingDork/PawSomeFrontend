@@ -1,6 +1,13 @@
 import { apiFetch, WS_BASE_URL } from './client'
 import { getAccessToken } from './tokens'
-import type { ChatHistoryResponse, ChatSocketEvent, ChatStatus, ReadReceipts } from './types'
+import type {
+  ChatHistoryResponse,
+  ChatReaction,
+  ChatSearchResponse,
+  ChatSocketEvent,
+  ChatStatus,
+  ReadReceipts,
+} from './types'
 
 export function getChatHistory(matchId: string, before?: string): Promise<ChatHistoryResponse> {
   const query = before ? `?before=${before}` : ''
@@ -20,6 +27,25 @@ export function markRead(matchId: string, messageId: string): Promise<void> {
 
 export function getReadReceipts(matchId: string): Promise<ReadReceipts> {
   return apiFetch<ReadReceipts>(`/chat/${matchId}/read-receipts`)
+}
+
+export function searchMessages(matchId: string, query: string): Promise<ChatSearchResponse> {
+  return apiFetch<ChatSearchResponse>(`/chat/${matchId}/search?q=${encodeURIComponent(query)}`)
+}
+
+export function deleteMessage(matchId: string, messageId: string): Promise<void> {
+  return apiFetch<void>(`/chat/${matchId}/messages/${messageId}`, { method: 'DELETE' })
+}
+
+export function addReaction(matchId: string, messageId: string, emoji: string): Promise<ChatReaction> {
+  return apiFetch<ChatReaction>(`/chat/${matchId}/messages/${messageId}/reactions`, {
+    method: 'POST',
+    body: { message_id: messageId, emoji },
+  })
+}
+
+export function removeReaction(matchId: string, messageId: string): Promise<void> {
+  return apiFetch<void>(`/chat/${matchId}/messages/${messageId}/reactions`, { method: 'DELETE' })
 }
 
 export interface ChatSocketHandlers {
