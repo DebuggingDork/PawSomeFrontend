@@ -11,6 +11,7 @@ import OwnerProfilePage from './pages/OwnerProfile'
 import NotFoundPage from './pages/NotFound'
 import SessionExpiredPage from './pages/SessionExpired'
 import MatchesPage from './pages/Matches'
+import EventsPage from './pages/Events'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import OnboardingPage from './pages/Onboarding'
@@ -106,6 +107,7 @@ function App() {
     { name: 'Community', link: '/community' },
     { name: 'Discover', link: '/discover' },
     { name: 'Matches', link: '/matches' },
+    { name: 'Events', link: '/events' },
     { name: 'Chat', link: '/chat' },
   ]
 
@@ -272,6 +274,7 @@ function App() {
             <Route path="/owners/:userId" element={<OwnerProfilePage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />
+            <Route path="/events" element={<EventsPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
