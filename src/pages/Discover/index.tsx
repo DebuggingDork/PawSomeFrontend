@@ -4,7 +4,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MapPinOff } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { ApiError } from '@/lib/api/client'
-import { browsePets, swipe as swipeApi, undoSwipe, getNotifications, acceptLike, rejectLike } from '@/lib/api/matches'
+import {
+  browsePets,
+  swipe as swipeApi,
+  undoSwipe,
+  getNotifications,
+  acceptLike,
+  rejectLike,
+  getSuperWoofStatus,
+} from '@/lib/api/matches'
 import { SwipeDeck } from '@/components/discover/SwipeDeck'
 import { LikesReceivedList } from '@/components/discover/LikesReceivedList'
 import { BrowseFiltersPanel } from '@/components/discover/BrowseFiltersPanel'
@@ -65,9 +73,25 @@ function DiscoverPage() {
     queryFn: () => getNotifications(false, 100),
     enabled: !!activePet && tab === 'likes',
   })
-  const likes = (notificationsQuery.data ?? []).filter((n) => n.notification_type === 'new_like' && !n.is_read)
+  const likes = (notificationsQuery.data ?? [])
+    .filter((n) => n.notification_type === 'new_like' && !n.is_read)
+    .sort((a, b) => Number(b.is_super) - Number(a.is_super))
 
-  const swipeMutation = useMutation({ mutationFn: swipeApi })
+  const superWoofQuery = useQuery({
+    queryKey: ['super-woof-remaining'],
+    queryFn: getSuperWoofStatus,
+    enabled: !!activePet,
+    staleTime: 30_000,
+  })
+
+  const swipeMutation = useMutation({
+    mutationFn: swipeApi,
+    onSuccess: (_result, variables) => {
+      if (variables.action === 'super_like') {
+        queryClient.invalidateQueries({ queryKey: ['super-woof-remaining'] })
+      }
+    },
+  })
 
   const undoMutation = useMutation({
     mutationFn: undoSwipe,
@@ -89,7 +113,7 @@ function DiscoverPage() {
     onSettled: () => setRespondingId(null),
   })
 
-  const handleSwipe = (candidate: BrowseCandidate, action: 'like' | 'skip') => {
+  const handleSwipe = (candidate: BrowseCandidate, action: 'like' | 'skip' | 'super_like') => {
     if (!activePet) {
       // If no active pet, just show a message or redirect to onboarding
       return
@@ -159,6 +183,7 @@ function DiscoverPage() {
                 onUndo={() => lastSwipe && activePet && undoMutation.mutate(lastSwipe.swipeId)}
                 canUndo={!!lastSwipe && !!activePet}
                 undoing={undoMutation.isPending}
+                superWoofRemaining={superWoofQuery.data?.remaining}
               />
             </>
           )}
