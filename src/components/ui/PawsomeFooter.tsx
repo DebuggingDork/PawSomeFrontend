@@ -1,4 +1,3 @@
-import React from "react";
 import { Mail, Heart, Share2, Globe, Rss, ExternalLink } from "lucide-react";
 import {
   FooterBackgroundGradient,

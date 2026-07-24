@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, MapPinOff, PawPrint } from 'lucide-react'
+import { Heart, MapPinOff } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { ApiError } from '@/lib/api/client'
 import { browsePets, swipe as swipeApi, undoSwipe, getNotifications, acceptLike, rejectLike } from '@/lib/api/matches'
@@ -14,27 +14,6 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import type { BrowseCandidate, BrowseFilters } from '@/lib/api/types'
 
 type Tab = 'discover' | 'likes'
-
-function NoPetPrompt() {
-  return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6">
-      <EmptyState
-        size="lg"
-        icon={PawPrint}
-        title="Add a pet to start discovering"
-        description="You'll need a pet profile with at least one photo before you can browse and swipe."
-        action={
-          <Link
-            to="/onboarding"
-            className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
-          >
-            Create pet profile
-          </Link>
-        }
-      />
-    </div>
-  )
-}
 
 function LocationNeededPrompt() {
   return (

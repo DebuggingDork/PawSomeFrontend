@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 
 interface PillTabsProps<T extends string> {
-  tabs: { key: T; label: string; badge?: number; icon?: LucideIcon }[]
+  tabs: readonly { key: T; label: string; badge?: number; icon?: LucideIcon }[]
   active: T
   onChange: (key: T) => void
   /** Unique per instance so simultaneous PillTabs on one page don't share a layout animation. */
