@@ -13,6 +13,8 @@ import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import OnboardingPage from './pages/Onboarding'
 import { getOnboardingStatus } from './lib/api/onboarding'
+import { getMyProfile } from './lib/api/users'
+import { PetAvatar } from './components/chat/PetAvatar'
 import {
   Navbar,
   NavBody,
@@ -26,7 +28,7 @@ import {
 import { GlobalLoader } from './components/ui/GlobalLoader'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
-import { Heart, LogOut, User } from 'lucide-react'
+import { Heart, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { NotificationBell } from './components/notifications/NotificationBell'
@@ -62,6 +64,13 @@ function App() {
   useEffect(() => {
     hydrate()
   }, [hydrate])
+
+  const { data: myProfile } = useQuery({
+    queryKey: ['my-profile'],
+    queryFn: getMyProfile,
+    enabled: isAuthenticated,
+    staleTime: 60_000,
+  })
 
   const navItems = [
     { name: 'Home', link: '/' },
@@ -104,9 +113,9 @@ function App() {
                   to="/profile"
                   title="Profile"
                   aria-label="Profile"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-[#ff6b35]"
+                  className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
                 >
-                  <User className="h-5 w-5" />
+                  <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
                 </Link>
               )}
               {isAuthenticated ? (
