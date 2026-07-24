@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, MapPinOff, PawPrint, SlidersHorizontal } from 'lucide-react'
+import { Heart, MapPinOff, PawPrint } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { ApiError } from '@/lib/api/client'
 import { browsePets, swipe as swipeApi, undoSwipe, getNotifications, acceptLike, rejectLike } from '@/lib/api/matches'
@@ -146,25 +146,6 @@ function DiscoverPage() {
 
       {tab === 'discover' && (
         <>
-          <div className="mb-4 flex items-center justify-end gap-2 text-xs text-neutral-500">
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            <label className="flex items-center gap-2">
-              Radius
-              <input
-                type="range"
-                min={5}
-                max={5000}
-                step={50}
-                value={filters.radius}
-                onChange={(e) => setFilters((f) => ({ ...f, radius: Number(e.target.value) }))}
-                className="accent-[#ff6b35]"
-              />
-              <span className="w-20 text-neutral-400">
-                {(filters.radius ?? 5000) >= 5000 ? 'All' : `${filters.radius} km`}
-              </span>
-            </label>
-          </div>
-
           <BrowseFiltersPanel filters={filters} onChange={setFilters} />
 
           {locationError && <LocationNeededPrompt />}

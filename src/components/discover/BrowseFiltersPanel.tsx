@@ -70,6 +70,24 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
             className="overflow-hidden"
           >
             <div className="space-y-4 border-t border-neutral-800/80 px-4 py-4">
+              <div>
+                <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-neutral-500">
+                  <span>Distance</span>
+                  <span className="text-neutral-400">
+                    {(filters.radius ?? 5000) >= 5000 ? 'Anywhere' : `${filters.radius} km`}
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min={5}
+                  max={5000}
+                  step={50}
+                  value={filters.radius ?? 5000}
+                  onChange={(e) => set({ radius: Number(e.target.value) })}
+                  className="w-full accent-[#ff6b35]"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-neutral-500">Species</label>
