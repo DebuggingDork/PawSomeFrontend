@@ -200,6 +200,7 @@ export interface BrowseCandidate {
   pet: Pet
   distance_km: number
   calculated_at: string
+  compatibility_score?: number | null
 }
 
 export interface BrowsePetsResponse {

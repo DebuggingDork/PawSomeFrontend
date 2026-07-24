@@ -15,7 +15,7 @@ interface SwipeCardContentProps {
 }
 
 export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
-  const { pet, distance_km } = candidate
+  const { pet, distance_km, compatibility_score } = candidate
   const photo = pet.primary_photo_url
 
   return (
@@ -25,6 +25,12 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-900">
           <PawPrint className="h-20 w-20 text-neutral-700" />
+        </div>
+      )}
+
+      {compatibility_score != null && (
+        <div className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white">
+          {compatibility_score}% match
         </div>
       )}
 
