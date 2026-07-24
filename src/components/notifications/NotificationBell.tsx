@@ -1,12 +1,20 @@
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Bell, Heart, X } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
-import { acceptLike, getNotifications, markNotificationsRead, rejectLike } from '@/lib/api/matches'
+import {
+  acceptLike,
+  connectNotificationSocket,
+  getNotifications,
+  markNotificationsRead,
+  rejectLike,
+} from '@/lib/api/matches'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
+import { NotificationToastStack, type ToastItem } from './NotificationToast'
+import type { NotificationPushEvent } from '@/lib/api/types'
 
 function timeAgo(iso: string) {
   const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000)
@@ -23,7 +31,10 @@ export function NotificationBell() {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
   const [respondingId, setRespondingId] = useState<string | null>(null)
+  const [toasts, setToasts] = useState<ToastItem[]>([])
   const panelRef = useRef<HTMLDivElement | null>(null)
+  const openRef = useRef(open)
+  openRef.current = open
 
   useOnClickOutside(panelRef, () => setOpen(false))
 
@@ -35,6 +46,32 @@ export function NotificationBell() {
   })
 
   const unreadCount = (notifications ?? []).filter((n) => !n.is_read).length
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  // Live push: new_like/new_match/new_message land instantly instead of
+  // waiting for the next poll or window-focus refetch. Only pops a toast
+  // when the dropdown isn't already open (it'd be redundant).
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const socket = connectNotificationSocket((event) => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      if (!openRef.current) {
+        setToasts((prev) => [...prev, { id: event.data.id, event }])
+      }
+    })
+
+    return () => socket.close()
+  }, [isAuthenticated, queryClient])
+
+  const handleToastClick = (event: NotificationPushEvent) => {
+    setToasts((prev) => prev.filter((t) => t.id !== event.data.id))
+    if (event.data.match_id) navigate(`/chat?match=${event.data.match_id}`)
+    else setOpen(true)
+  }
 
   const markReadMutation = useMutation({
     mutationFn: markNotificationsRead,
@@ -144,6 +181,8 @@ export function NotificationBell() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <NotificationToastStack toasts={toasts} onDismiss={dismissToast} onClick={handleToastClick} />
     </div>
   )
 }

@@ -257,9 +257,11 @@ export interface LikesReceivedResponse {
   total: number
 }
 
+export type NotificationType = 'new_match' | 'new_like' | 'new_message'
+
 export interface NotificationWithDetails {
   id: string
-  notification_type: 'new_match' | 'new_like'
+  notification_type: NotificationType
   message: string
   is_read: boolean
   created_at: string
@@ -267,6 +269,22 @@ export interface NotificationWithDetails {
   your_pet: { id: string; name: string; primary_photo_url: string | null }
   other_pet: { id: string; name: string; primary_photo_url: string | null }
   match_id: string | null
+}
+
+/** Lighter payload pushed over the live notifications WebSocket — just enough
+ * to show a toast immediately; the full row (with your_pet) comes from a
+ * REST refetch triggered alongside it. */
+export interface NotificationPushEvent {
+  type: 'notification'
+  data: {
+    id: string
+    notification_type: NotificationType
+    message: string
+    is_read: boolean
+    created_at: string
+    match_id: string | null
+    other_pet: { id: string; name: string; primary_photo_url: string | null }
+  }
 }
 
 export interface DailySwipeStats {

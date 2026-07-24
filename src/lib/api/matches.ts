@@ -1,4 +1,5 @@
-import { apiFetch } from './client'
+import { apiFetch, WS_BASE_URL } from './client'
+import { getAccessToken } from './tokens'
 import { getPet } from './pets'
 import type {
   BrowseFilters,
@@ -6,6 +7,7 @@ import type {
   Conversation,
   LikesReceivedResponse,
   MatchSummary,
+  NotificationPushEvent,
   NotificationWithDetails,
   SwipeHistoryFilters,
   SwipeHistoryResponse,
@@ -111,6 +113,10 @@ export function markNotificationsRead(notificationIds: string[]): Promise<void> 
   })
 }
 
+export function markAllNotificationsRead(): Promise<void> {
+  return apiFetch<void>('/matches/notifications/read-all', { method: 'POST' })
+}
+
 export function getSwipeStatistics(petId: string): Promise<SwipeStatistics> {
   return apiFetch<SwipeStatistics>(`/matches/statistics?pet_id=${petId}`)
 }
@@ -123,4 +129,26 @@ export function getSwipeHistory(petId: string, filters: SwipeHistoryFilters = {}
 export function getBreeds(species?: string): Promise<string[]> {
   const query = species ? `?${toQueryString({ species })}` : ''
   return apiFetch<string[]>(`/matches/breeds${query}`)
+}
+
+export interface NotificationSocket {
+  close: () => void
+}
+
+/** Opens the real-time notifications WebSocket — new_like/new_match/new_message
+ * push while connected, so the bell doesn't rely on polling alone. */
+export function connectNotificationSocket(onNotification: (event: NotificationPushEvent) => void): NotificationSocket {
+  const token = getAccessToken()
+  const socket = new WebSocket(`${WS_BASE_URL}/matches/notifications/ws?token=${encodeURIComponent(token ?? '')}`)
+
+  socket.onmessage = (event) => {
+    try {
+      const parsed = JSON.parse(event.data) as NotificationPushEvent
+      if (parsed.type === 'notification') onNotification(parsed)
+    } catch {
+      // ignore malformed frames
+    }
+  }
+
+  return { close: () => socket.close() }
 }
