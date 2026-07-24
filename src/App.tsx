@@ -8,6 +8,7 @@ import DiscoverPage from './pages/Discover'
 import CommunityPage from './pages/Community'
 import PetProfilePage from './pages/PetProfile'
 import OwnerProfilePage from './pages/OwnerProfile'
+import NotFoundPage from './pages/NotFound'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
@@ -229,6 +230,7 @@ function App() {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </div>
