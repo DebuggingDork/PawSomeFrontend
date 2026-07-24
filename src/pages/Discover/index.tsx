@@ -7,6 +7,7 @@ import { ApiError } from '@/lib/api/client'
 import { browsePets, swipe as swipeApi, undoSwipe, getNotifications, acceptLike, rejectLike } from '@/lib/api/matches'
 import { SwipeDeck } from '@/components/discover/SwipeDeck'
 import { LikesReceivedList } from '@/components/discover/LikesReceivedList'
+import { BrowseFiltersPanel } from '@/components/discover/BrowseFiltersPanel'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -159,10 +160,12 @@ function DiscoverPage() {
                 className="accent-[#ff6b35]"
               />
               <span className="w-20 text-neutral-400">
-                {filters.radius >= 5000 ? 'All' : `${filters.radius} km`}
+                {(filters.radius ?? 5000) >= 5000 ? 'All' : `${filters.radius} km`}
               </span>
             </label>
           </div>
+
+          <BrowseFiltersPanel filters={filters} onChange={setFilters} />
 
           {locationError && <LocationNeededPrompt />}
 
