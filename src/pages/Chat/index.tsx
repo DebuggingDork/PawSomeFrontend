@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, PawPrint, Search } from 'lucide-react'
+import { Send, PawPrint, Search, Calendar } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations } from '@/lib/api/matches'
 import type { Conversation } from '@/lib/api/types'
@@ -10,6 +10,7 @@ import { ChatBubble } from '@/components/chat/ChatBubble'
 import { TypingIndicator } from '@/components/chat/TypingIndicator'
 import { ConversationSidebar } from '@/components/chat/ConversationSidebar'
 import { ChatSearchPanel } from '@/components/chat/ChatSearchPanel'
+import { PlaydatePanel } from '@/components/chat/PlaydatePanel'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -29,6 +30,7 @@ function ChatPage() {
   const [conversationsLoading, setConversationsLoading] = useState(true)
   const [selected, setSelected] = useState<Conversation | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [playdatesOpen, setPlaydatesOpen] = useState(false)
 
   const scrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -81,9 +83,10 @@ function ChatPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, otherTyping])
 
-  // Close search whenever the conversation changes.
+  // Close search/playdates whenever the conversation changes.
   useEffect(() => {
     setSearchOpen(false)
+    setPlaydatesOpen(false)
   }, [selected?.matchId])
 
   const jumpToMessage = (messageId: string) => {
@@ -135,7 +138,24 @@ function ChatPage() {
                 )}
                 <button
                   type="button"
-                  onClick={() => setSearchOpen((v) => !v)}
+                  onClick={() => {
+                    setPlaydatesOpen((v) => !v)
+                    setSearchOpen(false)
+                  }}
+                  aria-label="Schedule playdate"
+                  title="Playdates"
+                  className={`rounded-full p-2 transition-colors ${
+                    playdatesOpen ? 'bg-neutral-800 text-white' : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  <Calendar className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchOpen((v) => !v)
+                    setPlaydatesOpen(false)
+                  }}
                   aria-label="Search messages"
                   className={`rounded-full p-2 transition-colors ${
                     searchOpen ? 'bg-neutral-800 text-white' : 'text-neutral-400 hover:text-white'
@@ -160,6 +180,15 @@ function ChatPage() {
                   matchId={selected.matchId}
                   onClose={() => setSearchOpen(false)}
                   onJumpToMessage={jumpToMessage}
+                />
+              )}
+
+              {playdatesOpen && (
+                <PlaydatePanel
+                  matchId={selected.matchId}
+                  yourPetId={selected.yourPetId}
+                  otherPetName={selected.otherPet.name}
+                  onClose={() => setPlaydatesOpen(false)}
                 />
               )}
 
