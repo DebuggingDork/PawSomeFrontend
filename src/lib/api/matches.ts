@@ -9,6 +9,10 @@ import type {
   MatchSummary,
   NotificationPushEvent,
   NotificationWithDetails,
+  Playdate,
+  PlaydateCreateInput,
+  PlaydateListResponse,
+  SuperWoofStatus,
   SwipeHistoryFilters,
   SwipeHistoryResponse,
   SwipeInput,
@@ -129,6 +133,39 @@ export function getSwipeHistory(petId: string, filters: SwipeHistoryFilters = {}
 export function getBreeds(species?: string): Promise<string[]> {
   const query = species ? `?${toQueryString({ species })}` : ''
   return apiFetch<string[]>(`/matches/breeds${query}`)
+}
+
+export function getSuperWoofStatus(): Promise<SuperWoofStatus> {
+  return apiFetch<SuperWoofStatus>('/matches/super-woof/remaining')
+}
+
+// --- Playdates ---
+
+export function getPlaydates(matchId: string): Promise<PlaydateListResponse> {
+  return apiFetch<PlaydateListResponse>(`/matches/${matchId}/playdates`)
+}
+
+export function proposePlaydate(matchId: string, body: PlaydateCreateInput): Promise<Playdate> {
+  return apiFetch<Playdate>(`/matches/${matchId}/playdates`, { method: 'POST', body })
+}
+
+export function respondToPlaydate(
+  matchId: string,
+  playdateId: string,
+  responseStatus: 'accepted' | 'declined',
+): Promise<Playdate> {
+  return apiFetch<Playdate>(`/matches/${matchId}/playdates/${playdateId}/respond`, {
+    method: 'POST',
+    body: { status: responseStatus },
+  })
+}
+
+export function cancelPlaydate(matchId: string, playdateId: string): Promise<Playdate> {
+  return apiFetch<Playdate>(`/matches/${matchId}/playdates/${playdateId}/cancel`, { method: 'POST' })
+}
+
+export function getUpcomingPlaydates(): Promise<PlaydateListResponse> {
+  return apiFetch<PlaydateListResponse>('/matches/playdates/upcoming')
 }
 
 export interface NotificationSocket {
