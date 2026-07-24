@@ -17,6 +17,44 @@ function notifySessionExpired(): void {
   sessionExpiredListeners.forEach((cb) => cb())
 }
 
+type ConnectivityListener = () => void
+const backendUnreachableListeners: ConnectivityListener[] = []
+const backendReachableListeners: ConnectivityListener[] = []
+
+/** Fired when a request fails at the network level (not just a 4xx/5xx response)
+ * while the browser itself reports being online — i.e. the internet is fine but
+ * our API isn't answering. Distinct from useOnlineStatus, which only tracks the
+ * browser's own connectivity. */
+export function onBackendUnreachable(cb: ConnectivityListener): void {
+  backendUnreachableListeners.push(cb)
+}
+
+/** Fired after any request that actually reaches the server (any HTTP status),
+ * so the UI can clear a previously-shown "server unreachable" state. */
+export function onBackendReachable(cb: ConnectivityListener): void {
+  backendReachableListeners.push(cb)
+}
+
+// Require a couple of consecutive network-level failures before declaring the
+// backend unreachable — a single flaky request (e.g. one background poll)
+// shouldn't take over the whole app with a full-page error.
+const UNREACHABLE_THRESHOLD = 2
+let consecutiveFailures = 0
+
+function notifyBackendUnreachable(): void {
+  if (typeof navigator !== 'undefined' && !navigator.onLine) return // useOnlineStatus already covers this case
+
+  consecutiveFailures += 1
+  if (consecutiveFailures >= UNREACHABLE_THRESHOLD) {
+    backendUnreachableListeners.forEach((cb) => cb())
+  }
+}
+
+function notifyBackendReachable(): void {
+  consecutiveFailures = 0
+  backendReachableListeners.forEach((cb) => cb())
+}
+
 export class ApiError extends Error {
   status: number
   detail: unknown
@@ -120,12 +158,23 @@ export async function apiFetch<T>(
     })
   }
 
-  let res = await doFetch()
+  const trackedFetch = async (): Promise<Response> => {
+    try {
+      const response = await doFetch()
+      notifyBackendReachable()
+      return response
+    } catch (err) {
+      notifyBackendUnreachable()
+      throw err
+    }
+  }
+
+  let res = await trackedFetch()
 
   if (res.status === 401 && auth && getRefreshToken()) {
     const newToken = await refreshAccessToken()
     if (newToken) {
-      res = await doFetch()
+      res = await trackedFetch()
     }
     // else: refreshAccessToken() already cleared tokens and fired onSessionExpired
   }

@@ -15,7 +15,9 @@ import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
 import OnboardingPage from './pages/Onboarding'
 import OfflinePage from './pages/Offline'
+import ServerErrorPage from './pages/ServerError'
 import { getOnboardingStatus } from './lib/api/onboarding'
+import { onBackendReachable, onBackendUnreachable } from './lib/api/client'
 import { getMyProfile } from './lib/api/users'
 import { PetAvatar } from './components/chat/PetAvatar'
 import {
@@ -80,10 +82,16 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { isAuthenticated, hydrate, logout } = useAuthStore()
   const isOnline = useOnlineStatus()
+  const [backendUnreachable, setBackendUnreachable] = useState(false)
 
   useEffect(() => {
     hydrate()
   }, [hydrate])
+
+  useEffect(() => {
+    onBackendUnreachable(() => setBackendUnreachable(true))
+    onBackendReachable(() => setBackendUnreachable(false))
+  }, [])
 
   const { data: myProfile } = useQuery({
     queryKey: ['my-profile'],
@@ -104,6 +112,14 @@ function App() {
     return (
       <div className="min-h-screen bg-neutral-950 text-white">
         <OfflinePage />
+      </div>
+    )
+  }
+
+  if (backendUnreachable) {
+    return (
+      <div className="min-h-screen bg-neutral-950 text-white">
+        <ServerErrorPage />
       </div>
     )
   }
