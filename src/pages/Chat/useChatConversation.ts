@@ -77,9 +77,16 @@ export function useChatConversation(selected: Conversation | null) {
         if (cancelled) return
 
         if (event.type === 'message') {
-          setMessages((prev) => (prev.some((m) => m.id === event.data.id) ? prev : [...prev, event.data]))
-          if (event.data.sender_pet_id !== selected.yourPetId) {
-            socket.sendRead(event.data.id)
+          // WS broadcasts omit reactions/is_read — normalize so ChatBubble never
+          // crashes on undefined.reactions when the live message arrives.
+          const incoming: ChatMessage = {
+            ...event.data,
+            is_read: event.data.is_read ?? false,
+            reactions: event.data.reactions ?? [],
+          }
+          setMessages((prev) => (prev.some((m) => m.id === incoming.id) ? prev : [...prev, incoming]))
+          if (incoming.sender_pet_id !== selected.yourPetId) {
+            socket.sendRead(incoming.id)
           }
         } else if (event.type === 'typing') {
           if (event.data.pet_id !== selected.otherPet.id) return
@@ -101,7 +108,7 @@ export function useChatConversation(selected: Conversation | null) {
                 ? {
                     ...m,
                     reactions: [
-                      ...m.reactions.filter((r) => r.user_id !== user_id),
+                      ...(m.reactions ?? []).filter((r) => r.user_id !== user_id),
                       { id: message_id + user_id, message_id, user_id, emoji, created_at: new Date().toISOString() },
                     ],
                   }
@@ -112,7 +119,9 @@ export function useChatConversation(selected: Conversation | null) {
           const { message_id, user_id } = event.data
           setMessages((prev) =>
             prev.map((m) =>
-              m.id === message_id ? { ...m, reactions: m.reactions.filter((r) => r.user_id !== user_id) } : m,
+              m.id === message_id
+                ? { ...m, reactions: (m.reactions ?? []).filter((r) => r.user_id !== user_id) }
+                : m,
             ),
           )
         } else if (event.type === 'message_deleted') {

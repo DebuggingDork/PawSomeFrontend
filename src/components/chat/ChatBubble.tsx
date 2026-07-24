@@ -32,8 +32,9 @@ export function ChatBubble({
 }: ChatBubbleProps) {
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  const myReaction = currentUserId ? message.reactions.find((r) => r.user_id === currentUserId) : undefined
-  const grouped = message.reactions.reduce<Record<string, number>>((acc, r) => {
+  const reactions = message.reactions ?? []
+  const myReaction = currentUserId ? reactions.find((r) => r.user_id === currentUserId) : undefined
+  const grouped = reactions.reduce<Record<string, number>>((acc, r) => {
     acc[r.emoji] = (acc[r.emoji] ?? 0) + 1
     return acc
   }, {})
