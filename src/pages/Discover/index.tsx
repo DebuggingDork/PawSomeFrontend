@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MapPinOff } from 'lucide-react'
@@ -39,7 +39,6 @@ function DiscoverPage() {
   const [tab, setTab] = useState<Tab>('discover')
   const [filters, setFilters] = useState<BrowseFilters>({ radius: 5000 }) // Default to 5000km to show all
   const [deck, setDeck] = useState<BrowseCandidate[]>([])
-  const [loadedCandidates, setLoadedCandidates] = useState<BrowseCandidate[] | null>(null)
   const [lastSwipe, setLastSwipe] = useState<{ swipeId: string; candidate: BrowseCandidate } | null>(null)
   const [respondingId, setRespondingId] = useState<string | null>(null)
 
@@ -50,10 +49,14 @@ function DiscoverPage() {
     retry: false,
   })
 
-  // Seed the locally-mutable deck from the query result exactly once per fetch
-  // (React's documented "adjust state during render" escape hatch, not an effect).
-  if (browseQuery.data && browseQuery.data.candidates !== loadedCandidates) {
-    setLoadedCandidates(browseQuery.data.candidates)
+  // Seed the locally-mutable deck once per distinct (pet, filters) combo — keyed
+  // explicitly rather than by data reference, so a background refetch (e.g. after
+  // an unrelated mutation invalidates the 'browse' query) never silently wipes
+  // out the swipes the user has already made against the currently-loaded deck.
+  const browseKey = JSON.stringify([activePet?.id, filters])
+  const seededKeyRef = useRef<string | null>(null)
+  if (browseQuery.data && seededKeyRef.current !== browseKey) {
+    seededKeyRef.current = browseKey
     setDeck(browseQuery.data.candidates)
   }
 

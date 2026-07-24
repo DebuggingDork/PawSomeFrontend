@@ -73,13 +73,12 @@ export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing }: Swi
     if (!top || exiting) return
     setExiting(true)
     onSwipe(top, action)
-    setTimeout(() => setExiting(false), 50)
   }
 
   return (
     <div className="flex flex-col items-center">
       <div className="relative h-[26rem] w-full max-w-sm sm:h-[30rem]">
-        <AnimatePresence>
+        <AnimatePresence onExitComplete={() => setExiting(false)}>
           {visible.map((candidate, i) => (
             <DraggableCard
               key={candidate.pet.id}
