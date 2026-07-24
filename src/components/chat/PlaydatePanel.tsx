@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { X, Plus } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { X, Plus, CalendarHeart } from 'lucide-react'
 import { getPlaydates, proposePlaydate, respondToPlaydate, cancelPlaydate } from '@/lib/api/matches'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PlaydateCard } from './PlaydateCard'
@@ -12,6 +13,9 @@ interface PlaydatePanelProps {
   otherPetName: string
   onClose: () => void
 }
+
+const FIELD =
+  'w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
 
 function defaultDateTimeLocal(): string {
   const d = new Date(Date.now() + 24 * 60 * 60 * 1000) // default: this time tomorrow
@@ -70,18 +74,28 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
   })
 
   const canSubmit = locationName.trim().length > 0 && lat !== null && lng !== null && when.length > 0
-
   const playdates = playdatesQuery.data?.items ?? []
 
   return (
-    <div className="flex-shrink-0 max-h-80 overflow-y-auto border-b border-neutral-800/80 p-3">
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: 'auto', opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="flex-shrink-0 max-h-80 overflow-y-auto border-b border-neutral-800/80 bg-gradient-to-b from-[#ff6b35]/5 to-transparent p-3"
+    >
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Playdates with {otherPetName}</h3>
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow shadow-[#ff6b35]/30">
+            <CalendarHeart className="h-4 w-4" />
+          </span>
+          Playdates with {otherPetName}
+        </h3>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="flex items-center gap-1 rounded-lg bg-neutral-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-neutral-700"
+            className="flex items-center gap-1 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
           >
             <Plus className="h-3.5 w-3.5" /> Propose
           </button>
@@ -92,21 +106,18 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
       </div>
 
       {showForm && (
-        <form
+        <motion.form
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
           onSubmit={(e) => {
             e.preventDefault()
             if (canSubmit) proposeMutation.mutate()
           }}
-          className="mb-3 space-y-3 rounded-xl border border-neutral-800 bg-neutral-950/60 p-3"
+          className="mb-3 space-y-3 rounded-xl border border-neutral-800 bg-neutral-950/70 p-3"
         >
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-neutral-500">When</span>
-            <input
-              type="datetime-local"
-              value={when}
-              onChange={(e) => setWhen(e.target.value)}
-              className="w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
-            />
+            <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className={FIELD} />
           </label>
 
           <label className="block">
@@ -116,11 +127,18 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
               placeholder="Cubbon Park dog run"
-              className="w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+              className={FIELD}
             />
           </label>
 
-          <LocationPicker latitude={lat} longitude={lng} onChange={(newLat, newLng) => { setLat(newLat); setLng(newLng) }} />
+          <LocationPicker
+            latitude={lat}
+            longitude={lng}
+            onChange={(newLat, newLng) => {
+              setLat(newLat)
+              setLng(newLng)
+            }}
+          />
 
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-neutral-500">Note (optional)</span>
@@ -130,21 +148,19 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
               rows={2}
               maxLength={1000}
               placeholder="Bring water for the pups!"
-              className="w-full resize-none rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+              className={`${FIELD} resize-none`}
             />
           </label>
 
           <button
             type="submit"
             disabled={!canSubmit || proposeMutation.isPending}
-            className="w-full rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-[#ff6b35]/30 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {proposeMutation.isPending ? 'Sending…' : 'Send proposal'}
           </button>
-          {proposeMutation.isError && (
-            <p className="text-xs text-red-400">Could not send the proposal — try again.</p>
-          )}
-        </form>
+          {proposeMutation.isError && <p className="text-xs text-red-400">Could not send the proposal — try again.</p>}
+        </motion.form>
       )}
 
       {playdatesQuery.isLoading && (
@@ -154,7 +170,10 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
       )}
 
       {!playdatesQuery.isLoading && playdates.length === 0 && !showForm && (
-        <p className="py-4 text-center text-sm text-neutral-500">No playdates yet — propose one!</p>
+        <div className="flex flex-col items-center gap-1 py-6 text-center">
+          <CalendarHeart className="h-8 w-8 text-neutral-700" />
+          <p className="text-sm text-neutral-500">No playdates yet — propose one!</p>
+        </div>
       )}
 
       <div className="space-y-2">
@@ -179,6 +198,6 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
