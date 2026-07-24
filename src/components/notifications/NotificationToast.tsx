@@ -6,13 +6,15 @@ import type { NotificationPushEvent } from '@/lib/api/types'
 
 const TOAST_DURATION_MS = 5000
 
-const TYPE_ICON = {
+/** Shared per-type styling — also used by NotificationBell's dropdown rows
+ * so a "new match" (say) looks the same whether it's in a toast or the list. */
+export const NOTIFICATION_TYPE_ICON = {
   new_like: Heart,
   new_match: Sparkles,
   new_message: MessageCircle,
 }
 
-const TYPE_ACCENT = {
+export const NOTIFICATION_TYPE_ACCENT = {
   new_like: 'text-[#ff6b35]',
   new_match: 'text-pink-400',
   new_message: 'text-sky-400',
@@ -36,7 +38,7 @@ function Toast({ toast, onDismiss, onClick }: { toast: ToastItem; onDismiss: (id
   }, [toast.id, onDismiss])
 
   const { data } = toast.event
-  const Icon = TYPE_ICON[data.notification_type]
+  const Icon = NOTIFICATION_TYPE_ICON[data.notification_type]
 
   return (
     <motion.button
@@ -51,7 +53,7 @@ function Toast({ toast, onDismiss, onClick }: { toast: ToastItem; onDismiss: (id
       <PetAvatar name={data.other_pet.name} photoUrl={data.other_pet.primary_photo_url} size="md" />
       <div className="min-w-0 flex-1">
         <div className="mb-0.5 flex items-center gap-1.5">
-          <Icon className={`h-3.5 w-3.5 ${TYPE_ACCENT[data.notification_type]}`} />
+          <Icon className={`h-3.5 w-3.5 ${NOTIFICATION_TYPE_ACCENT[data.notification_type]}`} />
           <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
             {data.notification_type === 'new_match' ? "It's a match" : data.notification_type === 'new_like' ? 'New like' : 'New message'}
           </span>

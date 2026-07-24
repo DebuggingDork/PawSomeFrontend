@@ -2,18 +2,19 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Bell, Heart, X } from 'lucide-react'
+import { Bell, CheckCheck, Heart, X } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import {
   acceptLike,
   connectNotificationSocket,
   getNotifications,
+  markAllNotificationsRead,
   markNotificationsRead,
   rejectLike,
 } from '@/lib/api/matches'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
-import { NotificationToastStack, type ToastItem } from './NotificationToast'
+import { NOTIFICATION_TYPE_ACCENT, NOTIFICATION_TYPE_ICON, NotificationToastStack, type ToastItem } from './NotificationToast'
 import type { NotificationPushEvent } from '@/lib/api/types'
 
 function timeAgo(iso: string) {
@@ -77,6 +78,10 @@ export function NotificationBell() {
     mutationFn: markNotificationsRead,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
   })
+  const markAllReadMutation = useMutation({
+    mutationFn: markAllNotificationsRead,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+  })
   const acceptMutation = useMutation({
     mutationFn: acceptLike,
     onSuccess: (result) => {
@@ -119,8 +124,18 @@ export function NotificationBell() {
             transition={{ duration: 0.15 }}
             className="absolute right-0 top-12 z-50 max-h-[28rem] w-80 overflow-y-auto rounded-2xl border border-white/10 bg-neutral-900/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
           >
-            <div className="border-b border-neutral-800 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
               <h3 className="font-display font-bold text-white">Notifications</h3>
+              {unreadCount > 0 && (
+                <button
+                  onClick={() => markAllReadMutation.mutate()}
+                  disabled={markAllReadMutation.isPending}
+                  className="flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-white disabled:opacity-50"
+                >
+                  <CheckCheck className="h-3.5 w-3.5" />
+                  Mark all read
+                </button>
+              )}
             </div>
 
             {(!notifications || notifications.length === 0) && (
@@ -128,10 +143,17 @@ export function NotificationBell() {
             )}
 
             <ul className="divide-y divide-neutral-800/80">
-              {notifications?.map((n) => (
+              {notifications?.map((n) => {
+                const TypeIcon = NOTIFICATION_TYPE_ICON[n.notification_type]
+                return (
                 <li key={n.id} className={`px-4 py-3 ${n.is_read ? 'opacity-60' : ''}`}>
                   <div className="flex items-start gap-3">
-                    <PetAvatar name={n.other_pet.name} photoUrl={n.other_pet.primary_photo_url} size="sm" />
+                    <div className="relative flex-shrink-0">
+                      <PetAvatar name={n.other_pet.name} photoUrl={n.other_pet.primary_photo_url} size="sm" />
+                      <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 ring-2 ring-neutral-900">
+                        <TypeIcon className={`h-2.5 w-2.5 ${NOTIFICATION_TYPE_ACCENT[n.notification_type]}`} />
+                      </span>
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-neutral-200">{n.message}</p>
                       <p className="mt-0.5 text-xs text-neutral-500">{timeAgo(n.created_at)}</p>
@@ -161,7 +183,7 @@ export function NotificationBell() {
                         </div>
                       )}
 
-                      {n.notification_type === 'new_match' && (
+                      {(n.notification_type === 'new_match' || n.notification_type === 'new_message') && n.match_id && (
                         <button
                           onClick={() => {
                             if (!n.is_read) markReadMutation.mutate([n.id])
@@ -176,7 +198,8 @@ export function NotificationBell() {
                     </div>
                   </div>
                 </li>
-              ))}
+                )
+              })}
             </ul>
           </motion.div>
         )}
