@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Send, PawPrint } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations } from '@/lib/api/matches'
-import { getChatHistory, getChatStatus, connectChatSocket, type ChatSocket } from '@/lib/api/chat'
+import { getChatHistory, getChatStatus, getReadReceipts, connectChatSocket, type ChatSocket } from '@/lib/api/chat'
 import type { ChatMessage, Conversation } from '@/lib/api/types'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { ChatBubble } from '@/components/chat/ChatBubble'
@@ -83,8 +83,24 @@ function ChatPage() {
       setOtherTyping(false)
       setConnected(false)
       try {
-        const history = await getChatHistory(selected.matchId)
-        if (!cancelled) setMessages(history.messages)
+        // Fetch together: read-receipts reconciliation needs the history's message
+        // order, and doing this in one pass avoids a second setMessages clobbering it.
+        const [history, receipts] = await Promise.all([
+          getChatHistory(selected.matchId),
+          getReadReceipts(selected.matchId).catch(() => null),
+        ])
+        if (cancelled) return
+
+        let messages = history.messages
+        if (receipts?.other_last_read) {
+          const readUpToIndex = messages.findIndex((m) => m.id === receipts.other_last_read)
+          if (readUpToIndex !== -1) {
+            messages = messages.map((m, i) =>
+              i <= readUpToIndex && m.sender_pet_id === selected.yourPetId ? { ...m, is_read: true } : m,
+            )
+          }
+        }
+        setMessages(messages)
       } finally {
         if (!cancelled) setMessagesLoading(false)
       }

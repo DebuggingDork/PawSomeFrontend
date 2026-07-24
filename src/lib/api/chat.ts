@@ -1,6 +1,6 @@
 import { apiFetch, WS_BASE_URL } from './client'
 import { getAccessToken } from './tokens'
-import type { ChatHistoryResponse, ChatSocketEvent, ChatStatus } from './types'
+import type { ChatHistoryResponse, ChatSocketEvent, ChatStatus, ReadReceipts } from './types'
 
 export function getChatHistory(matchId: string, before?: string): Promise<ChatHistoryResponse> {
   const query = before ? `?before=${before}` : ''
@@ -16,6 +16,10 @@ export function markRead(matchId: string, messageId: string): Promise<void> {
     method: 'POST',
     body: { message_id: messageId },
   })
+}
+
+export function getReadReceipts(matchId: string): Promise<ReadReceipts> {
+  return apiFetch<ReadReceipts>(`/chat/${matchId}/read-receipts`)
 }
 
 export interface ChatSocketHandlers {
