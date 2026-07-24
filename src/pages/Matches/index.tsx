@@ -80,9 +80,11 @@ function MatchesPage() {
                 <SafetyMenu
                   userId={conversation.otherPet.owner.id}
                   petId={conversation.otherPet.id}
+                  matchId={conversation.matchId}
                   otherName={conversation.otherPet.name}
                   className="absolute right-3 top-3"
                   onBlocked={() => conversationsQuery.refetch()}
+                  onUnmatched={() => conversationsQuery.refetch()}
                 />
               )}
               <div className="mb-4 flex items-center gap-3">

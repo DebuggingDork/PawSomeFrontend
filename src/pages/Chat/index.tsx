@@ -147,8 +147,10 @@ function ChatPage() {
                   <SafetyMenu
                     userId={selected.otherPet.owner.id}
                     petId={selected.otherPet.id}
+                    matchId={selected.matchId}
                     otherName={selected.otherPet.name}
                     onBlocked={() => setSelected(null)}
+                    onUnmatched={() => setSelected(null)}
                   />
                 )}
               </div>

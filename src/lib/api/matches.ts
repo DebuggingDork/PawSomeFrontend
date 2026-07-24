@@ -70,6 +70,20 @@ export function undoSwipe(swipeId: string): Promise<UndoSwipeResult> {
   return apiFetch<UndoSwipeResult>('/matches/undo-swipe', { method: 'POST', body: { swipe_id: swipeId } })
 }
 
+export interface UnmatchResult {
+  message: string
+  match_id: string
+  blocked: boolean
+  notification_sent: boolean
+}
+
+export function unmatch(matchId: string, blockUser = false): Promise<UnmatchResult> {
+  return apiFetch<UnmatchResult>(`/matches/${matchId}/unmatch`, {
+    method: 'POST',
+    body: { block_user: blockUser },
+  })
+}
+
 export function getLikesReceived(petId: string): Promise<LikesReceivedResponse> {
   return apiFetch<LikesReceivedResponse>(`/matches/likes-received?pet_id=${petId}`)
 }
