@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { PawPrint, Search } from 'lucide-react'
 import { browsePets } from '@/lib/api/pets'
+import { getBreeds } from '@/lib/api/matches'
 import type { BrowsePetsParams } from '@/lib/api/pets'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -16,6 +17,12 @@ function CatalogPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['pets', 'catalog', filters],
     queryFn: () => browsePets(filters),
+  })
+
+  const breedsQuery = useQuery({
+    queryKey: ['breeds', filters.species],
+    queryFn: () => getBreeds(filters.species),
+    staleTime: 5 * 60_000,
   })
 
   const pets = data?.items ?? []
@@ -65,11 +72,17 @@ function CatalogPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
             <input
               type="text"
+              list="catalog-breed-options"
               placeholder="Search breed..."
               value={filters.breed ?? ''}
               onChange={(e) => setFilters((f) => ({ ...f, breed: e.target.value || undefined }))}
               className="w-full rounded-lg border border-neutral-700 bg-neutral-800 pl-10 pr-4 py-2 text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
             />
+            <datalist id="catalog-breed-options">
+              {(breedsQuery.data ?? []).map((breed) => (
+                <option key={breed} value={breed} />
+              ))}
+            </datalist>
           </div>
         </div>
       </div>
