@@ -201,10 +201,14 @@ export interface BrowsePetsResponse {
 
 export interface BrowseFilters {
   species?: string
+  breed?: string
   age_min?: number
   age_max?: number
   gender?: string
   radius?: number
+  is_vaccinated?: boolean
+  is_neutered?: boolean
+  is_trained?: boolean
   limit?: number
 }
 
@@ -267,6 +271,29 @@ export interface SwipeStatistics {
   avg_response_time_minutes: number | null
   last_30_days: DailySwipeStats[]
   top_breeds_liked: TopBreed[]
+}
+
+export interface SwipeHistoryItem {
+  swipe_id: string
+  action: 'like' | 'skip'
+  created_at: string
+  target_pet: Pet & { owner?: PetOwner }
+}
+
+export interface SwipeHistoryResponse {
+  swipes: SwipeHistoryItem[]
+  total: number
+  limit: number
+  offset: number
+}
+
+export interface SwipeHistoryFilters {
+  action?: 'like' | 'skip'
+  breed?: string
+  date_from?: string
+  date_to?: string
+  limit?: number
+  offset?: number
 }
 
 // --- Favorites / blocks / reports ---
@@ -336,6 +363,13 @@ export interface ChatStatus {
   other_pet_id: string
   is_online: boolean
   message_count: number
+}
+
+export interface ReadReceipts {
+  match_id: string
+  your_last_read: string | null
+  other_last_read: string | null
+  unread_count: number
 }
 
 /** A match enriched with the other pet's public profile, for display in the UI. */
