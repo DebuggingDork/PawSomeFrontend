@@ -99,6 +99,14 @@ export interface OnboardingStatus {
 
 // --- Users / profile ---
 
+export interface PetSummary {
+  id: string
+  name: string
+  species: string
+  breed: string
+  primary_photo_url: string | null
+}
+
 export interface UserProfile {
   id: string
   full_name: string | null
@@ -110,6 +118,7 @@ export interface UserProfile {
   is_verified?: boolean
   latitude?: number | null
   longitude?: number | null
+  pets: PetSummary[]
 }
 
 export interface UserProfileUpdateInput {

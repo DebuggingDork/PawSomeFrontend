@@ -6,6 +6,7 @@ import ResetPasswordPage from './pages/ResetPassword'
 import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
 import PetsPage from './pages/Pets'
+import PetProfilePage from './pages/PetProfile'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
@@ -223,6 +224,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/pets" element={<PetsPage />} />
+            <Route path="/pets/:petId" element={<PetProfilePage />} />
             <Route path="/discover" element={<DiscoverPage />} />
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/chat" element={<ChatPage />} />
