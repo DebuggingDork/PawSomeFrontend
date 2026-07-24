@@ -8,14 +8,14 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 
-function CatalogPage() {
+function PetsPage() {
   const [filters, setFilters] = useState<BrowsePetsParams>({
     limit: 20,
     offset: 0,
   })
 
   const { data, isLoading } = useQuery({
-    queryKey: ['pets', 'catalog', filters],
+    queryKey: ['pets', 'browse', filters],
     queryFn: () => browsePets(filters),
   })
 
@@ -30,8 +30,8 @@ function CatalogPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:pt-28">
       <div className="mb-8">
-        <h1 className="font-display text-3xl font-bold text-white mb-2">Pet Catalog</h1>
-        <p className="text-neutral-400">Browse all available pets looking for matches</p>
+        <h1 className="font-display text-3xl font-bold text-white mb-2">Meet the Pets</h1>
+        <p className="text-neutral-400">Say hello to pets nearby looking for playdates and new friends</p>
       </div>
 
       {/* Filters */}
@@ -72,13 +72,13 @@ function CatalogPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
             <input
               type="text"
-              list="catalog-breed-options"
+              list="pets-breed-options"
               placeholder="Search breed..."
               value={filters.breed ?? ''}
               onChange={(e) => setFilters((f) => ({ ...f, breed: e.target.value || undefined }))}
               className="w-full rounded-lg border border-neutral-700 bg-neutral-800 pl-10 pr-4 py-2 text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
             />
-            <datalist id="catalog-breed-options">
+            <datalist id="pets-breed-options">
               {(breedsQuery.data ?? []).map((breed) => (
                 <option key={breed} value={breed} />
               ))}
@@ -196,4 +196,4 @@ function CatalogPage() {
   )
 }
 
-export default CatalogPage
+export default PetsPage
