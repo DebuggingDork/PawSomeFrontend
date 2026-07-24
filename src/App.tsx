@@ -135,7 +135,7 @@ function App() {
       <SessionExpiryWatcher />
       
       <div className="min-h-screen bg-neutral-950 text-white">
-        {/* Sticky Navigation Bar — full-bleed bar, content constrained */}
+        {/* Sticky Navigation Bar — full-bleed translucent glass */}
         <Navbar>
           {/* Desktop Navigation */}
           <NavBody>

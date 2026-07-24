@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -41,13 +41,24 @@ interface MobileNavMenuProps {
   onClose: () => void;
 }
 
-/** Full-bleed fixed bar — background spans the viewport; content stays
- * constrained inside NavBody / MobileNav. */
+/** Full-bleed fixed bar with translucent glass that frosts more on scroll. */
 export const Navbar = ({ children, className }: NavbarProps) => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <div
       className={cn(
-        "fixed inset-x-0 top-0 z-50 w-full border-b border-white/10 bg-neutral-950/95",
+        "fixed inset-x-0 top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ease-out",
+        scrolled
+          ? "border-b border-white/10 bg-neutral-950/65 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
+          : "border-b border-white/5 bg-neutral-950/35 backdrop-blur-md",
         className,
       )}
     >
@@ -144,7 +155,7 @@ export const MobileNavMenu = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
           className={cn(
-            "absolute inset-x-0 top-full z-50 flex w-full flex-col items-start justify-start gap-4 border-b border-white/10 bg-neutral-950 px-4 py-8 shadow-lg shadow-black/40",
+            "absolute inset-x-0 top-full z-50 flex w-full flex-col items-start justify-start gap-4 border-b border-white/10 bg-neutral-950/90 backdrop-blur-xl px-4 py-8 shadow-lg shadow-black/40",
             className,
           )}
         >
