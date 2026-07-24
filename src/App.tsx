@@ -9,6 +9,7 @@ import CommunityPage from './pages/Community'
 import PetProfilePage from './pages/PetProfile'
 import OwnerProfilePage from './pages/OwnerProfile'
 import NotFoundPage from './pages/NotFound'
+import SessionExpiredPage from './pages/SessionExpired'
 import MatchesPage from './pages/Matches'
 import ChatPage from './pages/Chat'
 import ProfilePage from './pages/Profile'
@@ -57,6 +58,21 @@ function OnboardingGate() {
   return null
 }
 
+/** Redirects to /session-expired the moment an active session dies mid-use
+ * (see useAuthStore's onSessionExpired handler for how the flag gets set). */
+function SessionExpiryWatcher() {
+  const { sessionJustExpired, clearSessionExpiredFlag } = useAuthStore()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!sessionJustExpired) return
+    clearSessionExpiredFlag()
+    navigate('/session-expired')
+  }, [sessionJustExpired, clearSessionExpiredFlag, navigate])
+
+  return null
+}
+
 function App() {
   useSmoothScroll()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -86,6 +102,7 @@ function App() {
       {/* Global Loader - shows loading states from anywhere in the app */}
       <GlobalLoader />
       <OnboardingGate />
+      <SessionExpiryWatcher />
       
       <div className="min-h-screen bg-neutral-950 text-white">
         {/* Sticky Navigation Bar - plain, solid, no glassmorphism */}
@@ -230,6 +247,7 @@ function App() {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/session-expired" element={<SessionExpiredPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

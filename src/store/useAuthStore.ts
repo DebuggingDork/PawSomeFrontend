@@ -15,11 +15,15 @@ interface AuthState {
   isAuthenticated: boolean
   /** True while the store is trying to resume a session from a stored token. */
   isHydrating: boolean
+  /** Set when an active session died mid-use (not on a fresh boot with already-dead
+   * tokens) — App.tsx watches this to redirect to /session-expired exactly once. */
+  sessionJustExpired: boolean
   login: (user: User, pets: Pet[]) => void
   logout: () => void
   setActivePet: (pet: Pet | null) => void
   /** Resumes a session from a persisted access token on app boot. Safe to call once. */
   hydrate: () => Promise<void>
+  clearSessionExpiredFlag: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -28,6 +32,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   activePet: null,
   isAuthenticated: false,
   isHydrating: true,
+  sessionJustExpired: false,
 
   login: (user, pets) =>
     set({
@@ -44,6 +49,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   setActivePet: (activePet) => set({ activePet }),
+
+  clearSessionExpiredFlag: () => set({ sessionJustExpired: false }),
 
   hydrate: () => {
     if (!hydratePromise) {
@@ -75,6 +82,11 @@ let hydratePromise: Promise<void> | null = null
 // any component explicitly calling logout() — sync the UI the moment that happens
 // instead of leaving it showing a stale "signed in" state until the next reload.
 onSessionExpired(() => {
+  // Only flag it as a mid-use expiry (redirect-worthy) if the user was actually
+  // signed in already — a fresh page load with already-dead stored tokens is just
+  // "not logged in," not a session that expired out from under them.
+  const wasActivelySignedIn = useAuthStore.getState().isAuthenticated
+
   clearTokens()
   useAuthStore.setState({
     user: null,
@@ -82,5 +94,6 @@ onSessionExpired(() => {
     activePet: null,
     isAuthenticated: false,
     isHydrating: false,
+    sessionJustExpired: wasActivelySignedIn,
   })
 })
