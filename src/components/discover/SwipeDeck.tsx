@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
-import { Heart, X, Undo2 } from 'lucide-react'
+import { Heart, X, Undo2, Star } from 'lucide-react'
 import { SwipeCardContent } from './SwipeCard'
 import type { BrowseCandidate } from '@/lib/api/types'
 
@@ -58,22 +58,25 @@ function DraggableCard({ candidate, isTop, stackIndex, onSwiped }: DraggableCard
 
 interface SwipeDeckProps {
   candidates: BrowseCandidate[]
-  onSwipe: (candidate: BrowseCandidate, action: 'like' | 'skip') => void
+  onSwipe: (candidate: BrowseCandidate, action: 'like' | 'skip' | 'super_like') => void
   onUndo: () => void
   canUndo: boolean
   undoing: boolean
+  superWoofRemaining?: number
 }
 
-export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing }: SwipeDeckProps) {
+export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, superWoofRemaining }: SwipeDeckProps) {
   const [exiting, setExiting] = useState(false)
   const visible = candidates.slice(0, VISIBLE_CARDS)
   const top = visible[0]
 
-  const handleSwiped = (action: 'like' | 'skip') => {
+  const handleSwiped = (action: 'like' | 'skip' | 'super_like') => {
     if (!top || exiting) return
     setExiting(true)
     onSwipe(top, action)
   }
+
+  const superWoofDisabled = !top || superWoofRemaining === 0
 
   return (
     <div className="flex flex-col items-center">
@@ -116,7 +119,22 @@ export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing }: Swi
         >
           <Heart className="h-7 w-7" fill="currentColor" />
         </button>
-        <div className="w-11" />
+        <div className="relative">
+          <button
+            onClick={() => handleSwiped('super_like')}
+            disabled={superWoofDisabled}
+            aria-label="Super Woof"
+            title={superWoofRemaining === 0 ? "You've used today's Super Woof" : 'Super Woof — jump to the top of their likes'}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-sky-400/40 bg-neutral-900 text-sky-400 transition-colors hover:bg-sky-400/10 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <Star className="h-5 w-5" fill="currentColor" />
+          </button>
+          {superWoofRemaining != null && superWoofRemaining > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-sky-400 px-1 text-[10px] font-bold text-neutral-950">
+              {superWoofRemaining}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )
