@@ -31,11 +31,35 @@
   --color-accent-900: #881337;
 
   --animate-shimmer: shimmer 1.6s infinite;
+  --animate-gradient-pan: gradient-pan 4s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
 }
 
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
+  }
+}
+
+/* Pans a wide gradient horizontally — pair with bg-[size:200%_auto] for a
+   living gradient on borders, text, and event covers. */
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Gentle bob for decorative accents (paw glyphs, stamps). */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
   }
 }
 
