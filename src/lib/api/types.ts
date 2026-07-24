@@ -233,7 +233,7 @@ export interface BrowseFilters {
 export interface SwipeInput {
   pet_id: string
   target_pet_id: string
-  action: 'like' | 'skip'
+  action: 'like' | 'skip' | 'super_like'
 }
 
 export interface SwipeResult {
@@ -257,13 +257,19 @@ export interface LikesReceivedResponse {
   total: number
 }
 
-export type NotificationType = 'new_match' | 'new_like' | 'new_message'
+export type NotificationType =
+  | 'new_match'
+  | 'new_like'
+  | 'new_message'
+  | 'playdate_proposed'
+  | 'playdate_response'
 
 export interface NotificationWithDetails {
   id: string
   notification_type: NotificationType
   message: string
   is_read: boolean
+  is_super: boolean
   created_at: string
   read_at: string | null
   your_pet: { id: string; name: string; primary_photo_url: string | null }
@@ -281,10 +287,17 @@ export interface NotificationPushEvent {
     notification_type: NotificationType
     message: string
     is_read: boolean
+    is_super: boolean
     created_at: string
     match_id: string | null
     other_pet: { id: string; name: string; primary_photo_url: string | null }
   }
+}
+
+export interface SuperWoofStatus {
+  remaining: number
+  limit: number
+  window_seconds: number
 }
 
 export interface DailySwipeStats {
@@ -428,4 +441,110 @@ export interface ChatSearchResponse {
   results: { message: ChatMessage; relevance_score: number }[]
   total: number
   query: string
+}
+
+// --- Playdates ---
+
+export type PlaydateStatus = 'pending' | 'accepted' | 'declined' | 'cancelled'
+
+export interface PlaydatePetInfo {
+  id: string
+  name: string
+  primary_photo_url: string | null
+}
+
+export interface Playdate {
+  id: string
+  match_id: string
+  scheduled_at: string
+  location_name: string
+  latitude: number
+  longitude: number
+  note: string | null
+  status: PlaydateStatus
+  proposed_by_pet: PlaydatePetInfo
+  proposed_to_pet: PlaydatePetInfo
+  is_mine_to_respond: boolean
+  created_at: string
+  responded_at: string | null
+}
+
+export interface PlaydateListResponse {
+  items: Playdate[]
+  total: number
+}
+
+export interface PlaydateCreateInput {
+  scheduled_at: string
+  location_name: string
+  latitude: number
+  longitude: number
+  note?: string
+}
+
+// --- Events ---
+
+export interface EventCreatorInfo {
+  id: string
+  full_name: string | null
+  profile_photo_url: string | null
+}
+
+export interface CommunityEvent {
+  id: string
+  title: string
+  description: string | null
+  location_name: string
+  latitude: number
+  longitude: number
+  event_time: string
+  species: string | null
+  creator: EventCreatorInfo
+  attendee_count: number
+  is_cancelled: boolean
+  your_rsvp_status: 'going' | 'interested' | null
+  created_at: string
+}
+
+export interface EventListResponse {
+  items: CommunityEvent[]
+  total: number
+  limit: number
+  offset: number
+}
+
+export interface EventCreateInput {
+  title: string
+  description?: string
+  location_name: string
+  latitude: number
+  longitude: number
+  event_time: string
+  species?: string
+}
+
+export interface EventRSVPInput {
+  pet_id?: string
+  status: 'going' | 'interested'
+}
+
+export interface EventRSVPResult {
+  id: string
+  event_id: string
+  status: string
+  pet_id: string | null
+  created_at: string
+}
+
+export interface EventAttendee {
+  user_id: string
+  full_name: string | null
+  profile_photo_url: string | null
+  status: string
+  pet: { id: string; name: string; species: string; primary_photo_url: string | null } | null
+}
+
+export interface EventAttendeesResponse {
+  items: EventAttendee[]
+  total: number
 }
