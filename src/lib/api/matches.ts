@@ -7,6 +7,8 @@ import type {
   LikesReceivedResponse,
   MatchSummary,
   NotificationWithDetails,
+  SwipeHistoryFilters,
+  SwipeHistoryResponse,
   SwipeInput,
   SwipeResult,
   SwipeStatistics,
@@ -97,4 +99,14 @@ export function markNotificationsRead(notificationIds: string[]): Promise<void> 
 
 export function getSwipeStatistics(petId: string): Promise<SwipeStatistics> {
   return apiFetch<SwipeStatistics>(`/matches/statistics?pet_id=${petId}`)
+}
+
+export function getSwipeHistory(petId: string, filters: SwipeHistoryFilters = {}): Promise<SwipeHistoryResponse> {
+  const query = toQueryString({ pet_id: petId, ...filters })
+  return apiFetch<SwipeHistoryResponse>(`/matches/swipe-history?${query}`)
+}
+
+export function getBreeds(species?: string): Promise<string[]> {
+  const query = species ? `?${toQueryString({ species })}` : ''
+  return apiFetch<string[]>(`/matches/breeds${query}`)
 }
