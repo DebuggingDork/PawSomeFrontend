@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Bell, CheckCheck, Heart, X } from 'lucide-react'
+import { Bell, BellOff, CheckCheck, Heart, Trash2, X } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import {
   acceptLike,
+  clearNotifications,
   connectNotificationSocket,
+  deleteNotification,
   getNotifications,
   markAllNotificationsRead,
   markNotificationsRead,
@@ -97,6 +99,14 @@ export function NotificationBell() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
     onSettled: () => setRespondingId(null),
   })
+  const deleteMutation = useMutation({
+    mutationFn: deleteNotification,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+  })
+  const clearAllMutation = useMutation({
+    mutationFn: clearNotifications,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+  })
 
   if (!isAuthenticated) return null
 
@@ -126,80 +136,111 @@ export function NotificationBell() {
           >
             <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
               <h3 className="font-display font-bold text-white">Notifications</h3>
-              {unreadCount > 0 && (
-                <button
-                  onClick={() => markAllReadMutation.mutate()}
-                  disabled={markAllReadMutation.isPending}
-                  className="flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-white disabled:opacity-50"
-                >
-                  <CheckCheck className="h-3.5 w-3.5" />
-                  Mark all read
-                </button>
-              )}
+              <div className="flex items-center gap-3">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => markAllReadMutation.mutate()}
+                    disabled={markAllReadMutation.isPending}
+                    className="flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-white disabled:opacity-50"
+                  >
+                    <CheckCheck className="h-3.5 w-3.5" />
+                    Mark all read
+                  </button>
+                )}
+                {notifications && notifications.length > 0 && (
+                  <button
+                    onClick={() => clearAllMutation.mutate()}
+                    disabled={clearAllMutation.isPending}
+                    className="flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-red-400 disabled:opacity-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Clear all
+                  </button>
+                )}
+              </div>
             </div>
 
             {(!notifications || notifications.length === 0) && (
-              <p className="px-4 py-8 text-center text-sm text-neutral-500">You're all caught up.</p>
+              <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+                <BellOff className="h-6 w-6 text-neutral-700" />
+                <p className="text-sm text-neutral-500">You're all caught up.</p>
+              </div>
             )}
 
             <ul className="divide-y divide-neutral-800/80">
-              {notifications?.map((n) => {
-                const TypeIcon = NOTIFICATION_TYPE_ICON[n.notification_type]
-                return (
-                <li key={n.id} className={`px-4 py-3 ${n.is_read ? 'opacity-60' : ''}`}>
-                  <div className="flex items-start gap-3">
-                    <div className="relative flex-shrink-0">
-                      <PetAvatar name={n.other_pet.name} photoUrl={n.other_pet.primary_photo_url} size="sm" />
-                      <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 ring-2 ring-neutral-900">
-                        <TypeIcon className={`h-2.5 w-2.5 ${NOTIFICATION_TYPE_ACCENT[n.notification_type]}`} />
-                      </span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-neutral-200">{n.message}</p>
-                      <p className="mt-0.5 text-xs text-neutral-500">{timeAgo(n.created_at)}</p>
+              <AnimatePresence initial={false}>
+                {notifications?.map((n) => {
+                  const TypeIcon = NOTIFICATION_TYPE_ICON[n.notification_type]
+                  return (
+                  <motion.li
+                    key={n.id}
+                    layout
+                    exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0.23, 1, 0.32, 1] } }}
+                    className={`group relative px-4 py-3 pr-9 ${n.is_read ? 'opacity-60' : ''}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="relative flex-shrink-0">
+                        <PetAvatar name={n.other_pet.name} photoUrl={n.other_pet.primary_photo_url} size="sm" />
+                        <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 ring-2 ring-neutral-900">
+                          <TypeIcon className={`h-2.5 w-2.5 ${NOTIFICATION_TYPE_ACCENT[n.notification_type]}`} />
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-neutral-200">{n.message}</p>
+                        <p className="mt-0.5 text-xs text-neutral-500">{timeAgo(n.created_at)}</p>
 
-                      {n.notification_type === 'new_like' && !n.is_read && (
-                        <div className="mt-2 flex gap-2">
+                        {n.notification_type === 'new_like' && !n.is_read && (
+                          <div className="mt-2 flex gap-2">
+                            <button
+                              onClick={() => {
+                                setRespondingId(n.id)
+                                acceptMutation.mutate(n.id)
+                              }}
+                              disabled={respondingId === n.id}
+                              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                            >
+                              <Heart className="h-3 w-3" fill="currentColor" /> Match back
+                            </button>
+                            <button
+                              onClick={() => {
+                                setRespondingId(n.id)
+                                rejectMutation.mutate(n.id)
+                              }}
+                              disabled={respondingId === n.id}
+                              className="flex items-center gap-1 rounded-full border border-neutral-700 px-3 py-1 text-xs font-medium text-neutral-400 disabled:opacity-50"
+                            >
+                              <X className="h-3 w-3" /> Pass
+                            </button>
+                          </div>
+                        )}
+
+                        {n.notification_type !== 'new_like' && n.match_id && (
                           <button
                             onClick={() => {
-                              setRespondingId(n.id)
-                              acceptMutation.mutate(n.id)
+                              if (!n.is_read) markReadMutation.mutate([n.id])
+                              setOpen(false)
+                              navigate(`/chat?match=${n.match_id}`)
                             }}
-                            disabled={respondingId === n.id}
-                            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                            className="mt-2 text-xs font-semibold text-[#ff8c5c] hover:text-[#ff6b35]"
                           >
-                            <Heart className="h-3 w-3" fill="currentColor" /> Match back
+                            Open chat →
                           </button>
-                          <button
-                            onClick={() => {
-                              setRespondingId(n.id)
-                              rejectMutation.mutate(n.id)
-                            }}
-                            disabled={respondingId === n.id}
-                            className="flex items-center gap-1 rounded-full border border-neutral-700 px-3 py-1 text-xs font-medium text-neutral-400 disabled:opacity-50"
-                          >
-                            <X className="h-3 w-3" /> Pass
-                          </button>
-                        </div>
-                      )}
-
-                      {n.notification_type !== 'new_like' && n.match_id && (
-                        <button
-                          onClick={() => {
-                            if (!n.is_read) markReadMutation.mutate([n.id])
-                            setOpen(false)
-                            navigate(`/chat?match=${n.match_id}`)
-                          }}
-                          className="mt-2 text-xs font-semibold text-[#ff8c5c] hover:text-[#ff6b35]"
-                        >
-                          Open chat →
-                        </button>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </li>
-                )
-              })}
+
+                    <button
+                      onClick={() => deleteMutation.mutate(n.id)}
+                      aria-label="Dismiss notification"
+                      title="Dismiss"
+                      className="absolute right-2 top-3 flex h-6 w-6 items-center justify-center rounded-full text-neutral-600 opacity-0 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 group-hover:opacity-100"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </motion.li>
+                  )
+                })}
+              </AnimatePresence>
             </ul>
           </motion.div>
         )}

@@ -121,6 +121,14 @@ export function markAllNotificationsRead(): Promise<void> {
   return apiFetch<void>('/matches/notifications/read-all', { method: 'POST' })
 }
 
+export function deleteNotification(notificationId: string): Promise<void> {
+  return apiFetch<void>(`/matches/notifications/${notificationId}`, { method: 'DELETE' })
+}
+
+export function clearNotifications(): Promise<void> {
+  return apiFetch<void>('/matches/notifications', { method: 'DELETE' })
+}
+
 export function getSwipeStatistics(petId: string): Promise<SwipeStatistics> {
   return apiFetch<SwipeStatistics>(`/matches/statistics?pet_id=${petId}`)
 }
