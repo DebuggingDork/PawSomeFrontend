@@ -71,7 +71,7 @@ export const NavBody = ({ children, className }: NavBodyProps) => {
   return (
     <div
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl items-center justify-between px-8 py-4 lg:flex",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-8 py-4 lg:grid",
         className,
       )}
     >
