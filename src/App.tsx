@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router'
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
@@ -35,7 +35,10 @@ import {
 } from './components/ui/resizable-navbar'
 import { GlobalLoader } from './components/ui/GlobalLoader'
 import { CursorClickEffect } from './components/ui/CursorClickEffect'
-import logoIcon from './assets/icon.png'
+// 256px master-derived logo (icon.png is the 1254px original, kept as the source
+// art). The full-size file was 828 KB shipped on every page load to render a
+// 40px navbar mark — this one is 47 KB.
+import logoIcon from './assets/logo-256.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
 import { Heart, LogOut } from 'lucide-react'
@@ -54,6 +57,23 @@ function NavAuthSkeleton() {
       <div className="motion-safe:animate-pulse h-10 w-10 rounded-full bg-white/10" />
     </div>
   )
+}
+
+/** Wraps routes that only make sense while signed out (i.e. /auth). Hitting Back
+ * after signing in used to land the user right back on the sign-in form while the
+ * navbar above it showed them signed in, with a "Sign In" button that would just
+ * re-authenticate an already-live session. Signed-in visitors get sent home
+ * instead — with `replace`, so Back doesn't bounce them straight back here. */
+function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isHydrating } = useAuthStore()
+
+  // Deciding before the session resolves would flash the form at a signed-in
+  // user (or, worse, redirect a genuinely signed-out one). #root stays hidden
+  // until hydration settles, so rendering nothing here costs no visible time.
+  if (isHydrating) return null
+  if (isAuthenticated) return <Navigate to="/" replace />
+
+  return <>{children}</>
 }
 
 /** Redirects a freshly-authenticated user into /onboarding once per session until required steps are done. */
@@ -123,13 +143,16 @@ function App() {
     staleTime: 60_000,
   })
 
+  // While the session is still resolving we show only the links that are the same
+  // either way, so the menu can only ever gain items once hydration lands — never
+  // swap "About" out for "Discover/Matches/Chat" in front of the user.
   const navItems = [
     { name: 'Home', link: '/' },
     { name: 'Community', link: '/community' },
     // About is only useful as a pitch to visitors who haven't signed up yet.
-    ...(isAuthenticated ? [] : [{ name: 'About', link: '/about' }]),
+    ...(isHydrating || isAuthenticated ? [] : [{ name: 'About', link: '/about' }]),
     { name: 'Events', link: '/events' },
-    ...(isAuthenticated
+    ...(!isHydrating && isAuthenticated
       ? [
           { name: 'Discover', link: '/discover' },
           { name: 'Matches', link: '/matches' },
@@ -327,7 +350,14 @@ function App() {
         <main className="w-full">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/auth" element={<AuthPage />} />
+            <Route
+              path="/auth"
+              element={
+                <GuestOnlyRoute>
+                  <AuthPage />
+                </GuestOnlyRoute>
+              }
+            />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/community" element={<CommunityPage />} />

@@ -20,7 +20,7 @@ import * as petsApi from '@/lib/api/pets'
 import { setTokens } from '@/lib/api/tokens'
 import { ApiError } from '@/lib/api/client'
 import { PillTabs } from '@/components/ui/PillTabs'
-import logoIcon from '@/assets/icon.png'
+import logoIcon from '@/assets/logo-256.png'
 
 type Mode = 'signin' | 'signup' | 'forgot'
 
@@ -87,7 +87,10 @@ function AuthPage() {
       const [user, pets] = await Promise.all([authApi.me(), petsApi.listMyPets()])
       login(user, pets)
 
-      navigate(pets.length > 0 ? '/chat' : '/discover')
+      // `replace` so the sign-in screen drops out of the history stack entirely —
+      // pressing Back from the app should go wherever the user came from, not
+      // return them to a login form for the session they just started.
+      navigate(pets.length > 0 ? '/chat' : '/discover', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
         setError(typeof err.detail === 'string' ? err.detail : 'Something went wrong. Please try again.')
