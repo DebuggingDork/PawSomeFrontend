@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -82,6 +83,7 @@ export const NavBody = ({ children, className }: NavBodyProps) => {
 
 export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
+  const { pathname } = useLocation();
 
   return (
     <motion.div
@@ -92,12 +94,15 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
       )}
     >
       {items.map((item, idx) => (
-        <a
+        <Link
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-5 py-2 text-white/80 transition-colors hover:text-[#ff6b35]"
+          className={cn(
+            "relative px-5 py-2 transition-colors hover:text-[#ff6b35]",
+            pathname === item.link ? "text-white" : "text-white/80",
+          )}
           key={`link-${idx}`}
-          href={item.link}
+          to={item.link}
         >
           {hovered === idx && (
             <motion.div
@@ -106,7 +111,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
             />
           )}
           <span className="relative z-20">{item.name}</span>
-        </a>
+        </Link>
       ))}
     </motion.div>
   );
