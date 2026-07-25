@@ -6,6 +6,7 @@ import ResetPasswordPage from './pages/ResetPassword'
 import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
 import CommunityPage from './pages/Community'
+import AboutPage from './pages/About'
 import PetProfilePage from './pages/PetProfile'
 import OwnerProfilePage from './pages/OwnerProfile'
 import NotFoundPage from './pages/NotFound'
@@ -105,10 +106,8 @@ function App() {
   const navItems = [
     { name: 'Home', link: '/' },
     { name: 'Community', link: '/community' },
-    { name: 'Discover', link: '/discover' },
-    { name: 'Matches', link: '/matches' },
+    { name: 'About', link: '/about' },
     { name: 'Events', link: '/events' },
-    { name: 'Chat', link: '/chat' },
   ]
 
   if (!isOnline) {
@@ -140,10 +139,10 @@ function App() {
           {/* Desktop Navigation */}
           <NavBody>
             {/* Left: Logo */}
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 justify-self-start">
               <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
               <span
-                className="text-2xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent drop-shadow-sm"
+                className="text-2xl font-bold text-[#ff6b35] drop-shadow-sm"
                 style={{ fontFamily: 'Pacifico, cursive' }}
               >
                 PawSome
@@ -154,7 +153,7 @@ function App() {
             <NavItems items={navItems} />
 
             {/* Right: Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 justify-self-end">
               {isAuthenticated && <NotificationBell />}
               {isAuthenticated && (
                 <Link
@@ -189,7 +188,7 @@ function App() {
               <Link to="/" className="flex items-center gap-2">
                 <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
                 <span
-                  className="text-xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
+                  className="text-xl font-bold text-[#ff6b35]"
                   style={{ fontFamily: 'Pacifico, cursive' }}
                 >
                   PawSome
@@ -270,6 +269,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/pets/:petId" element={<PetProfilePage />} />
             <Route path="/owners/:userId" element={<OwnerProfilePage />} />
             <Route path="/discover" element={<DiscoverPage />} />
