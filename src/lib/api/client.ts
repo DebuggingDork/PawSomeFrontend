@@ -55,6 +55,14 @@ function notifyBackendReachable(): void {
   backendReachableListeners.forEach((cb) => cb())
 }
 
+/** True when a request was cancelled by the caller rather than failing.
+ * Browsers report this as a DOMException named AbortError; checking the signal
+ * too covers engines that reject with something less specific. */
+function isAbortError(err: unknown, signal?: AbortSignal | null): boolean {
+  if (signal?.aborted) return true
+  return (err as { name?: string } | null)?.name === 'AbortError'
+}
+
 export class ApiError extends Error {
   status: number
   detail: unknown
@@ -167,7 +175,13 @@ export async function apiFetch<T>(
       notifyBackendReachable()
       return response
     } catch (err) {
-      notifyBackendUnreachable()
+      // An abort is us cancelling our own request, not the server failing.
+      // LocationPicker aborts the in-flight address search on every keystroke,
+      // so typing an address produced a stream of AbortErrors — two of them
+      // was enough to trip UNREACHABLE_THRESHOLD and replace the entire app
+      // with the "we're having trouble connecting" page, mid-typing, every
+      // time. Aborts are neutral: they mark the backend neither up nor down.
+      if (!isAbortError(err, rest.signal)) notifyBackendUnreachable()
       throw err
     }
   }
