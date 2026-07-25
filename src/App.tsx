@@ -42,6 +42,18 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { NotificationBell } from './components/notifications/NotificationBell'
 
+/** Placeholder for the navbar's auth-dependent controls while session state is still
+ * resolving, so we never guess "signed out" and then flash into "signed in" (or vice
+ * versa) once hydrate() resolves. */
+function NavAuthSkeleton() {
+  return (
+    <div className="flex items-center gap-3" aria-hidden="true">
+      <div className="motion-safe:animate-pulse h-9 w-24 rounded-full bg-white/10" />
+      <div className="motion-safe:animate-pulse h-9 w-32 rounded-full bg-white/10" />
+    </div>
+  )
+}
+
 /** Redirects a freshly-authenticated user into /onboarding once per session until required steps are done. */
 function OnboardingGate() {
   const { isAuthenticated, isHydrating } = useAuthStore()
@@ -83,7 +95,7 @@ function SessionExpiryWatcher() {
 function App() {
   useSmoothScroll()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isAuthenticated, hydrate, logout } = useAuthStore()
+  const { isAuthenticated, isHydrating, hydrate, logout } = useAuthStore()
   const isOnline = useOnlineStatus()
   const [backendUnreachable, setBackendUnreachable] = useState(false)
 
@@ -161,31 +173,37 @@ function App() {
 
             {/* Right: Buttons */}
             <div className="flex items-center gap-3 justify-self-end">
-              {isAuthenticated && <NotificationBell />}
-              {isAuthenticated && (
-                <Link
-                  to="/profile"
-                  title="Profile"
-                  aria-label="Profile"
-                  className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
-                >
-                  <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
-                </Link>
-              )}
-              {isAuthenticated ? (
-                <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth">
-                  <LogOut className="mr-2 inline h-4 w-4" />
-                  Sign Out
-                </NavbarButton>
+              {isHydrating ? (
+                <NavAuthSkeleton />
               ) : (
-                <NavbarButton variant="secondary" as={Link} href="/auth">
-                  Sign In
-                </NavbarButton>
+                <>
+                  {isAuthenticated && <NotificationBell />}
+                  {isAuthenticated && (
+                    <Link
+                      to="/profile"
+                      title="Profile"
+                      aria-label="Profile"
+                      className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
+                    >
+                      <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
+                    </Link>
+                  )}
+                  {isAuthenticated ? (
+                    <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth">
+                      <LogOut className="mr-2 inline h-4 w-4" />
+                      Sign Out
+                    </NavbarButton>
+                  ) : (
+                    <NavbarButton variant="secondary" as={Link} href="/auth">
+                      Sign In
+                    </NavbarButton>
+                  )}
+                  <NavbarButton variant="gradient" as={Link} href={isAuthenticated ? '/chat' : '/discover'}>
+                    <Heart className="mr-2 inline h-4 w-4" />
+                    {isAuthenticated ? 'My Chats' : 'Find Matches'}
+                  </NavbarButton>
+                </>
               )}
-              <NavbarButton variant="gradient" as={Link} href={isAuthenticated ? '/chat' : '/discover'}>
-                <Heart className="mr-2 inline h-4 w-4" />
-                {isAuthenticated ? 'My Chats' : 'Find Matches'}
-              </NavbarButton>
             </div>
           </NavBody>
 
@@ -202,7 +220,7 @@ function App() {
                 </span>
               </Link>
               <div className="flex items-center gap-1">
-                {isAuthenticated && <NotificationBell />}
+                {!isHydrating && isAuthenticated && <NotificationBell />}
                 <MobileNavToggle
                   isOpen={isMobileMenuOpen}
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -234,35 +252,44 @@ function App() {
                 </Link>
               )}
               <div className="flex w-full flex-col gap-4">
-                <NavbarButton
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    if (isAuthenticated) logout()
-                  }}
-                  variant="secondary"
-                  className="w-full"
-                  as={Link}
-                  href="/auth"
-                >
-                  {isAuthenticated ? (
-                    <>
-                      <LogOut className="mr-2 inline h-4 w-4" />
-                      Sign Out
-                    </>
-                  ) : (
-                    'Sign In'
-                  )}
-                </NavbarButton>
-                <NavbarButton
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  variant="gradient"
-                  className="w-full"
-                  as={Link}
-                  href={isAuthenticated ? '/chat' : '/discover'}
-                >
-                  <Heart className="mr-2 inline h-4 w-4" />
-                  {isAuthenticated ? 'My Chats' : 'Find Matches'}
-                </NavbarButton>
+                {isHydrating ? (
+                  <>
+                    <div className="motion-safe:animate-pulse h-11 w-full rounded-full bg-white/10" />
+                    <div className="motion-safe:animate-pulse h-11 w-full rounded-full bg-white/10" />
+                  </>
+                ) : (
+                  <>
+                    <NavbarButton
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        if (isAuthenticated) logout()
+                      }}
+                      variant="secondary"
+                      className="w-full"
+                      as={Link}
+                      href="/auth"
+                    >
+                      {isAuthenticated ? (
+                        <>
+                          <LogOut className="mr-2 inline h-4 w-4" />
+                          Sign Out
+                        </>
+                      ) : (
+                        'Sign In'
+                      )}
+                    </NavbarButton>
+                    <NavbarButton
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      variant="gradient"
+                      className="w-full"
+                      as={Link}
+                      href={isAuthenticated ? '/chat' : '/discover'}
+                    >
+                      <Heart className="mr-2 inline h-4 w-4" />
+                      {isAuthenticated ? 'My Chats' : 'Find Matches'}
+                    </NavbarButton>
+                  </>
+                )}
               </div>
             </MobileNavMenu>
           </MobileNav>
