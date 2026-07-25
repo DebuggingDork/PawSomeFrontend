@@ -41,7 +41,13 @@ export function NotificationBell() {
   const [respondingId, setRespondingId] = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
 
-  useOnClickOutside(panelRef, () => setOpen(false))
+  // This component is mounted twice (desktop + mobile nav) but shares one `open`
+  // flag via the store, so each copy has to treat the *other* copy's subtree as
+  // "inside" too. Without that, clicking anything in the visible dropdown looked
+  // like an outside click to the hidden copy, which closed the shared state on
+  // mousedown — the panel unmounted before the button's onClick could ever run,
+  // so every control in the dropdown appeared dead and it just snapped shut.
+  useOnClickOutside(panelRef, () => setOpen(false), '[data-notifications-root]')
 
   const { data: notifications } = useQuery({
     queryKey: ['notifications'],
@@ -87,7 +93,7 @@ export function NotificationBell() {
   if (!isAuthenticated) return null
 
   return (
-    <div ref={panelRef} className="relative">
+    <div ref={panelRef} data-notifications-root className="relative">
       <button
         onClick={() => setOpen(!open)}
         aria-label="Notifications"
