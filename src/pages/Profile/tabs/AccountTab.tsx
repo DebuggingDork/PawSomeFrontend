@@ -13,6 +13,7 @@ import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
+import type { UserProfile } from '@/lib/api/types'
 
 const BIO_MAX_LENGTH = 2000
 
@@ -48,36 +49,7 @@ export function AccountTab() {
     queryClient.invalidateQueries({ queryKey: ['users', 'completion'] })
   }
 
-  const profile = profileQuery.data
-  const [fullName, setFullName] = useState(profile?.full_name ?? '')
-  const [occupation, setOccupation] = useState(profile?.occupation ?? '')
-  const [bio, setBio] = useState(profile?.bio ?? '')
-  const [address, setAddress] = useState(profile?.address ?? '')
-  const [pincode, setPincode] = useState(profile?.pincode ?? '')
-  const [lat, setLat] = useState<number | null>(profile?.latitude ?? null)
-  const [lng, setLng] = useState<number | null>(profile?.longitude ?? null)
-  const [dirty, setDirty] = useState(false)
-  // Bumped on removal to remount the uploader. It holds an object URL for any
-  // file picked in this session, which would otherwise keep displaying a photo
-  // the user had just deleted.
-  const [photoUploaderKey, setPhotoUploaderKey] = useState(0)
-
-  const updateMutation = useMutation({
-    mutationFn: updateMyProfile,
-    onSuccess: () => {
-      invalidate()
-      setDirty(false)
-    },
-  })
-  const deletePhotoMutation = useMutation({
-    mutationFn: deleteProfilePhoto,
-    onSuccess: () => {
-      invalidate()
-      setPhotoUploaderKey((k) => k + 1)
-    },
-  })
-
-  if (profileQuery.isLoading || !profile) {
+  if (profileQuery.isLoading || !profileQuery.data) {
     return (
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <Skeleton className="h-96" />
@@ -86,6 +58,7 @@ export function AccountTab() {
     )
   }
 
+  const profile = profileQuery.data
   const completion = completionQuery.data
 
   return (
@@ -122,6 +95,60 @@ export function AccountTab() {
         </div>
       )}
 
+      {/* Keyed so the form re-seeds from scratch if the signed-in account changes. */}
+      <AccountForm key={profile.id} profile={profile} invalidate={invalidate} />
+    </div>
+  )
+}
+
+/**
+ * The editable half of the Account tab.
+ *
+ * Split into its own component deliberately. It seeds every field from
+ * `profile` in useState initialisers, which only run on mount — and this used
+ * to live inside AccountTab, where it mounted while the profile query was still
+ * loading. Every field therefore initialised to '' and kept that empty value
+ * forever, because useState ignores a changed initial argument on later
+ * renders. The result was a fully-populated account rendering a blank name,
+ * occupation, bio, address and pincode. AccountTab now holds this back behind
+ * its loading check, so these initialisers always see real data.
+ */
+function AccountForm({
+  profile,
+  invalidate,
+}: {
+  profile: UserProfile
+  invalidate: () => void
+}) {
+  const [fullName, setFullName] = useState(profile.full_name ?? '')
+  const [occupation, setOccupation] = useState(profile.occupation ?? '')
+  const [bio, setBio] = useState(profile.bio ?? '')
+  const [address, setAddress] = useState(profile.address ?? '')
+  const [pincode, setPincode] = useState(profile.pincode ?? '')
+  const [lat, setLat] = useState<number | null>(profile.latitude ?? null)
+  const [lng, setLng] = useState<number | null>(profile.longitude ?? null)
+  const [dirty, setDirty] = useState(false)
+  // Bumped on removal to remount the uploader. It holds an object URL for any
+  // file picked in this session, which would otherwise keep displaying a photo
+  // the user had just deleted.
+  const [photoUploaderKey, setPhotoUploaderKey] = useState(0)
+
+  const updateMutation = useMutation({
+    mutationFn: updateMyProfile,
+    onSuccess: () => {
+      invalidate()
+      setDirty(false)
+    },
+  })
+  const deletePhotoMutation = useMutation({
+    mutationFn: deleteProfilePhoto,
+    onSuccess: () => {
+      invalidate()
+      setPhotoUploaderKey((k) => k + 1)
+    },
+  })
+
+  return (
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -284,6 +311,5 @@ export function AccountTab() {
           {updateMutation.isPending ? 'Saving…' : updateMutation.isSuccess && !dirty ? 'Saved' : 'Save changes'}
         </button>
       </form>
-    </div>
   )
 }

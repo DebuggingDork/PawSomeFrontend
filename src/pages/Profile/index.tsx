@@ -1,7 +1,11 @@
 import { useState, type ComponentType } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3, Sparkles } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3, BadgeCheck } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
+import { getMyProfile } from '@/lib/api/users'
+import { PetAvatar } from '@/components/chat/PetAvatar'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { PetsTab } from './tabs/PetsTab'
@@ -37,6 +41,68 @@ const TAB_PANELS: Record<TabKey, ComponentType> = {
   blocked: BlockedUsersTab,
 }
 
+/** Who you're signed in as, at the top of the page.
+ *
+ * The header used to read just "Profile" over a generic sparkle icon, so
+ * nothing on the page identified the account — no name, no photo, none of the
+ * details on file. This shows the photo, name and the profile facts that are
+ * already stored, rather than making the user open a tab to find out. */
+function ProfileIdentityHeader() {
+  const { data: profile, isLoading } = useQuery({ queryKey: ['users', 'me'], queryFn: getMyProfile })
+
+  if (isLoading || !profile) {
+    return (
+      <div className="mb-6 flex items-center gap-4">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+      </div>
+    )
+  }
+
+  const name = profile.full_name?.trim() || 'Your profile'
+  const facts = [
+    profile.occupation,
+    profile.address,
+    profile.pincode ? `PIN ${profile.pincode}` : null,
+  ].filter(Boolean) as string[]
+
+  return (
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start">
+      <PetAvatar name={name} photoUrl={profile.profile_photo_url} size="lg" />
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="font-display text-2xl font-bold text-white">{name}</h1>
+          {profile.is_verified && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400">
+              <BadgeCheck className="h-3.5 w-3.5" />
+              Verified
+            </span>
+          )}
+        </div>
+
+        {facts.length > 0 && (
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-neutral-400">
+            {facts.map((fact, i) => (
+              <span key={fact} className="flex items-center gap-2">
+                {i > 0 && <span className="text-neutral-700">•</span>}
+                {fact}
+              </span>
+            ))}
+          </p>
+        )}
+
+        {profile.bio && (
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-300">{profile.bio}</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function ProfilePage() {
   const { isAuthenticated, isHydrating } = useAuthStore()
   const [tab, setTab] = useState<TabKey>('account')
@@ -53,15 +119,7 @@ function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 pb-16 pt-24 md:pt-28">
-      <div className="mb-6 flex items-center gap-3">
-        <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#ff6b35]/10 text-[#ff6b35]">
-          <Sparkles className="h-5 w-5" />
-        </span>
-        <div>
-          <h1 className="font-display text-2xl font-bold text-white">Profile</h1>
-          <p className="text-sm text-neutral-400">Manage your profile and preferences</p>
-        </div>
-      </div>
+      <ProfileIdentityHeader />
 
       <PillTabs layoutId="profile-tab-pill" active={tab} onChange={setTab} tabs={TABS} className="mb-6 w-full" />
 

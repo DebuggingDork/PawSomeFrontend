@@ -137,7 +137,12 @@ function App() {
   }, [])
 
   const { data: myProfile, isLoading: isProfileLoading } = useQuery({
-    queryKey: ['my-profile'],
+    // Must match the key every other consumer uses (Profile header, Account
+    // tab, Onboarding). The navbar had its own ['my-profile'] entry for the
+    // same endpoint, so uploading or removing a profile photo invalidated
+    // ['users','me'] and left this copy stale — the photo updated on the
+    // profile page while the navbar kept showing the old initial.
+    queryKey: ['users', 'me'],
     queryFn: getMyProfile,
     enabled: isAuthenticated,
     staleTime: 60_000,

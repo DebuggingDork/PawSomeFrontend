@@ -34,7 +34,13 @@ export function PetAvatar({ name, photoUrl, size = 'md', online, className = '' 
   const initial = name.trim().charAt(0).toUpperCase()
   // A URL that 404s, times out, or hits a flaky CDN shouldn't leave a blank
   // circle — fall back to the same gradient+initial treatment as "no photo".
-  const [failed, setFailed] = useState(false)
+  //
+  // Keyed by the URL so the flag resets when a different photo comes in. One
+  // transient failure used to stick for the component's whole life, which meant
+  // a blip on first paint left the initial showing even after a good URL
+  // arrived, and re-uploading a photo appeared to do nothing.
+  const [failedUrl, setFailedUrl] = useState<string | null>(null)
+  const failed = failedUrl !== null && failedUrl === photoUrl
 
   return (
     <div className={`relative flex-shrink-0 ${className}`}>
@@ -42,7 +48,7 @@ export function PetAvatar({ name, photoUrl, size = 'md', online, className = '' 
         <img
           src={photoUrl}
           alt={name}
-          onError={() => setFailed(true)}
+          onError={() => setFailedUrl(photoUrl)}
           className={`${SIZE_CLASSES[size]} rounded-full object-cover ring-2 ring-white/10`}
         />
       ) : (
