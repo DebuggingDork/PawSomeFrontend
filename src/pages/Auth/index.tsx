@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import {
   Mail,
   Lock,
@@ -34,6 +34,7 @@ function AuthPage() {
   const navigate = useNavigate()
   const { startLoading, stopLoading } = useLoaderStore()
   const login = useAuthStore((s) => s.login)
+  const shouldReduceMotion = useReducedMotion()
 
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
@@ -100,20 +101,27 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* ── Left: brand panel (large screens only) ─────────────────────────── */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-neutral-950 p-12 pt-28 lg:flex">
-        {/* Same soft ambient-glow language as the form panel on the right (see
-            below), just larger — so the two halves read as one design instead
-            of a loud saturated panel bolted onto a quiet one. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-32 -top-32 h-[26rem] w-[26rem] rounded-full bg-[#ff6b35]/25 blur-[130px]" />
-          <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-pink-500/15 blur-[120px]" />
-          <div className="absolute -bottom-32 left-1/4 h-96 w-96 rounded-full bg-[#ff6b35]/10 blur-[130px]" />
-        </div>
+    <div className="relative flex min-h-screen overflow-hidden bg-neutral-950">
+      {/* One continuous photo behind the whole page instead of a hard split
+          between a brand panel and a form panel — the form reads as a glass
+          surface floating on top of it, not a separately-designed block. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=1600"
+          alt=""
+          className={`h-full w-full object-cover ${shouldReduceMotion ? '' : 'animate-slow-pan'}`}
+        />
+        {/* Deepens left-to-right so the glass card on the right has real
+            contrast to sit on, while the brand copy on the left keeps more
+            of the photo visible. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/50 via-neutral-950/75 to-neutral-950/95" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-neutral-950/40" />
+      </div>
 
+      {/* ── Left: brand copy over the photo (large screens only) ────────────── */}
+      <div className="relative z-10 hidden w-1/2 flex-col justify-between p-12 pt-28 lg:flex">
         {/* Logo + wordmark */}
-        <div className="relative flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <img src={logoIcon} alt="PawSome" className="h-11 w-11 drop-shadow-lg" />
           <span className="text-2xl font-bold text-white" style={{ fontFamily: 'Pacifico, cursive' }}>
             PawSome
@@ -121,7 +129,7 @@ function AuthPage() {
         </div>
 
         {/* Tagline + features */}
-        <div className="relative">
+        <div>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -146,7 +154,7 @@ function AuthPage() {
                   <Icon className="h-5 w-5 flex-shrink-0 text-[#ff6b35]" />
                   <div>
                     <p className="text-sm font-semibold text-white">{f.title}</p>
-                    <p className="text-xs text-neutral-400">{f.copy}</p>
+                    <p className="text-xs text-neutral-300">{f.copy}</p>
                   </div>
                 </motion.div>
               )
@@ -155,26 +163,20 @@ function AuthPage() {
         </div>
 
         {/* Trust line */}
-        <p className="relative text-sm font-medium text-neutral-400">
+        <p className="text-sm font-medium text-neutral-300">
           🐾 Join 10,000+ pet parents already matching nearby.
         </p>
       </div>
 
-      {/* ── Right: form ────────────────────────────────────────────────────── */}
-      <div className="relative flex w-full items-center justify-center overflow-hidden p-6 lg:w-1/2">
-        {/* Ambient background glow */}
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-1/3 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ff6b35]/20 blur-[120px]" />
-          <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-pink-500/10 blur-[100px]" />
-        </div>
-
+      {/* ── Right: glass form panel ──────────────────────────────────────────── */}
+      <div className="relative z-10 flex w-full items-center justify-center p-6 lg:w-1/2">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={{ opacity: 0, y: 20, scale: 0.98, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.55, ease: [0.23, 1, 0.32, 1] }}
           className="w-full max-w-md"
         >
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/60 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-8 shadow-2xl shadow-black/50 backdrop-blur-2xl">
             {/* Brand mark — the real PawSome logo */}
             <div className="mb-6 flex flex-col items-center text-center">
               <div className="relative mb-4">
@@ -242,13 +244,13 @@ function AuthPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="relative">
-                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                   <input
                     type="email"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                    className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:border-[#ff6b35] focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
                     required
                     autoComplete="email"
                   />
@@ -256,13 +258,13 @@ function AuthPage() {
 
                 {!isForgot && (
                   <div className="relative">
-                    <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                    <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                      className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-11 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:border-[#ff6b35] focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
                       required
                       minLength={8}
                       autoComplete={isSignUp ? 'new-password' : 'current-password'}
@@ -270,7 +272,7 @@ function AuthPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
                       tabIndex={-1}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
@@ -295,7 +297,7 @@ function AuthPage() {
                   type="submit"
                   disabled={submitting}
                   whileHover={{ scale: submitting ? 1 : 1.01 }}
-                  whileTap={{ scale: submitting ? 1 : 0.99 }}
+                  whileTap={{ scale: submitting ? 1 : 0.98 }}
                   className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {submitting ? (
@@ -321,7 +323,7 @@ function AuthPage() {
             )}
           </div>
 
-          <p className="mt-6 text-center text-xs text-neutral-500">
+          <p className="mt-6 text-center text-xs text-neutral-400">
             By continuing you agree to PawSome's Terms of Use and Privacy Policy.
           </p>
         </motion.div>

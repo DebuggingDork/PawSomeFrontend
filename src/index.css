@@ -33,6 +33,7 @@
   --animate-shimmer: shimmer 1.6s infinite;
   --animate-gradient-pan: gradient-pan 4s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
+  --animate-slow-pan: slow-pan 26s ease-in-out infinite alternate;
 }
 
 @keyframes shimmer {
@@ -60,6 +61,18 @@
   }
   50% {
     transform: translateY(-8px);
+  }
+}
+
+/* Barely-there Ken Burns drift for full-bleed background photos (Auth page).
+   Kept to a small amplitude over a long duration so it reads as ambient life,
+   not a slideshow effect. */
+@keyframes slow-pan {
+  from {
+    transform: scale(1) translate(0, 0);
+  }
+  to {
+    transform: scale(1.07) translate(-1.5%, -1%);
   }
 }
 
