@@ -3,6 +3,7 @@ import Lenis from 'lenis'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import gsap from 'gsap'
 import { useLoaderStore } from '@/store/useLoaderStore'
+import { useAuthStore } from '@/store/useAuthStore'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -56,13 +57,24 @@ export function useSmoothScroll() {
     // fully calculated before we restore the scroll position.
     const savedY = sessionStorage.getItem(STORAGE_KEY)
 
+    // Resuming a session from a stored token (see useAuthStore.hydrate) is async,
+    // so on a fresh page load isAuthenticated starts out false regardless of the
+    // real session state. Revealing the navbar before that resolves is what caused
+    // the "signed out, then signed in" flash on every refresh — so the pre-loader
+    // stays up until hydration finishes too, not just once scroll is restored.
+    // hydrate() is idempotent/cached and always settles (see its own try/catch),
+    // so this can't leave the splash stuck even if the API call fails.
+    const hydrated = useAuthStore.getState().hydrate()
+
     const finish = (targetY?: number) => {
-      if (targetY !== undefined) {
-        lenis.scrollTo(targetY, { immediate: true })
-        sessionStorage.removeItem(STORAGE_KEY)
-      }
-      stopLoading()
-      revealPage()
+      hydrated.then(() => {
+        if (targetY !== undefined) {
+          lenis.scrollTo(targetY, { immediate: true })
+          sessionStorage.removeItem(STORAGE_KEY)
+        }
+        stopLoading()
+        revealPage()
+      })
     }
 
     if (savedY) {

@@ -65,7 +65,12 @@ export const useAuthStore = create<AuthState>((set) => ({
           const [user, pets] = await Promise.all([me(), listMyPets()])
           set({ user, pets, activePet: pets[0] ?? null, isAuthenticated: true, isHydrating: false })
         } catch {
-          clearTokens()
+          // Don't clearTokens() here — a network hiccup or a request aborted by a fast
+          // navigation isn't proof the session is invalid, and wiping a good refresh
+          // token over a transient failure is what caused sessions to die for no
+          // reason. A confirmed-dead refresh token already clears tokens itself via
+          // onSessionExpired below. This just reflects "couldn't confirm" for this
+          // page load; the still-present tokens let the next attempt succeed.
           set({ user: null, pets: [], activePet: null, isAuthenticated: false, isHydrating: false })
         }
       })()

@@ -82,6 +82,7 @@ async function refreshAccessToken(): Promise<string | null> {
     })
       .then(async (res) => {
         if (!res.ok) {
+          // The server itself rejected the refresh token — the session is actually dead.
           clearTokens()
           notifySessionExpired()
           return null
@@ -91,8 +92,10 @@ async function refreshAccessToken(): Promise<string | null> {
         return data.access_token as string
       })
       .catch(() => {
-        clearTokens()
-        notifySessionExpired()
+        // fetch() itself threw — offline, backend unreachable, or the request got
+        // aborted (e.g. a navigation firing mid-flight). That's not proof the refresh
+        // token is invalid, so don't destroy it: a transient blip shouldn't sign
+        // someone out. Whatever triggered this call just fails for now and can retry.
         return null
       })
       .finally(() => {
