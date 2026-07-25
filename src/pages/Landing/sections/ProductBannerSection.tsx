@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ParallaxImage } from '../../../components/animations/ParallaxImage'
 import { ScrollReveal } from '../../../components/animations/ScrollReveal'
+import { siteImages } from '@/lib/siteImages'
 
 export const ProductBannerSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -30,7 +31,7 @@ export const ProductBannerSection: React.FC = () => {
       >
         <div className="relative w-full h-full">
           <ParallaxImage
-            src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
+            src={siteImages.heroDog}
             alt="Dogs"
             className="w-full h-full"
             offset={60}

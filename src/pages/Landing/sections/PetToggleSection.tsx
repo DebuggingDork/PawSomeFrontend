@@ -3,6 +3,7 @@ import { motion, useInView } from 'framer-motion'
 import { ScrollReveal } from '../../../components/animations/ScrollReveal'
 import { AnimatedToggle } from '../../../components/animations/AnimatedToggle'
 import { HoverCard } from '../../../components/animations/HoverCard'
+import { siteImages } from '@/lib/siteImages'
 
 export const PetToggleSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dog' | 'cat' | null>('dog')
@@ -70,7 +71,7 @@ export const PetToggleSection: React.FC = () => {
             {[1, 2, 3].map((i) => (
               <HoverCard key={`dog-${i}`} className="bg-neutral-950">
                 <div className="aspect-square bg-neutral-800 overflow-hidden relative">
-                  <img src={`https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400&h=400&sig=${i}`} alt="Dog Match" className="object-cover w-full h-full" />
+                  <img src={siteImages.toggleDog} alt="Dog Match" className="object-cover w-full h-full" />
                 </div>
                 <div className="p-6">
                   <h4 className="text-lg font-bold text-white mb-1">Golden Retriever</h4>
@@ -87,7 +88,7 @@ export const PetToggleSection: React.FC = () => {
             {[1, 2, 3].map((i) => (
               <HoverCard key={`cat-${i}`} className="bg-neutral-950">
                 <div className="aspect-square bg-neutral-800 overflow-hidden relative">
-                  <img src={`https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=400&h=400&sig=${i}`} alt="Cat Match" className="object-cover w-full h-full" />
+                  <img src={siteImages.toggleCat} alt="Cat Match" className="object-cover w-full h-full" />
                 </div>
                 <div className="p-6">
                   <h4 className="text-lg font-bold text-white mb-1">British Shorthair</h4>

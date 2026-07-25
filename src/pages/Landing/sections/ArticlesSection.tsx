@@ -2,24 +2,25 @@ import React from 'react'
 import { ScrollReveal } from '../../../components/animations/ScrollReveal'
 import { HoverZoomImage } from '../../../components/animations/HoverZoomImage'
 import { ArrowRight } from 'lucide-react'
+import { siteImages } from '@/lib/siteImages'
 
 const ARTICLES = [
   {
     title: "Reading Your Pet's Body Language",
     desc: 'How to tell a playdate is going well — and when to step in.',
-    image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80',
+    image: siteImages.articleVaccination,
     direction: 'up' as const,
   },
   {
     title: 'Planning the Perfect First Playdate',
     desc: 'A simple guide to safe, low-stress first meetings between pets.',
-    image: 'https://images.unsplash.com/photo-1537151608804-ea6f117398e0?auto=format&fit=crop&q=80',
+    image: siteImages.articleSocialising,
     direction: 'up' as const,
   },
   {
     title: "Understanding Your Pet's Temperament",
     desc: "What their personality means for the kind of friends they'll click with.",
-    image: 'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80',
+    image: siteImages.articleNutrition,
     direction: 'up' as const,
   },
 ]

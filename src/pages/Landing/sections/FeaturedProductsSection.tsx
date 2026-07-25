@@ -1,6 +1,7 @@
 import React from 'react'
 import { ScrollPinnedSlider } from '../../../components/animations/ScrollPinnedSlider'
 import { ArrowRight } from 'lucide-react'
+import { siteImages } from '@/lib/siteImages'
 
 export const FeaturedProductsSection: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ export const FeaturedProductsSection: React.FC = () => {
         {/* Panel 1 */}
         <div className="w-[85vw] md:w-[60vw] max-w-4xl shrink-0 h-[60vh] min-h-[400px] bg-neutral-900 rounded-3xl p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group">
           <div className="absolute inset-0 z-0">
-             <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80" alt="Featured Dog" className="w-full h-full object-cover opacity-20 transition-opacity duration-700 group-hover:opacity-40" />
+             <img src={siteImages.featuredDog} alt="Featured Dog" className="w-full h-full object-cover opacity-20 transition-opacity duration-700 group-hover:opacity-40" />
              <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/80 to-transparent" />
           </div>
           <div className="relative z-10 max-w-xl">
@@ -25,7 +26,7 @@ export const FeaturedProductsSection: React.FC = () => {
         {/* Panel 2 */}
         <div className="w-[85vw] md:w-[60vw] max-w-4xl shrink-0 h-[60vh] min-h-[400px] bg-neutral-900 rounded-3xl p-8 md:p-12 flex flex-col justify-center relative overflow-hidden group">
           <div className="absolute inset-0 z-0">
-             <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?auto=format&fit=crop&q=80" alt="Featured Cat" className="w-full h-full object-cover opacity-20 transition-opacity duration-700 group-hover:opacity-40" />
+             <img src={siteImages.featuredCat} alt="Featured Cat" className="w-full h-full object-cover opacity-20 transition-opacity duration-700 group-hover:opacity-40" />
              <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/80 to-transparent" />
           </div>
           <div className="relative z-10 max-w-xl">

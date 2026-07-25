@@ -21,6 +21,7 @@ import { setTokens } from '@/lib/api/tokens'
 import { ApiError } from '@/lib/api/client'
 import { PillTabs } from '@/components/ui/PillTabs'
 import logoIcon from '@/assets/logo-256.png'
+import { siteImages } from '@/lib/siteImages'
 
 type Mode = 'signin' | 'signup' | 'forgot'
 
@@ -110,7 +111,7 @@ function AuthPage() {
           surface floating on top of it, not a separately-designed block. */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=1600"
+          src={siteImages.heroDog}
           alt=""
           className={`h-full w-full object-cover ${shouldReduceMotion ? '' : 'animate-slow-pan'}`}
         />

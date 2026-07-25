@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { HeroEntranceContainer, HeroEntranceItem } from '../../../components/animations/HeroEntrance'
 import { ParallaxImage } from '../../../components/animations/ParallaxImage'
 import { MapPin, Shield, Heart, ArrowDown, Sparkles } from 'lucide-react'
+import { siteImages } from '@/lib/siteImages'
 
 export const HeroSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -25,7 +26,7 @@ export const HeroSection = () => {
         {/* Background - bright image */}
         <div className="absolute inset-0 z-0">
           <ParallaxImage
-            src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80"
+            src={siteImages.heroDog}
             alt="Happy dogs running together"
             className="w-full h-full object-cover brightness-110 contrast-105"
           />
