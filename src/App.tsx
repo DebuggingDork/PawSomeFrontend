@@ -108,7 +108,7 @@ function App() {
     onBackendReachable(() => setBackendUnreachable(false))
   }, [])
 
-  const { data: myProfile } = useQuery({
+  const { data: myProfile, isLoading: isProfileLoading } = useQuery({
     queryKey: ['my-profile'],
     queryFn: getMyProfile,
     enabled: isAuthenticated,
@@ -179,14 +179,22 @@ function App() {
               ) : isAuthenticated ? (
                 <>
                   <NotificationBell />
-                  <Link
-                    to="/profile"
-                    title="Profile"
-                    aria-label="Profile"
-                    className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
-                  >
-                    <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
-                  </Link>
+                  {isProfileLoading ? (
+                    // The photo comes from a separate /users/me call that isn't part of
+                    // hydrate(), so it can still resolve after the navbar is already
+                    // shown — a neutral placeholder here avoids the avatar visibly
+                    // swapping from a guessed initial to the real photo a beat later.
+                    <div className="h-9 w-9 rounded-full bg-white/10 motion-safe:animate-pulse" aria-hidden="true" />
+                  ) : (
+                    <Link
+                      to="/profile"
+                      title="Profile"
+                      aria-label="Profile"
+                      className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
+                    >
+                      <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
+                    </Link>
+                  )}
                   <Link
                     to="/auth"
                     onClick={logout}
