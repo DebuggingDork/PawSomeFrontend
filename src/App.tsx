@@ -68,11 +68,17 @@ function OnboardingGate() {
   })
 
   useEffect(() => {
+    // The query goes disabled on logout but its last cached result (from while the
+    // user WAS signed in) sticks around, so this must re-check auth itself — it used
+    // to only "work" because signing out happened to always land on /auth, one of the
+    // excluded routes below. Signing out anywhere else would otherwise get hijacked
+    // into /onboarding using a stale status for a session that no longer exists.
+    if (!isAuthenticated) return
     if (!status?.should_show_wizard) return
     if (sessionStorage.getItem('onboarding-dismissed') === '1') return
     if (location.pathname === '/onboarding' || location.pathname === '/auth') return
     navigate('/onboarding')
-  }, [status, location.pathname, navigate])
+  }, [isAuthenticated, status, location.pathname, navigate])
 
   return null
 }
@@ -196,7 +202,7 @@ function App() {
                     </Link>
                   )}
                   <Link
-                    to="/auth"
+                    to="/"
                     onClick={logout}
                     title="Sign out"
                     aria-label="Sign out"
@@ -281,7 +287,7 @@ function App() {
                       variant="secondary"
                       className="w-full"
                       as={Link}
-                      href="/auth"
+                      href={isAuthenticated ? '/' : '/auth'}
                     >
                       {isAuthenticated ? (
                         <>
