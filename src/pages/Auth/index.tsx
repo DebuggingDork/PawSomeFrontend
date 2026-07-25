@@ -6,7 +6,6 @@ import {
   Lock,
   Eye,
   EyeOff,
-  PawPrint,
   AlertCircle,
   ArrowRight,
   CheckCircle2,
@@ -24,15 +23,6 @@ import { PillTabs } from '@/components/ui/PillTabs'
 import logoIcon from '@/assets/icon.png'
 
 type Mode = 'signin' | 'signup' | 'forgot'
-
-// Static positions so we never call Math.random during render.
-const PANEL_PAWS = [
-  { top: '14%', left: '12%', rotate: -18, delay: 0 },
-  { top: '30%', left: '74%', rotate: 20, delay: 1.4 },
-  { top: '58%', left: '20%', rotate: 10, delay: 0.7 },
-  { top: '74%', left: '66%', rotate: -12, delay: 2 },
-  { top: '46%', left: '46%', rotate: 24, delay: 1.1 },
-]
 
 const PANEL_FEATURES = [
   { icon: MapPin, title: 'Matches near you', copy: 'Discover pets and parents in your neighborhood.' },
@@ -112,28 +102,20 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen">
       {/* ── Left: brand panel (large screens only) ─────────────────────────── */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-[#ff6b35] via-[#f7415a] to-pink-600 p-12 pt-28 lg:flex">
-        {/* animated gradient wash + floating paws */}
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-black/20 blur-3xl" />
-          {PANEL_PAWS.map((p, i) => (
-            <motion.div
-              key={i}
-              className="absolute text-white/15"
-              style={{ top: p.top, left: p.left, rotate: `${p.rotate}deg` }}
-              animate={{ y: [0, -16, 0], opacity: [0.1, 0.25, 0.1] }}
-              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
-            >
-              <PawPrint className="h-14 w-14" fill="currentColor" />
-            </motion.div>
-          ))}
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-neutral-950 p-12 pt-28 lg:flex">
+        {/* Same soft ambient-glow language as the form panel on the right (see
+            below), just larger — so the two halves read as one design instead
+            of a loud saturated panel bolted onto a quiet one. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-32 -top-32 h-[26rem] w-[26rem] rounded-full bg-[#ff6b35]/25 blur-[130px]" />
+          <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-pink-500/15 blur-[120px]" />
+          <div className="absolute -bottom-32 left-1/4 h-96 w-96 rounded-full bg-[#ff6b35]/10 blur-[130px]" />
         </div>
 
         {/* Logo + wordmark */}
         <div className="relative flex items-center gap-3">
-          <img src={logoIcon} alt="PawSome" className="h-12 w-12 drop-shadow-lg" />
-          <span className="text-3xl font-bold text-white drop-shadow" style={{ fontFamily: 'Pacifico, cursive' }}>
+          <img src={logoIcon} alt="PawSome" className="h-11 w-11 drop-shadow-lg" />
+          <span className="text-2xl font-bold text-white" style={{ fontFamily: 'Pacifico, cursive' }}>
             PawSome
           </span>
         </div>
@@ -143,13 +125,14 @@ function AuthPage() {
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="mb-8 max-w-md font-display text-4xl font-extrabold leading-tight text-white"
+            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+            className="mb-8 max-w-md text-4xl font-medium leading-[1.15] text-white"
+            style={{ fontFamily: 'Playfair Display, serif' }}
           >
-            Where good dogs find great friends.
+            Where good dogs find <span className="italic text-[#ff6b35]">great friends</span>
           </motion.h1>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {PANEL_FEATURES.map((f, i) => {
               const Icon = f.icon
               return (
@@ -157,15 +140,13 @@ function AuthPage() {
                   key={f.title}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.15 + i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="flex items-start gap-3"
+                  transition={{ duration: 0.5, delay: 0.15 + i * 0.1, ease: [0.23, 1, 0.32, 1] }}
+                  className="flex items-center gap-3"
                 >
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white/15 text-white backdrop-blur">
-                    <Icon className="h-5 w-5" />
-                  </span>
+                  <Icon className="h-5 w-5 flex-shrink-0 text-[#ff6b35]" />
                   <div>
-                    <p className="font-semibold text-white">{f.title}</p>
-                    <p className="text-sm text-white/70">{f.copy}</p>
+                    <p className="text-sm font-semibold text-white">{f.title}</p>
+                    <p className="text-xs text-neutral-400">{f.copy}</p>
                   </div>
                 </motion.div>
               )
@@ -174,7 +155,7 @@ function AuthPage() {
         </div>
 
         {/* Trust line */}
-        <p className="relative text-sm font-medium text-white/70">
+        <p className="relative text-sm font-medium text-neutral-400">
           🐾 Join 10,000+ pet parents already matching nearby.
         </p>
       </div>
