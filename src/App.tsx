@@ -118,7 +118,8 @@ function App() {
   const navItems = [
     { name: 'Home', link: '/' },
     { name: 'Community', link: '/community' },
-    { name: 'About', link: '/about' },
+    // About is only useful as a pitch to visitors who haven't signed up yet.
+    ...(isAuthenticated ? [] : [{ name: 'About', link: '/about' }]),
     { name: 'Events', link: '/events' },
     ...(isAuthenticated
       ? [
