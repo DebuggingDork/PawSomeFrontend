@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Trash2, User as UserIcon } from 'lucide-react'
+import { Briefcase, MapPin, Sparkles, Trash2, User as UserIcon } from 'lucide-react'
 import {
   confirmProfilePhoto,
   deleteProfilePhoto,
@@ -12,6 +12,44 @@ import {
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { Skeleton } from '@/components/ui/Skeleton'
+
+const BIO_MAX_LENGTH = 2000
+
+const PROFILE_TIPS = [
+  {
+    icon: UserIcon,
+    title: 'Add a clear profile photo',
+    description: 'Helps other pet parents recognize and trust you.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Write a warm bio',
+    description: 'Share a bit about yourself and your pet’s personality.',
+  },
+  {
+    icon: MapPin,
+    title: 'Add your location',
+    description: 'Helps nearby pet parents find you.',
+  },
+]
+
+function SectionHeader({ icon: Icon, title, subtitle }: { icon: typeof UserIcon; title: string; subtitle?: string }) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#ff6b35]/10 text-[#ff6b35]">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="text-sm font-semibold text-white">{title}</p>
+        {subtitle && <p className="text-xs text-neutral-500">{subtitle}</p>}
+      </div>
+    </div>
+  )
+}
+
+const inputClass =
+  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
+const iconPrefixClass = 'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500'
 
 export function AccountTab() {
   const queryClient = useQueryClient()
@@ -42,7 +80,12 @@ export function AccountTab() {
   const deletePhotoMutation = useMutation({ mutationFn: deleteProfilePhoto, onSuccess: invalidate })
 
   if (profileQuery.isLoading || !profile) {
-    return <Skeleton className="h-64" />
+    return (
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <Skeleton className="h-96" />
+        <Skeleton className="h-96" />
+      </div>
+    )
   }
 
   const completion = completionQuery.data
@@ -50,19 +93,29 @@ export function AccountTab() {
   return (
     <div className="space-y-6">
       {completion && (
-        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4">
-          <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="font-semibold text-white">Profile completion</span>
-            <span className="text-neutral-400">{completion.completion_percentage}%</span>
+        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/20">
+                <Sparkles className="h-5 w-5 text-white" />
+              </span>
+              <div>
+                <p className="font-semibold text-white">Profile completion</p>
+                <p className="text-sm text-neutral-400">Complete your profile to get more matches</p>
+              </div>
+            </div>
+            <span className="font-display text-lg font-bold text-[#ff6b35]">
+              {completion.completion_percentage}% Complete
+            </span>
           </div>
-          <div className="mb-3 h-2 overflow-hidden rounded-full bg-neutral-800">
+          <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-neutral-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 transition-all duration-500"
               style={{ width: `${completion.completion_percentage}%` }}
             />
           </div>
           {completion.suggestions.length > 0 && (
-            <ul className="space-y-1 text-xs text-neutral-500">
+            <ul className="mt-3 space-y-1 text-xs text-neutral-400">
               {completion.suggestions.map((s) => (
                 <li key={s}>• {s}</li>
               ))}
@@ -70,35 +123,6 @@ export function AccountTab() {
           )}
         </div>
       )}
-
-      <div>
-        <p className="mb-2 text-sm font-medium text-neutral-300">Profile photo</p>
-        <div className="flex items-center gap-4">
-          {profile.profile_photo_url ? (
-            <img src={profile.profile_photo_url} alt="" className="h-16 w-16 rounded-full object-cover" />
-          ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-800">
-              <UserIcon className="h-7 w-7 text-neutral-600" />
-            </div>
-          )}
-          <div className="flex-1">
-            <PhotoUploader
-              label={profile.profile_photo_url ? 'Replace photo' : 'Upload photo'}
-              presign={presignProfilePhoto}
-              confirm={(key) => confirmProfilePhoto(key).then(() => invalidate())}
-            />
-          </div>
-          {profile.profile_photo_url && (
-            <button
-              onClick={() => deletePhotoMutation.mutate()}
-              aria-label="Remove profile photo"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-400 hover:bg-red-500/10 hover:text-red-400"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      </div>
 
       <form
         onSubmit={(e) => {
@@ -111,61 +135,147 @@ export function AccountTab() {
             ...(lat !== null && lng !== null ? { latitude: lat, longitude: lng } : {}),
           })
         }}
-        className="space-y-4"
       >
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-300">Name</label>
-            <input
-              value={fullName}
-              onChange={(e) => { setFullName(e.target.value); setDirty(true) }}
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
-            />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+          {/* Left column */}
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+              <p className="mb-4 text-sm font-semibold text-white">Profile photo</p>
+              <PhotoUploader
+                label="Upload a profile photo"
+                presign={presignProfilePhoto}
+                confirm={(key) => confirmProfilePhoto(key).then(() => invalidate())}
+                variant="card"
+                className="mx-auto max-w-[180px]"
+              />
+              {profile.profile_photo_url && (
+                <button
+                  type="button"
+                  onClick={() => deletePhotoMutation.mutate()}
+                  disabled={deletePhotoMutation.isPending}
+                  className="mx-auto mt-3 flex items-center gap-1.5 text-xs font-medium text-neutral-500 transition-colors hover:text-red-400 disabled:opacity-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Remove photo
+                </button>
+              )}
+              <p className="mt-3 text-center text-xs text-neutral-500">JPEG, PNG or WebP. Max 5MB.</p>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+              <p className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
+                <Sparkles className="h-4 w-4 text-[#ff6b35]" />
+                Tips for a great profile
+              </p>
+              <ul className="space-y-4">
+                {PROFILE_TIPS.map((tip) => (
+                  <li key={tip.title} className="flex items-start gap-3">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#ff6b35]/10 text-[#ff6b35]">
+                      <tip.icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white">{tip.title}</p>
+                      <p className="text-xs text-neutral-400">{tip.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-300">Occupation</label>
-            <input
-              value={occupation}
-              onChange={(e) => { setOccupation(e.target.value); setDirty(true) }}
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
-            />
+
+          {/* Right column */}
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+              <SectionHeader icon={UserIcon} title="Personal information" />
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-neutral-300">Name</label>
+                  <div className="relative">
+                    <UserIcon className={iconPrefixClass} />
+                    <input
+                      value={fullName}
+                      onChange={(e) => {
+                        setFullName(e.target.value)
+                        setDirty(true)
+                      }}
+                      placeholder="Your name"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-neutral-300">Occupation</label>
+                  <div className="relative">
+                    <Briefcase className={iconPrefixClass} />
+                    <input
+                      value={occupation}
+                      onChange={(e) => {
+                        setOccupation(e.target.value)
+                        setDirty(true)
+                      }}
+                      placeholder="What do you do?"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="mb-1.5 block text-sm font-medium text-neutral-300">Bio</label>
+                <div className="relative">
+                  <textarea
+                    value={bio}
+                    onChange={(e) => {
+                      setBio(e.target.value.slice(0, BIO_MAX_LENGTH))
+                      setDirty(true)
+                    }}
+                    maxLength={BIO_MAX_LENGTH}
+                    rows={4}
+                    placeholder="Tell others about yourself and your pet…"
+                    className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 pb-6 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                  />
+                  <span className="pointer-events-none absolute bottom-2.5 right-3.5 text-xs text-neutral-600">
+                    {bio.length}/{BIO_MAX_LENGTH}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+              <SectionHeader icon={MapPin} title="Location" subtitle="Visible to matches" />
+
+              <div className="relative mb-4">
+                <MapPin className={iconPrefixClass} />
+                <input
+                  value={address}
+                  onChange={(e) => {
+                    setAddress(e.target.value)
+                    setDirty(true)
+                  }}
+                  placeholder="Add your city or area"
+                  className={inputClass}
+                />
+              </div>
+
+              <LocationPicker
+                latitude={lat}
+                longitude={lng}
+                onChange={(nlat, nlng) => {
+                  setLat(nlat)
+                  setLng(nlng)
+                  setDirty(true)
+                }}
+              />
+            </div>
           </div>
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-neutral-300">Bio</label>
-          <textarea
-            value={bio}
-            onChange={(e) => { setBio(e.target.value); setDirty(true) }}
-            rows={3}
-            className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-neutral-300">Address</label>
-          <input
-            value={address}
-            onChange={(e) => { setAddress(e.target.value); setDirty(true) }}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-neutral-300">Your location</label>
-          <LocationPicker
-            latitude={lat}
-            longitude={lng}
-            onChange={(nlat, nlng) => { setLat(nlat); setLng(nlng); setDirty(true) }}
-          />
         </div>
 
         <button
           type="submit"
           disabled={updateMutation.isPending || !dirty}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
-          {updateMutation.isSuccess && !dirty && <Check className="h-4 w-4" />}
           {updateMutation.isPending ? 'Saving…' : updateMutation.isSuccess && !dirty ? 'Saved' : 'Save changes'}
         </button>
       </form>

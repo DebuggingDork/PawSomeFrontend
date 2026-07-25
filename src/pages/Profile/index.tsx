@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3 } from 'lucide-react'
+import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { PillTabs } from '@/components/ui/PillTabs'
@@ -39,8 +39,16 @@ function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-28">
-      <h1 className="mb-6 font-display text-2xl font-bold text-white">Profile</h1>
+    <div className="mx-auto max-w-5xl px-6 pb-16 pt-24 md:pt-28">
+      <div className="mb-6 flex items-center gap-3">
+        <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#ff6b35]/10 text-[#ff6b35]">
+          <Sparkles className="h-5 w-5" />
+        </span>
+        <div>
+          <h1 className="font-display text-2xl font-bold text-white">Profile</h1>
+          <p className="text-sm text-neutral-400">Manage your profile and preferences</p>
+        </div>
+      </div>
 
       <PillTabs layoutId="profile-tab-pill" active={tab} onChange={setTab} tabs={TABS} className="mb-6 w-full" />
 
