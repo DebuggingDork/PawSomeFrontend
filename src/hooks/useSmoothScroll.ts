@@ -9,11 +9,23 @@ gsap.registerPlugin(ScrollTrigger)
 
 const STORAGE_KEY = 'pawsome_scroll_y'
 
+/** Past this point we reveal the app whether or not the session has resolved.
+ * A slow or hanging backend used to pin the splash indefinitely; the navbar
+ * renders its own hydrating skeleton, so a late resolution fills that in rather
+ * than contradicting anything already on screen. */
+const HYDRATION_REVEAL_TIMEOUT_MS = 2500
+
 /** Reveal #root with a fade once we're at the correct position. */
 function revealPage() {
-  // Dismiss the pre-loader and reveal #root in the same JS task — no gap
+  // Dismiss the pre-loader and reveal #root in the same JS task — no gap.
+  // The two fades overlap into a crossfade instead of the splash snapping out.
   const pre = document.getElementById('pre-loader')
-  if (pre) pre.style.display = 'none'
+  if (pre) {
+    pre.classList.add('is-done')
+    // It's already pointer-events:none, so it can't swallow clicks while the
+    // fade plays out; this just keeps the finished splash out of the tree.
+    setTimeout(() => pre.remove(), 400)
+  }
   const root = document.getElementById('root')
   if (root) root.classList.add('ready')
 }
@@ -64,10 +76,24 @@ export function useSmoothScroll() {
     // stays up until hydration finishes too, not just once scroll is restored.
     // hydrate() is idempotent/cached and always settles (see its own try/catch),
     // so this can't leave the splash stuck even if the API call fails.
+    //
+    // The splash itself stays invisible for its first 450ms (see index.html), so
+    // a session that resolves quickly is never announced with a loading screen at
+    // all — the user just sees the app. The splash only fades in when there is
+    // genuinely something to wait for.
     const hydrated = useAuthStore.getState().hydrate()
 
+    let revealTimeoutId: number | undefined
+    const settled = Promise.race([
+      hydrated,
+      new Promise<void>((resolve) => {
+        revealTimeoutId = window.setTimeout(resolve, HYDRATION_REVEAL_TIMEOUT_MS)
+      }),
+    ])
+
     const finish = (targetY?: number) => {
-      hydrated.then(() => {
+      settled.then(() => {
+        if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
         if (targetY !== undefined) {
           lenis.scrollTo(targetY, { immediate: true })
           sessionStorage.removeItem(STORAGE_KEY)
@@ -101,6 +127,7 @@ export function useSmoothScroll() {
         // to the real one a moment later. hydrate() always settles (see its
         // try/catch), so the surviving mount's own finish()→hydrated.then()
         // chain is guaranteed to reveal the page — no separate safety net needed.
+        if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
         window.removeEventListener('beforeunload', handleBeforeUnload)
         cancelAnimationFrame(rafId)
         lenis.destroy()
@@ -111,6 +138,7 @@ export function useSmoothScroll() {
     finish()
 
     return () => {
+      if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
       window.removeEventListener('beforeunload', handleBeforeUnload)
       cancelAnimationFrame(rafId)
       lenis.destroy()

@@ -4,24 +4,39 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0a" />
     <meta name="description" content="PawSome — The premium pet matching platform. Connect with verified, responsible breeders for dogs and cats." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <title>PawSome — Premium Pet Matching</title>
     <!--
-      1. Disable the browser's built-in scroll restoration so Lenis can own it.
-      2. Hide #root immediately so the user never sees the black flash, the
-         top-of-page flash, or the scroll-jump flash. useSmoothScroll will
-         reveal the page (with a short fade) once the position is restored.
+      Loaded non-render-blocking (media=print flips to all on load). A blocking
+      stylesheet here meant nothing at all painted until Google Fonts answered,
+      which is dead time on every single reload. The splash below is drawn with
+      inline SVG + a system-font fallback, so it paints without waiting on this.
     -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    >
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    </noscript>
+    <title>PawSome — Premium Pet Matching</title>
     <script>
+      // Disable the browser's built-in scroll restoration so Lenis can own it.
       if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
       }
     </script>
     <style>
-      /* Keep the page content hidden until Lenis has restored scroll position */
+      /* Page background is painted on <html> so there's never a white flash
+         between first paint and React mounting. */
+      html { background: #0a0a0a; }
+
+      /* Keep the page content hidden until Lenis has restored scroll position.
+         useSmoothScroll adds .ready once the position (and session) settle. */
       #root {
         visibility: hidden;
         opacity: 0;
@@ -29,78 +44,202 @@
       #root.ready {
         visibility: visible;
         opacity: 1;
-        transition: opacity 0.25s ease;
+        transition: opacity 0.3s ease;
       }
 
-      /* ── Instant pre-React splash screen ───────────────────────────────────
-         Pure HTML/CSS — zero extra network requests (favicon.svg is already
-         fetched for the browser tab). React's MutationObserver (below) hides
-         this the moment #root has children, by which point the Lottie
-         GlobalLoader is already covering the screen.                          */
+      /* ── Pre-React splash ──────────────────────────────────────────────────
+         Drawn entirely with inline SVG + CSS: zero network requests, so it can
+         paint on the very first frame. (It used to <img> an 842 KB PNG, which
+         made the "loading" screen itself the slowest thing on the page.)
+
+         Crucially it stays INVISIBLE for the first SPLASH_DELAY ms — a reload
+         that resolves quickly shows nothing but the app background, and the
+         splash only fades in when there is genuinely something to wait for. */
       #pre-loader {
         position: fixed;
         inset: 0;
         z-index: 99999;
-        background: #0a0a0a;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 20px;
+        gap: 26px;
+        background: #0a0a0a;
+        opacity: 0;
+        /* 450ms hold, then a 350ms fade-in. Fast loads never reach the fade. */
+        animation: preloader-in 350ms ease 450ms forwards;
       }
 
-      /* Logo icon — reuses the favicon already cached by the browser */
-      .pre-loader-icon {
-        width: 88px;
-        height: 88px;
-        animation: logo-pulse 1.8s ease-in-out infinite;
-      }
-
-      /* Wordmark styled to match the navbar gradient */
-      .pre-loader-wordmark {
-        font-family: 'Pacifico', 'Georgia', cursive;
-        font-size: 2rem;
-        background: linear-gradient(90deg, #ff6b35, #ff8c5c, #ff6b35);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        background-size: 200% auto;
-        animation: shimmer 2s linear infinite;
-      }
-
-      /* Thin loading bar at the bottom of the splash */
-      .pre-loader-bar {
+      /* Soft brand-warm glow so the mark isn't floating in flat black. */
+      #pre-loader::before {
+        content: '';
         position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 3px;
-        width: 40%;
-        background: linear-gradient(90deg, #ff6b35, #ff8c5c);
-        border-radius: 0 2px 2px 0;
-        animation: load-bar 1.6s ease-in-out infinite;
+        width: min(560px, 80vw);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 107, 53, 0.13), transparent 68%);
+        animation: glow-breathe 3.6s ease-in-out infinite;
       }
 
-      @keyframes logo-pulse {
-        0%, 100% { transform: scale(1);    opacity: 1;    }
-        50%       { transform: scale(1.08); opacity: 0.85; }
+      .preloader-stack {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+      }
+
+      /* ── Paw mark ── */
+      .preloader-mark {
+        width: 74px;
+        height: 74px;
+        transform-origin: 50% 62%;
+        animation: mark-breathe 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+        filter: drop-shadow(0 6px 22px rgba(255, 107, 53, 0.32));
+      }
+
+      /* Toes fade up one after another, like a paw settling down. */
+      .preloader-toe {
+        transform-origin: 50% 50%;
+        animation: toe-step 2.6s ease-in-out infinite;
+      }
+      .preloader-toe:nth-of-type(1) { animation-delay: 0ms; }
+      .preloader-toe:nth-of-type(2) { animation-delay: 110ms; }
+      .preloader-toe:nth-of-type(3) { animation-delay: 220ms; }
+      .preloader-toe:nth-of-type(4) { animation-delay: 330ms; }
+
+      /* ── Wordmark ── */
+      .preloader-wordmark {
+        font-family: 'Pacifico', 'Segoe Script', 'Brush Script MT', cursive;
+        font-size: 1.75rem;
+        line-height: 1;
+        letter-spacing: 0.01em;
+        background: linear-gradient(100deg, #ff5f6d 0%, #ff6b35 45%, #ffb347 100%);
+        background-size: 220% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        animation: shimmer 3s linear infinite;
+      }
+
+      /* ── Indeterminate rail ──
+         A short centred rail reads as "working" without the stray edge-of-screen
+         sliver the old full-width bottom bar left behind. */
+      .preloader-rail {
+        position: relative;
+        width: 108px;
+        height: 2px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.07);
+        overflow: hidden;
+      }
+      .preloader-rail::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        width: 42%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, transparent, #ff6b35, #ffb347, transparent);
+        animation: rail-sweep 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      }
+
+      /* Screen-reader-only status text. */
+      .preloader-sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Dismissal — crossfades with #root rather than snapping away. */
+      #pre-loader.is-done {
+        animation: none;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+      }
+
+      @keyframes preloader-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes glow-breathe {
+        0%, 100% { opacity: 0.55; transform: scale(0.94); }
+        50%      { opacity: 1;    transform: scale(1.04); }
+      }
+      @keyframes mark-breathe {
+        0%, 100% { transform: scale(1)     translateY(0); }
+        50%      { transform: scale(1.055) translateY(-2px); }
+      }
+      @keyframes toe-step {
+        0%, 100% { opacity: 0.5; transform: translateY(1.5px); }
+        45%      { opacity: 1;   transform: translateY(-1.5px); }
       }
       @keyframes shimmer {
-        0%   { background-position: 0%   center; }
-        100% { background-position: 200% center; }
+        from { background-position: 0% center; }
+        to   { background-position: 220% center; }
       }
-      @keyframes load-bar {
-        0%   { left: -40%; width: 40%; }
-        50%  { width: 55%; }
-        100% { left: 100%; width: 40%; }
+      @keyframes rail-sweep {
+        0%   { transform: translateX(-115%); }
+        100% { transform: translateX(355%); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #pre-loader::before,
+        .preloader-mark,
+        .preloader-toe,
+        .preloader-wordmark,
+        .preloader-rail::after {
+          animation: none;
+        }
+        .preloader-rail::after {
+          width: 100%;
+          opacity: 0.6;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- Instant splash — visible before React boots, no extra network needed -->
-    <div id="pre-loader">
-      <img class="pre-loader-icon" src="/iconlarge.png" alt="PawSome" />
-      <span class="pre-loader-wordmark">PawSome</span>
-      <div class="pre-loader-bar"></div>
+    <!-- Instant splash — no network requests, held invisible for the first 450ms -->
+    <div id="pre-loader" role="status" aria-live="polite">
+      <div class="preloader-stack">
+        <svg
+          class="preloader-mark"
+          viewBox="0 0 100 100"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="pawGrad" x1="8" y1="6" x2="92" y2="94" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff5f6d" />
+              <stop offset="52%" stop-color="#ff6b35" />
+              <stop offset="100%" stop-color="#ffb347" />
+            </linearGradient>
+          </defs>
+          <!-- Four toe beans, arced above the pad -->
+          <ellipse class="preloader-toe" cx="17" cy="43" rx="8.6" ry="11.6" transform="rotate(-24 17 43)" fill="url(#pawGrad)" />
+          <ellipse class="preloader-toe" cx="37" cy="26" rx="9.2" ry="12.6" transform="rotate(-9 37 26)" fill="url(#pawGrad)" />
+          <ellipse class="preloader-toe" cx="63" cy="26" rx="9.2" ry="12.6" transform="rotate(9 63 26)" fill="url(#pawGrad)" />
+          <ellipse class="preloader-toe" cx="83" cy="43" rx="8.6" ry="11.6" transform="rotate(24 83 43)" fill="url(#pawGrad)" />
+          <!-- Main pad, shaped as a heart — the brand's whole idea in one shape -->
+          <path
+            d="M50 93C50 93 21.5 74.8 21.5 60.2C21.5 51.2 28.4 45.6 35.8 45.6C41.9 45.6 46.9 49.6 50 54.9C53.1 49.6 58.1 45.6 64.2 45.6C71.6 45.6 78.5 51.2 78.5 60.2C78.5 74.8 50 93 50 93Z"
+            fill="url(#pawGrad)"
+          />
+        </svg>
+
+        <span class="preloader-wordmark">PawSome</span>
+
+        <div class="preloader-rail" aria-hidden="true"></div>
+      </div>
+      <span class="preloader-sr">Loading PawSome…</span>
     </div>
 
     <div id="root"></div>
