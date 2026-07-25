@@ -48,8 +48,8 @@ import { NotificationBell } from './components/notifications/NotificationBell'
 function NavAuthSkeleton() {
   return (
     <div className="flex items-center gap-3" aria-hidden="true">
-      <div className="motion-safe:animate-pulse h-9 w-24 rounded-full bg-white/10" />
-      <div className="motion-safe:animate-pulse h-9 w-32 rounded-full bg-white/10" />
+      <div className="motion-safe:animate-pulse h-10 w-10 rounded-full bg-white/10" />
+      <div className="motion-safe:animate-pulse h-10 w-10 rounded-full bg-white/10" />
     </div>
   )
 }
@@ -157,7 +157,7 @@ function App() {
         <Navbar>
           {/* Desktop Navigation */}
           <NavBody>
-            {/* Left: Logo */}
+            {/* Left: Logo — pinned to the true edge, not a centered column */}
             <Link to="/" className="flex items-center gap-2 justify-self-start">
               <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
               <span
@@ -171,36 +171,39 @@ function App() {
             {/* Center: Nav Items */}
             <NavItems items={navItems} />
 
-            {/* Right: Buttons */}
+            {/* Right: notifications / profile / sign out — pinned to the true edge */}
             <div className="flex items-center gap-3 justify-self-end">
               {isHydrating ? (
                 <NavAuthSkeleton />
+              ) : isAuthenticated ? (
+                <>
+                  <NotificationBell />
+                  <Link
+                    to="/profile"
+                    title="Profile"
+                    aria-label="Profile"
+                    className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
+                  >
+                    <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
+                  </Link>
+                  <Link
+                    to="/auth"
+                    onClick={logout}
+                    title="Sign out"
+                    aria-label="Sign out"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-[#ff6b35]"
+                  >
+                    <LogOut className="h-5 w-5" />
+                  </Link>
+                </>
               ) : (
                 <>
-                  {isAuthenticated && <NotificationBell />}
-                  {isAuthenticated && (
-                    <Link
-                      to="/profile"
-                      title="Profile"
-                      aria-label="Profile"
-                      className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
-                    >
-                      <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
-                    </Link>
-                  )}
-                  {isAuthenticated ? (
-                    <NavbarButton variant="secondary" onClick={logout} as={Link} href="/auth">
-                      <LogOut className="mr-2 inline h-4 w-4" />
-                      Sign Out
-                    </NavbarButton>
-                  ) : (
-                    <NavbarButton variant="secondary" as={Link} href="/auth">
-                      Sign In
-                    </NavbarButton>
-                  )}
-                  <NavbarButton variant="gradient" as={Link} href={isAuthenticated ? '/chat' : '/discover'}>
+                  <NavbarButton variant="secondary" as={Link} href="/auth">
+                    Sign In
+                  </NavbarButton>
+                  <NavbarButton variant="gradient" as={Link} href="/discover">
                     <Heart className="mr-2 inline h-4 w-4" />
-                    {isAuthenticated ? 'My Chats' : 'Find Matches'}
+                    Find Matches
                   </NavbarButton>
                 </>
               )}
@@ -212,8 +215,10 @@ function App() {
             <MobileNavHeader>
               <Link to="/" className="flex items-center gap-2">
                 <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
+                {/* Wordmark drops off on narrow screens — the icon alone is enough
+                    to identify the brand once space gets tight. */}
                 <span
-                  className="text-xl font-bold text-[#ff6b35]"
+                  className="hidden min-[420px]:inline-block text-xl font-bold text-[#ff6b35]"
                   style={{ fontFamily: 'Pacifico, cursive' }}
                 >
                   PawSome
@@ -278,16 +283,20 @@ function App() {
                         'Sign In'
                       )}
                     </NavbarButton>
-                    <NavbarButton
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      variant="gradient"
-                      className="w-full"
-                      as={Link}
-                      href={isAuthenticated ? '/chat' : '/discover'}
-                    >
-                      <Heart className="mr-2 inline h-4 w-4" />
-                      {isAuthenticated ? 'My Chats' : 'Find Matches'}
-                    </NavbarButton>
+                    {/* Chat is already listed above as a nav link once signed in —
+                        this CTA is only needed to give logged-out visitors a next step. */}
+                    {!isAuthenticated && (
+                      <NavbarButton
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        variant="gradient"
+                        className="w-full"
+                        as={Link}
+                        href="/discover"
+                      >
+                        <Heart className="mr-2 inline h-4 w-4" />
+                        Find Matches
+                      </NavbarButton>
+                    )}
                   </>
                 )}
               </div>

@@ -68,11 +68,14 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   );
 };
 
+// Full-bleed (no max-width column) so the logo and right-side actions sit at
+// the true viewport edges instead of a centered content column — on wide
+// screens a max-w column left a large dead gap before the "edge" content.
 export const NavBody = ({ children, className }: NavBodyProps) => {
   return (
     <div
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-8 py-4 lg:grid",
+        "relative z-[60] hidden w-full grid-cols-[1fr_auto_1fr] items-center py-4 pl-4 pr-4 lg:grid lg:pl-[2cm] lg:pr-[2cm]",
         className,
       )}
     >
