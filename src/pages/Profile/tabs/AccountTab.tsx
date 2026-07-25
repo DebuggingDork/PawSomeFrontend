@@ -57,6 +57,10 @@ export function AccountTab() {
   const [lat, setLat] = useState<number | null>(profile?.latitude ?? null)
   const [lng, setLng] = useState<number | null>(profile?.longitude ?? null)
   const [dirty, setDirty] = useState(false)
+  // Bumped on removal to remount the uploader. It holds an object URL for any
+  // file picked in this session, which would otherwise keep displaying a photo
+  // the user had just deleted.
+  const [photoUploaderKey, setPhotoUploaderKey] = useState(0)
 
   const updateMutation = useMutation({
     mutationFn: updateMyProfile,
@@ -65,7 +69,13 @@ export function AccountTab() {
       setDirty(false)
     },
   })
-  const deletePhotoMutation = useMutation({ mutationFn: deleteProfilePhoto, onSuccess: invalidate })
+  const deletePhotoMutation = useMutation({
+    mutationFn: deleteProfilePhoto,
+    onSuccess: () => {
+      invalidate()
+      setPhotoUploaderKey((k) => k + 1)
+    },
+  })
 
   if (profileQuery.isLoading || !profile) {
     return (
@@ -131,11 +141,14 @@ export function AccountTab() {
             <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
               <p className="mb-4 text-sm font-semibold text-white">Profile photo</p>
               <PhotoUploader
+                key={photoUploaderKey}
                 label="Upload a profile photo"
                 presign={presignProfilePhoto}
                 confirm={(key) => confirmProfilePhoto(key).then(() => invalidate())}
                 variant="card"
                 className="mx-auto max-w-[180px]"
+                currentPhotoUrl={profile.profile_photo_url}
+                photoAlt="Your profile photo"
               />
               {profile.profile_photo_url && (
                 <button
@@ -145,7 +158,7 @@ export function AccountTab() {
                   className="mx-auto mt-3 flex items-center gap-1.5 text-xs font-medium text-neutral-500 transition-colors hover:text-red-400 disabled:opacity-50"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  Remove photo
+                  {deletePhotoMutation.isPending ? 'Removing…' : 'Remove photo'}
                 </button>
               )}
               <p className="mt-3 text-center text-xs text-neutral-500">JPEG, PNG or WebP. Max 5MB.</p>

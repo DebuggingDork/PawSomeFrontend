@@ -15,6 +15,17 @@ interface PhotoUploaderProps {
   label?: string
   className?: string
   /**
+   * The photo already saved on the server, if any. Without this the uploader can
+   * only ever preview a file picked in this session, so a screen with a photo
+   * already on file (the profile photo) kept showing an empty "upload" dropzone
+   * as though nothing had ever been set. A freshly picked file still takes
+   * precedence, so the preview stays instant.
+   */
+  currentPhotoUrl?: string | null
+  /** Alt text for the preview. Defaults to decorative, since most callers label
+   * the surrounding section themselves. */
+  photoAlt?: string
+  /**
    * 'card' renders a large photo preview that replaces the dropzone once a file is chosen
    * (used where there's no photo shown elsewhere, e.g. onboarding). 'compact' keeps the
    * slim inline button with a small thumbnail beside it, for screens that already show
@@ -38,6 +49,8 @@ export function PhotoUploader({
   label = 'Add photo',
   className = '',
   variant = 'compact',
+  currentPhotoUrl = null,
+  photoAlt = '',
 }: PhotoUploaderProps) {
   const [status, setStatus] = useState<Status>('idle')
   const [message, setMessage] = useState<string | null>(null)
@@ -91,7 +104,10 @@ export function PhotoUploader({
     }
   }
 
-  const hasPreview = !!previewUrl
+  // A file picked in this session wins: its object URL renders immediately,
+  // without waiting for the upload or the refetch that follows it.
+  const displayUrl = previewUrl ?? currentPhotoUrl
+  const hasPreview = !!displayUrl
   const isCard = variant === 'card'
 
   const fileInput = (
@@ -152,7 +168,7 @@ export function PhotoUploader({
             }`}
           >
             {hasPreview ? (
-              <img src={previewUrl} alt="" className="h-full w-full object-cover" />
+              <img src={displayUrl} alt={photoAlt} className="h-full w-full object-cover" />
             ) : (
               <>
                 <Camera className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-[#ff6b35]" />
@@ -160,11 +176,13 @@ export function PhotoUploader({
               </>
             )}
 
+            {/* Always visible, not hover-only: on touch there is no hover, so a
+                saved photo would otherwise read as a static image with no hint
+                that tapping it swaps the picture. */}
             {hasPreview && status === 'idle' && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-200 group-hover:bg-black/50 group-hover:opacity-100">
-                <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
-                  <Camera className="h-3.5 w-3.5" /> Change photo
-                </span>
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 bg-gradient-to-t from-black/85 via-black/45 to-transparent pb-2.5 pt-7 text-xs font-semibold text-white transition-colors group-hover:from-black group-hover:via-black/60">
+                <Camera className="h-3.5 w-3.5" />
+                Change photo
               </div>
             )}
 
@@ -203,7 +221,7 @@ export function PhotoUploader({
         <div className="flex items-center gap-3">
           {hasPreview && (
             <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
-              <img src={previewUrl} alt="" className="h-full w-full object-cover" />
+              <img src={displayUrl} alt={photoAlt} className="h-full w-full object-cover" />
               {status === 'uploading' && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                   <Loader2 className="h-4 w-4 animate-spin text-white" />
