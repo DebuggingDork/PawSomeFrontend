@@ -66,6 +66,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
           <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
           <span className="truncate">{event.location_name}</span>
         </p>
+        {event.address && <p className="ml-5 truncate text-xs text-neutral-600">{event.address}</p>}
 
         {event.description && <p className="mt-3 line-clamp-2 text-sm text-neutral-300">{event.description}</p>}
 

@@ -32,6 +32,8 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
   const [locationName, setLocationName] = useState('')
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
+  const [address, setAddress] = useState('')
+  const [pincode, setPincode] = useState('')
   const [note, setNote] = useState('')
 
   const playdatesQuery = useQuery({
@@ -48,6 +50,8 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
         location_name: locationName.trim(),
         latitude: lat as number,
         longitude: lng as number,
+        address: address.trim() || undefined,
+        pincode: pincode.trim() || undefined,
         note: note.trim() || undefined,
       }),
     onSuccess: () => {
@@ -56,6 +60,8 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
       setLocationName('')
       setLat(null)
       setLng(null)
+      setAddress('')
+      setPincode('')
       setNote('')
     },
   })
@@ -134,11 +140,26 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           <LocationPicker
             latitude={lat}
             longitude={lng}
-            onChange={({ lat: newLat, lng: newLng }) => {
+            address={address}
+            onChange={({ lat: newLat, lng: newLng, address: newAddress, pincode: newPincode }) => {
               setLat(newLat)
               setLng(newLng)
+              if (newAddress !== undefined) setAddress(newAddress)
+              if (newPincode !== undefined) setPincode(newPincode)
             }}
           />
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-neutral-500">Pincode</span>
+            <input
+              type="text"
+              value={pincode}
+              onChange={(e) => setPincode(e.target.value)}
+              maxLength={20}
+              placeholder="Auto-filled from location"
+              className={FIELD}
+            />
+          </label>
 
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-neutral-500">Note (optional)</span>

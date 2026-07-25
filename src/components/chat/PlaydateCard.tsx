@@ -72,6 +72,7 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
             <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="truncate">{playdate.location_name}</span>
           </p>
+          {playdate.address && <p className="ml-5 truncate text-[11px] text-neutral-600">{playdate.address}</p>}
 
           {playdate.note && <p className="mt-1 text-xs italic text-neutral-500">"{playdate.note}"</p>}
 

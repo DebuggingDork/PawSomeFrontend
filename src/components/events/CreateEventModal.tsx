@@ -35,6 +35,8 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
   const [locationName, setLocationName] = useState('')
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
+  const [address, setAddress] = useState('')
+  const [pincode, setPincode] = useState('')
   const [when, setWhen] = useState(defaultDateTimeLocal())
   const [species, setSpecies] = useState('')
 
@@ -49,6 +51,8 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
         location_name: locationName.trim(),
         latitude: lat as number,
         longitude: lng as number,
+        address: address.trim() || undefined,
+        pincode: pincode.trim() || undefined,
         event_time: new Date(when).toISOString(),
         species: species || undefined,
       }),
@@ -137,11 +141,26 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
               <LocationPicker
                 latitude={lat}
                 longitude={lng}
-                onChange={({ lat: newLat, lng: newLng }) => {
+                address={address}
+                onChange={({ lat: newLat, lng: newLng, address: newAddress, pincode: newPincode }) => {
                   setLat(newLat)
                   setLng(newLng)
+                  if (newAddress !== undefined) setAddress(newAddress)
+                  if (newPincode !== undefined) setPincode(newPincode)
                 }}
               />
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-neutral-300">Pincode</label>
+                <input
+                  type="text"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  maxLength={20}
+                  placeholder="Auto-filled from location"
+                  className={FIELD}
+                />
+              </div>
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-neutral-300">Who's welcome</label>

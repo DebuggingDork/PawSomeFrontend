@@ -466,6 +466,8 @@ export interface Playdate {
   location_name: string
   latitude: number
   longitude: number
+  address: string | null
+  pincode: string | null
   note: string | null
   status: PlaydateStatus
   proposed_by_pet: PlaydatePetInfo
@@ -485,6 +487,8 @@ export interface PlaydateCreateInput {
   location_name: string
   latitude: number
   longitude: number
+  address?: string
+  pincode?: string
   note?: string
 }
 
@@ -503,6 +507,8 @@ export interface CommunityEvent {
   location_name: string
   latitude: number
   longitude: number
+  address: string | null
+  pincode: string | null
   event_time: string
   species: string | null
   creator: EventCreatorInfo
@@ -525,6 +531,8 @@ export interface EventCreateInput {
   location_name: string
   latitude: number
   longitude: number
+  address?: string
+  pincode?: string
   event_time: string
   species?: string
 }
