@@ -114,29 +114,42 @@ export function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="thin-scrollbar lenis-prevent-scroll absolute right-0 top-12 z-50 max-h-[28rem] w-80 overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-neutral-900/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
+            className="thin-scrollbar lenis-prevent-scroll absolute right-0 top-12 z-50 max-h-[28rem] w-[min(23rem,calc(100vw-1.5rem))] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-neutral-900/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
           >
-            <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
-              <h3 className="font-display font-bold text-white">Notifications</h3>
-              <div className="flex items-center gap-3">
+            {/* Sticky so the actions stay reachable part-way down a long list.
+                Everything here is nowrap: at this width the two labels used to
+                wrap onto second lines and shove the check icon up against the
+                title. */}
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-neutral-800 bg-neutral-900/95 px-4 py-3 backdrop-blur-xl">
+              <h3 className="flex shrink-0 items-center gap-2 font-display font-bold text-white">
+                Notifications
+                {unreadCount > 0 && (
+                  <span className="rounded-full bg-[#ff6b35]/15 px-1.5 py-px text-[11px] font-semibold leading-tight text-[#ff6b35]">
+                    {unreadCount}
+                  </span>
+                )}
+              </h3>
+              <div className="flex shrink-0 items-center gap-1">
                 {unreadCount > 0 && (
                   <button
                     onClick={() => markAllReadMutation.mutate()}
                     disabled={markAllReadMutation.isPending}
-                    className="flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-white disabled:opacity-50"
+                    title="Mark all as read"
+                    className="flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
                   >
-                    <CheckCheck className="h-3.5 w-3.5" />
-                    Mark all read
+                    <CheckCheck className="h-3.5 w-3.5 shrink-0" />
+                    Read all
                   </button>
                 )}
                 {notifications && notifications.length > 0 && (
                   <button
                     onClick={() => clearAllMutation.mutate()}
                     disabled={clearAllMutation.isPending}
-                    className="flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-red-400 disabled:opacity-50"
+                    title="Clear all notifications"
+                    className="flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-red-400 disabled:opacity-50"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Clear all
+                    <Trash2 className="h-3.5 w-3.5 shrink-0" />
+                    Clear
                   </button>
                 )}
               </div>
