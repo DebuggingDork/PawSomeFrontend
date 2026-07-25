@@ -53,6 +53,7 @@ export function AccountTab() {
   const [occupation, setOccupation] = useState(profile?.occupation ?? '')
   const [bio, setBio] = useState(profile?.bio ?? '')
   const [address, setAddress] = useState(profile?.address ?? '')
+  const [pincode, setPincode] = useState(profile?.pincode ?? '')
   const [lat, setLat] = useState<number | null>(profile?.latitude ?? null)
   const [lng, setLng] = useState<number | null>(profile?.longitude ?? null)
   const [dirty, setDirty] = useState(false)
@@ -119,6 +120,7 @@ export function AccountTab() {
             occupation: occupation.trim(),
             bio: bio.trim(),
             address: address.trim(),
+            pincode: pincode.trim(),
             ...(lat !== null && lng !== null ? { latitude: lat, longitude: lng } : {}),
           })
         }}
@@ -232,28 +234,31 @@ export function AccountTab() {
             <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
               <SectionHeader icon={MapPin} title="Location" subtitle="Visible to matches" className="mb-5" />
 
-              <div className="relative mb-4">
-                <MapPin className={iconPrefixClass} />
-                <input
-                  value={address}
-                  onChange={(e) => {
-                    setAddress(e.target.value)
-                    setDirty(true)
-                  }}
-                  placeholder="Add your city or area"
-                  className={inputClass}
-                />
-              </div>
-
               <LocationPicker
                 latitude={lat}
                 longitude={lng}
-                onChange={(nlat, nlng) => {
+                address={address}
+                onChange={({ lat: nlat, lng: nlng, address: nAddress, pincode: nPincode }) => {
                   setLat(nlat)
                   setLng(nlng)
+                  if (nAddress !== undefined) setAddress(nAddress)
+                  if (nPincode !== undefined) setPincode(nPincode)
                   setDirty(true)
                 }}
               />
+
+              <div className="mt-3">
+                <label className="mb-1.5 block text-sm font-medium text-neutral-300">Pincode</label>
+                <input
+                  value={pincode}
+                  onChange={(e) => {
+                    setPincode(e.target.value)
+                    setDirty(true)
+                  }}
+                  placeholder="Auto-filled from location"
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                />
+              </div>
             </div>
           </div>
         </div>

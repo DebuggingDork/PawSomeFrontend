@@ -17,6 +17,8 @@ export function ProfileBasicsStep({ initialFullName, initialOccupation, initialL
   const [occupation, setOccupation] = useState(initialOccupation)
   const [lat, setLat] = useState<number | null>(initialLat)
   const [lng, setLng] = useState<number | null>(initialLng)
+  const [address, setAddress] = useState('')
+  const [pincode, setPincode] = useState('')
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -24,6 +26,8 @@ export function ProfileBasicsStep({ initialFullName, initialOccupation, initialL
         full_name: fullName.trim(),
         occupation: occupation.trim(),
         ...(lat !== null && lng !== null ? { latitude: lat, longitude: lng } : {}),
+        ...(address ? { address } : {}),
+        ...(pincode ? { pincode } : {}),
       }),
     onSuccess: onSaved,
   })
@@ -60,7 +64,17 @@ export function ProfileBasicsStep({ initialFullName, initialOccupation, initialL
         <label className="mb-1.5 block text-sm font-medium text-neutral-300">
           Your location <span className="font-normal text-neutral-500">(recommended — powers nearby matches)</span>
         </label>
-        <LocationPicker latitude={lat} longitude={lng} onChange={(nlat, nlng) => { setLat(nlat); setLng(nlng) }} />
+        <LocationPicker
+          latitude={lat}
+          longitude={lng}
+          address={address}
+          onChange={({ lat: nlat, lng: nlng, address: nAddress, pincode: nPincode }) => {
+            setLat(nlat)
+            setLng(nlng)
+            if (nAddress !== undefined) setAddress(nAddress)
+            if (nPincode !== undefined) setPincode(nPincode)
+          }}
+        />
       </div>
 
       {mutation.isError && <p className="text-sm text-red-400">Couldn't save that — try again.</p>}

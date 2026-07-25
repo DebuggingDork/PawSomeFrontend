@@ -134,7 +134,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           <LocationPicker
             latitude={lat}
             longitude={lng}
-            onChange={(newLat, newLng) => {
+            onChange={({ lat: newLat, lng: newLng }) => {
               setLat(newLat)
               setLng(newLng)
             }}

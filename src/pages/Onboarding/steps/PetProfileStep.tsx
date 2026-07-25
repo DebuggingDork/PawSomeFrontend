@@ -20,6 +20,8 @@ export function PetProfileStep({ onSaved }: Props) {
   const [bio, setBio] = useState('')
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
+  const [address, setAddress] = useState('')
+  const [pincode, setPincode] = useState('')
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -32,6 +34,8 @@ export function PetProfileStep({ onSaved }: Props) {
         bio: bio.trim() || undefined,
         lat: lat ?? 0,
         lng: lng ?? 0,
+        address: address.trim() || undefined,
+        pincode: pincode.trim() || undefined,
       }),
     onSuccess: onSaved,
   })
@@ -134,7 +138,17 @@ export function PetProfileStep({ onSaved }: Props) {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-neutral-300">Pet's location</label>
-        <LocationPicker latitude={lat} longitude={lng} onChange={(nlat, nlng) => { setLat(nlat); setLng(nlng) }} />
+        <LocationPicker
+          latitude={lat}
+          longitude={lng}
+          address={address}
+          onChange={({ lat: nlat, lng: nlng, address: nAddress, pincode: nPincode }) => {
+            setLat(nlat)
+            setLng(nlng)
+            if (nAddress !== undefined) setAddress(nAddress)
+            if (nPincode !== undefined) setPincode(nPincode)
+          }}
+        />
       </div>
 
       {mutation.isError && <p className="text-sm text-red-400">Couldn't create that pet — check the details and try again.</p>}

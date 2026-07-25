@@ -23,6 +23,8 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
   const [bio, setBio] = useState(initial?.bio ?? '')
   const [lat, setLat] = useState<number | null>(initial?.lat ?? null)
   const [lng, setLng] = useState<number | null>(initial?.lng ?? null)
+  const [address, setAddress] = useState(initial?.address ?? '')
+  const [pincode, setPincode] = useState(initial?.pincode ?? '')
   const [isVaccinated, setIsVaccinated] = useState(initial?.is_vaccinated ?? false)
   const [vaccinationDate, setVaccinationDate] = useState(initial?.vaccination_date?.slice(0, 10) ?? '')
   const [isNeutered, setIsNeutered] = useState(initial?.is_neutered ?? false)
@@ -44,6 +46,8 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
           bio: bio.trim() || undefined,
           lat: lat as number,
           lng: lng as number,
+          address: address.trim() || undefined,
+          pincode: pincode.trim() || undefined,
           is_vaccinated: isVaccinated,
           vaccination_date: isVaccinated ? vaccinationDate || null : null,
           is_neutered: isNeutered,
@@ -129,7 +133,26 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
 
       <div>
         <label className="mb-1.5 block text-xs font-medium text-neutral-400">Location</label>
-        <LocationPicker latitude={lat} longitude={lng} onChange={(nlat, nlng) => { setLat(nlat); setLng(nlng) }} />
+        <LocationPicker
+          latitude={lat}
+          longitude={lng}
+          address={address}
+          onChange={({ lat: nlat, lng: nlng, address: nAddress, pincode: nPincode }) => {
+            setLat(nlat)
+            setLng(nlng)
+            if (nAddress !== undefined) setAddress(nAddress)
+            if (nPincode !== undefined) setPincode(nPincode)
+          }}
+        />
+        <div className="mt-2">
+          <label className="mb-1.5 block text-xs font-medium text-neutral-400">Pincode</label>
+          <input
+            value={pincode}
+            onChange={(e) => setPincode(e.target.value)}
+            placeholder="Auto-filled from location"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+          />
+        </div>
       </div>
 
       <div>

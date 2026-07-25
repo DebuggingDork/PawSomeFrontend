@@ -137,7 +137,7 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
               <LocationPicker
                 latitude={lat}
                 longitude={lng}
-                onChange={(newLat, newLng) => {
+                onChange={({ lat: newLat, lng: newLng }) => {
                   setLat(newLat)
                   setLng(newLng)
                 }}

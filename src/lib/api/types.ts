@@ -39,6 +39,8 @@ export interface Pet {
   is_active: boolean
   lat?: number
   lng?: number
+  address?: string | null
+  pincode?: string | null
   primary_photo_url?: string | null
   photos?: PetPhoto[]
   owner?: PetOwner | null
@@ -59,6 +61,8 @@ export interface PetCreateInput {
   bio?: string
   lat: number
   lng: number
+  address?: string
+  pincode?: string
   is_vaccinated?: boolean
   vaccination_date?: string | null
   is_neutered?: boolean
@@ -122,6 +126,7 @@ export interface UserProfile {
   bio: string | null
   profile_photo_url: string | null
   address?: string | null
+  pincode?: string | null
   email?: string
   is_verified?: boolean
   latitude?: number | null
@@ -134,6 +139,7 @@ export interface UserProfileUpdateInput {
   occupation?: string
   bio?: string
   address?: string
+  pincode?: string
   latitude?: number
   longitude?: number
 }
