@@ -108,7 +108,7 @@ export function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-12 z-50 max-h-[28rem] w-80 overflow-y-auto rounded-2xl border border-white/10 bg-neutral-900/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
+            className="thin-scrollbar lenis-prevent-scroll absolute right-0 top-12 z-50 max-h-[28rem] w-80 overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-neutral-900/95 shadow-2xl shadow-black/50 backdrop-blur-xl"
           >
             <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
               <h3 className="font-display font-bold text-white">Notifications</h3>

@@ -162,7 +162,7 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
         )}
 
         {showSuggestions && suggestions.length > 0 && (
-          <ul className="absolute inset-x-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-lg border border-neutral-800 bg-neutral-900 py-1 shadow-xl shadow-black/40">
+          <ul className="thin-scrollbar lenis-prevent-scroll absolute inset-x-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto overscroll-contain rounded-lg border border-neutral-800 bg-neutral-900 py-1 shadow-xl shadow-black/40">
             {suggestions.map((s, i) => (
               <li key={`${s.lat}-${s.lng}-${i}`}>
                 <button

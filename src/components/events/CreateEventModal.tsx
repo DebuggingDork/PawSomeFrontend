@@ -64,7 +64,7 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
   const canSubmit = title.trim().length > 0 && locationName.trim().length > 0 && lat !== null && lng !== null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
+    <div className="thin-scrollbar lenis-prevent-scroll fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overscroll-contain bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}

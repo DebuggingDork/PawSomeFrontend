@@ -199,14 +199,22 @@ h1, h2, h3 {
  * Pair with `lenis-prevent-scroll` so Lenis does not steal wheel events —
  * hovering the panel and scrolling with trackpad/wheel must move that panel.
  */
+/* Deliberately close to invisible. A bright orange 4px bar read as a piece of
+   UI in its own right — the point is that these panels scroll with the wheel,
+   so the bar only needs to hint at position, not advertise itself. It comes up
+   to full strength while the pointer is over the panel. */
 .thin-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #ff6b35 transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+.thin-scrollbar:hover {
+  scrollbar-color: rgba(255, 107, 53, 0.55) transparent;
 }
 
 .thin-scrollbar::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
 }
 
 .thin-scrollbar::-webkit-scrollbar-track {
@@ -214,12 +222,17 @@ h1, h2, h3 {
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: #ff6b35;
+  background: rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.thin-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.55);
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #ff8c5c;
+  background: #ff6b35;
 }
 
 .thin-scrollbar::-webkit-scrollbar-corner {

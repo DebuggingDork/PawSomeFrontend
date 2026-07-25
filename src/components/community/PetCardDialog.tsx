@@ -61,7 +61,7 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className="thin-scrollbar max-h-[88vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-white/10 bg-neutral-900 shadow-2xl"
+        className="thin-scrollbar lenis-prevent-scroll max-h-[88vh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-3xl border border-white/10 bg-neutral-900 shadow-2xl"
       >
         <div className="relative aspect-square w-full bg-neutral-800 sm:aspect-[4/3]">
           {isLoading && <Skeleton className="absolute inset-0 rounded-none" />}
