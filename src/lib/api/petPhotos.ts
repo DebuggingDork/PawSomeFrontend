@@ -16,6 +16,26 @@ export function confirmPetPhoto(petId: string, objectKey: string): Promise<PetPh
   })
 }
 
+/** Step 1 of swapping an existing photo's image in place (same id, primary
+ * status, and position — not a delete + re-add). */
+export function presignPetPhotoReplace(
+  petId: string,
+  photoId: string,
+  contentType: UploadableContentType,
+): Promise<PresignResponse> {
+  return apiFetch<PresignResponse>(`/pets/${petId}/photos/${photoId}/replace/presign`, {
+    method: 'POST',
+    body: { content_type: contentType },
+  })
+}
+
+export function confirmPetPhotoReplace(petId: string, photoId: string, objectKey: string): Promise<PetPhoto> {
+  return apiFetch<PetPhoto>(`/pets/${petId}/photos/${photoId}/replace`, {
+    method: 'POST',
+    body: { object_key: objectKey },
+  })
+}
+
 export function setPrimaryPhoto(petId: string, photoId: string): Promise<PetPhoto> {
   return apiFetch<PetPhoto>(`/pets/${petId}/photos/${photoId}/primary`, { method: 'PATCH' })
 }

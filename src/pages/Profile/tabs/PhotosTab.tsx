@@ -1,13 +1,27 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Star, Trash2, PawPrint, Image as ImageIcon } from 'lucide-react'
+import { Star, Trash2, PawPrint, Image as ImageIcon, RefreshCw, Loader2 } from 'lucide-react'
 import { listMyPets } from '@/lib/api/pets'
-import { confirmPetPhoto, deletePetPhoto, presignPetPhoto, setPrimaryPhoto } from '@/lib/api/petPhotos'
+import {
+  confirmPetPhoto,
+  confirmPetPhotoReplace,
+  deletePetPhoto,
+  presignPetPhoto,
+  presignPetPhotoReplace,
+  setPrimaryPhoto,
+} from '@/lib/api/petPhotos'
+import { contentTypeOf, uploadToPresignedUrl } from '@/lib/api/upload'
+import { ApiError } from '@/lib/api/client'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
+
+// Mirrors MAX_PHOTOS_PER_PET in backend/app/api/routes/pet_photos.py — the
+// backend is the source of truth and rejects past this either way, this
+// just avoids letting someone attempt an upload that's already guaranteed to fail.
+const MAX_PHOTOS_PER_PET = 5
 
 export function PhotosTab() {
   const queryClient = useQueryClient()
@@ -15,6 +29,10 @@ export function PhotosTab() {
   const pets = petsQuery.data ?? []
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
   const selectedPet = pets.find((p) => p.id === selectedPetId) ?? pets[0]
+  const [replacingPhotoId, setReplacingPhotoId] = useState<string | null>(null)
+  const [replaceError, setReplaceError] = useState<string | null>(null)
+  const replaceInputRef = useRef<HTMLInputElement | null>(null)
+  const replaceTargetRef = useRef<string | null>(null)
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
 
@@ -26,6 +44,35 @@ export function PhotosTab() {
     mutationFn: (photoId: string) => deletePetPhoto(selectedPet!.id, photoId),
     onSuccess: invalidate,
   })
+
+  const startReplace = (photoId: string) => {
+    replaceTargetRef.current = photoId
+    replaceInputRef.current?.click()
+  }
+
+  const handleReplaceFile = async (file: File) => {
+    const photoId = replaceTargetRef.current
+    if (!photoId || !selectedPet) return
+    const contentType = contentTypeOf(file)
+    if (!contentType) {
+      setReplaceError('Please choose a JPEG, PNG, or WebP image.')
+      return
+    }
+
+    setReplaceError(null)
+    setReplacingPhotoId(photoId)
+    try {
+      const presigned = await presignPetPhotoReplace(selectedPet.id, photoId, contentType)
+      await uploadToPresignedUrl(presigned.upload_url, file, contentType)
+      await confirmPetPhotoReplace(selectedPet.id, photoId, presigned.object_key)
+      invalidate()
+    } catch (err) {
+      setReplaceError(err instanceof ApiError && typeof err.detail === 'string' ? err.detail : 'Replace failed. Try again.')
+    } finally {
+      setReplacingPhotoId(null)
+      if (replaceInputRef.current) replaceInputRef.current.value = ''
+    }
+  }
 
   if (petsQuery.isLoading) return <Skeleton className="h-48" />
 
@@ -64,8 +111,24 @@ export function PhotosTab() {
         <EmptyState icon={ImageIcon} title={`No photos of ${selectedPet?.name} yet`} className="py-10" />
       )}
 
+      {/* Shared across tiles — startReplace() points it at the right photo before opening it. */}
+      <input
+        ref={replaceInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) handleReplaceFile(file)
+        }}
+      />
+
+      {replaceError && <p className="mb-3 text-xs text-red-400">{replaceError}</p>}
+
       <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {photos.map((photo) => (
+        {photos.map((photo) => {
+          const isReplacing = replacingPhotoId === photo.id
+          return (
           <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-xl border border-neutral-800">
             <img src={photo.url} alt="" className="h-full w-full object-cover" />
             {photo.is_primary && (
@@ -73,19 +136,34 @@ export function PhotosTab() {
                 <Star className="h-3 w-3" fill="currentColor" /> Primary
               </span>
             )}
+            {isReplacing && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
+                <Loader2 className="h-5 w-5 animate-spin text-white" />
+              </div>
+            )}
             <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
               {!photo.is_primary && (
                 <button
                   onClick={() => setPrimaryMutation.mutate(photo.id)}
+                  disabled={isReplacing}
                   aria-label="Set as primary"
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <Star className="h-3.5 w-3.5" />
                 </button>
               )}
               <button
+                onClick={() => startReplace(photo.id)}
+                disabled={isReplacing}
+                aria-label="Replace photo"
+                title="Replace this photo"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
+              <button
                 onClick={() => deleteMutation.mutate(photo.id)}
-                disabled={photos.length <= 1}
+                disabled={photos.length <= 1 || isReplacing}
                 aria-label="Delete photo"
                 className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-30"
                 title={photos.length <= 1 ? 'A pet needs at least one photo' : undefined}
@@ -94,10 +172,17 @@ export function PhotosTab() {
               </button>
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
 
-      {selectedPet && (
+      {selectedPet && photos.length >= MAX_PHOTOS_PER_PET && (
+        <p className="rounded-xl border border-dashed border-neutral-800 bg-neutral-900/40 px-4 py-3 text-center text-xs text-neutral-500">
+          You've reached the {MAX_PHOTOS_PER_PET}-photo limit — remove one to add another.
+        </p>
+      )}
+
+      {selectedPet && photos.length < MAX_PHOTOS_PER_PET && (
         <PhotoUploader
           label={`Add a photo of ${selectedPet.name}`}
           presign={(contentType) => presignPetPhoto(selectedPet.id, contentType)}
