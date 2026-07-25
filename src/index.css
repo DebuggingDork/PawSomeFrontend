@@ -84,7 +84,7 @@ html {
   /* Hide scrollbar chrome — scrolling still works via wheel/trackpad/Lenis */
   -ms-overflow-style: none;
   scrollbar-width: none;
-  cursor: url('/cursor-paw.svg') 6 6, auto;
+  cursor: url('/cursor-paw.svg') 4 4, auto;
 }
 
 /* Paw cursor for anything clickable — same hotspot as the default paw above so
@@ -103,7 +103,7 @@ input[type='submit'],
 input[type='button'],
 input[type='checkbox'],
 input[type='radio'] {
-  cursor: url('/cursor-paw-active.svg') 6 6, pointer;
+  cursor: url('/cursor-paw-active.svg') 4 4, pointer;
 }
 
 html::-webkit-scrollbar {
