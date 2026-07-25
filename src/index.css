@@ -71,6 +71,26 @@ html {
   /* Hide scrollbar chrome — scrolling still works via wheel/trackpad/Lenis */
   -ms-overflow-style: none;
   scrollbar-width: none;
+  cursor: url('/cursor-paw.svg') 6 6, auto;
+}
+
+/* Paw cursor for anything clickable — same hotspot as the default paw above so
+   the cursor doesn't visibly jump when crossing into/out of a clickable element.
+   Text inputs/textareas are deliberately excluded: the I-beam is load-bearing
+   for knowing where the caret will land, not just decoration to swap out. */
+a,
+button,
+select,
+summary,
+label[for],
+[role='button'],
+[role='tab'],
+[role='menuitem'],
+input[type='submit'],
+input[type='button'],
+input[type='checkbox'],
+input[type='radio'] {
+  cursor: url('/cursor-paw-active.svg') 6 6, pointer;
 }
 
 html::-webkit-scrollbar {
