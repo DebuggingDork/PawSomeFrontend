@@ -6,6 +6,7 @@ import { listFavorites, removeFavorite } from '@/lib/api/favorites'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 export function FavoritesTab() {
@@ -36,6 +37,13 @@ export function FavoritesTab() {
 
   return (
     <div>
+      <SectionHeader
+        icon={Heart}
+        title="Favorites"
+        subtitle={selectedPet ? `Pets ${selectedPet.name} has favorited` : undefined}
+        className="mb-5"
+      />
+
       {pets.length > 1 && (
         <PillTabs
           layoutId="favorites-pet-pill"

@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { PawPrint, Heart, X as XIcon, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { BarChart3, PawPrint, Heart, X as XIcon, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { listMyPets } from '@/lib/api/pets'
 import { getSwipeStatistics, getSwipeHistory, getBreeds } from '@/lib/api/matches'
 import type { SwipeHistoryFilters } from '@/lib/api/types'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 type SubView = 'stats' | 'history'
@@ -15,7 +16,7 @@ function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-xl border border-neutral-800/80 bg-neutral-900/60 p-4 text-center">
       <div className="text-2xl font-bold text-white">{value}</div>
-      <div className="mt-1 text-xs text-neutral-500">{label}</div>
+      <div className="mt-1 text-xs text-neutral-400">{label}</div>
     </div>
   )
 }
@@ -43,10 +44,10 @@ function StatsView({ petId }: { petId: string }) {
         <StatTile label="Like ratio" value={`${Math.round(stats.like_to_skip_ratio * 100)}%`} />
       </div>
 
-      <div>
-        <h3 className="mb-3 text-sm font-semibold text-neutral-300">Last 30 days</h3>
+      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5">
+        <h3 className="mb-4 text-sm font-semibold text-white">Last 30 days</h3>
         {stats.last_30_days.length === 0 ? (
-          <p className="text-sm text-neutral-500">No swipes in the last 30 days.</p>
+          <p className="text-sm text-neutral-400">No swipes in the last 30 days.</p>
         ) : (
           <div className="flex h-24 items-end gap-1">
             {stats.last_30_days.map((day) => (
@@ -67,16 +68,16 @@ function StatsView({ petId }: { petId: string }) {
         )}
       </div>
 
-      <div>
-        <h3 className="mb-3 text-sm font-semibold text-neutral-300">Top breeds liked</h3>
+      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5">
+        <h3 className="mb-2 text-sm font-semibold text-white">Top breeds liked</h3>
         {stats.top_breeds_liked.length === 0 ? (
-          <p className="text-sm text-neutral-500">Like some pets to see your favorite breeds here.</p>
+          <p className="text-sm text-neutral-400">Like some pets to see your favorite breeds here.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="divide-y divide-neutral-800">
             {stats.top_breeds_liked.map((b) => (
-              <li key={b.breed} className="flex items-center justify-between rounded-lg bg-neutral-900/60 px-3 py-2 text-sm">
+              <li key={b.breed} className="flex items-center justify-between py-2.5 text-sm first:pt-0 last:pb-0">
                 <span className="text-neutral-200">{b.breed}</span>
-                <span className="text-neutral-500">{b.count}</span>
+                <span className="text-neutral-400">{b.count}</span>
               </li>
             ))}
           </ul>
@@ -99,13 +100,16 @@ function HistoryView({ petId }: { petId: string }) {
 
   const set = (patch: Partial<SwipeHistoryFilters>) => setFilters((f) => ({ ...f, ...patch, offset: 0 }))
 
+  const filterInputClass =
+    'rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none'
+
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-3">
+      <div className="mb-4 flex flex-wrap gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4">
         <select
           value={filters.action ?? ''}
           onChange={(e) => set({ action: (e.target.value || undefined) as 'like' | 'skip' | undefined })}
-          className="rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+          className={filterInputClass}
         >
           <option value="">All actions</option>
           <option value="like">Likes</option>
@@ -118,7 +122,7 @@ function HistoryView({ petId }: { petId: string }) {
           placeholder="Any breed"
           value={filters.breed ?? ''}
           onChange={(e) => set({ breed: e.target.value || undefined })}
-          className="rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+          className={filterInputClass}
         />
         <datalist id="history-breed-options">
           {(breedsQuery.data ?? []).map((breed) => (
@@ -130,13 +134,13 @@ function HistoryView({ petId }: { petId: string }) {
           type="date"
           value={filters.date_from ?? ''}
           onChange={(e) => set({ date_from: e.target.value || undefined })}
-          className="rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+          className={filterInputClass}
         />
         <input
           type="date"
           value={filters.date_to ?? ''}
           onChange={(e) => set({ date_to: e.target.value || undefined })}
-          className="rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+          className={filterInputClass}
         />
       </div>
 
@@ -221,6 +225,8 @@ export function ActivityTab() {
 
   return (
     <div>
+      <SectionHeader icon={BarChart3} title="Activity" subtitle={`${selectedPet?.name}'s swipe activity`} className="mb-5" />
+
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         {pets.length > 1 ? (
           <PillTabs

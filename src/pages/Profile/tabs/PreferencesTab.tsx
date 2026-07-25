@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { Check } from 'lucide-react'
+import { SlidersHorizontal } from 'lucide-react'
 import { updateMatchPreferences } from '@/lib/api/users'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 const SPECIES_OPTIONS = ['', 'dog', 'cat', 'rabbit', 'bird', 'other'] as const
 const GENDER_OPTIONS = ['', 'male', 'female'] as const
@@ -35,11 +36,13 @@ export function PreferencesTab() {
         e.preventDefault()
         mutation.mutate()
       }}
-      className="space-y-5"
+      className="space-y-5 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6"
     >
-      <p className="text-sm text-neutral-500">
-        Tune what shows up in Discover. Leave a field blank to not filter on it.
-      </p>
+      <SectionHeader
+        icon={SlidersHorizontal}
+        title="Match preferences"
+        subtitle="Tune what shows up in Discover — leave a field blank to not filter on it"
+      />
 
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -98,7 +101,7 @@ export function PreferencesTab() {
       <div>
         <label className="mb-1.5 flex items-center justify-between text-sm font-medium text-neutral-300">
           Search radius
-          <span className="text-neutral-500">{radius} km</span>
+          <span className="font-semibold text-[#ff6b35]">{radius} km</span>
         </label>
         <input
           type="range"
@@ -116,16 +119,15 @@ export function PreferencesTab() {
           value={breeds}
           onChange={(e) => setBreeds(e.target.value)}
           placeholder="Golden Retriever, Labrador (comma-separated)"
-          className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:border-[#ff6b35] focus:outline-none"
+          className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {mutation.isSuccess && <Check className="h-4 w-4" />}
         {mutation.isPending ? 'Saving…' : mutation.isSuccess ? 'Saved' : 'Save preferences'}
       </button>
     </form>

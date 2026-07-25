@@ -11,6 +11,7 @@ import {
 } from '@/lib/api/users'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 const BIO_MAX_LENGTH = 2000
@@ -32,20 +33,6 @@ const PROFILE_TIPS = [
     description: 'Helps nearby pet parents find you.',
   },
 ]
-
-function SectionHeader({ icon: Icon, title, subtitle }: { icon: typeof UserIcon; title: string; subtitle?: string }) {
-  return (
-    <div className="mb-5 flex items-center gap-3">
-      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#ff6b35]/10 text-[#ff6b35]">
-        <Icon className="h-4 w-4" />
-      </span>
-      <div>
-        <p className="text-sm font-semibold text-white">{title}</p>
-        {subtitle && <p className="text-xs text-neutral-500">{subtitle}</p>}
-      </div>
-    </div>
-  )
-}
 
 const inputClass =
   'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
@@ -186,7 +173,7 @@ export function AccountTab() {
           {/* Right column */}
           <div className="space-y-6">
             <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
-              <SectionHeader icon={UserIcon} title="Personal information" />
+              <SectionHeader icon={UserIcon} title="Personal information" className="mb-5" />
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
@@ -243,7 +230,7 @@ export function AccountTab() {
             </div>
 
             <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
-              <SectionHeader icon={MapPin} title="Location" subtitle="Visible to matches" />
+              <SectionHeader icon={MapPin} title="Location" subtitle="Visible to matches" className="mb-5" />
 
               <div className="relative mb-4">
                 <MapPin className={iconPrefixClass} />

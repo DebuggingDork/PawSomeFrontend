@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
+import { Award } from 'lucide-react'
 import { getMyAchievements } from '@/lib/api/achievements'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 export function BadgesTab() {
@@ -18,14 +20,16 @@ export function BadgesTab() {
 
   return (
     <div>
-      <div className="mb-5 overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <p className="font-semibold text-white">
-            {data.total_earned} / {data.total_available} badges earned
-          </p>
-          <p className="text-sm text-neutral-500">{data.completion_percentage}%</p>
+      <div className="mb-5 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <SectionHeader
+            icon={Award}
+            title="Badges"
+            subtitle={`${data.total_earned} of ${data.total_available} earned`}
+          />
+          <span className="font-display text-lg font-bold text-[#ff6b35]">{data.completion_percentage}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-neutral-800">
+        <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-neutral-800">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${data.completion_percentage}%` }}
@@ -50,7 +54,7 @@ export function BadgesTab() {
           >
             <span className="text-3xl">{badge.icon}</span>
             <p className="text-sm font-semibold text-white">{badge.name}</p>
-            <p className="text-xs text-neutral-500">{badge.description}</p>
+            <p className="text-xs text-neutral-400">{badge.description}</p>
           </motion.div>
         ))}
       </div>

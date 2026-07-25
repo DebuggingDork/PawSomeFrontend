@@ -59,7 +59,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
           />
         </div>
         <div>
@@ -67,7 +67,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
           <select
             value={species}
             onChange={(e) => setSpecies(e.target.value as (typeof SPECIES_OPTIONS)[number])}
-            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
           >
             {SPECIES_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -85,7 +85,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
             value={breed}
             onChange={(e) => setBreed(e.target.value)}
             required
-            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
           />
         </div>
         <div>
@@ -97,7 +97,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
             value={ageMonths}
             onChange={(e) => setAgeMonths(e.target.value)}
             required
-            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
           />
         </div>
       </div>
@@ -123,7 +123,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           rows={2}
-          className="w-full resize-none rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+          className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
         />
       </div>
 
@@ -170,7 +170,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
               type="date"
               value={vaccinationDate}
               onChange={(e) => setVaccinationDate(e.target.value)}
-              className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
             />
           </div>
         )}

@@ -6,6 +6,7 @@ import { confirmPetPhoto, deletePetPhoto, presignPetPhoto, setPrimaryPhoto } fro
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 export function PhotosTab() {
@@ -42,6 +43,13 @@ export function PhotosTab() {
 
   return (
     <div>
+      <SectionHeader
+        icon={ImageIcon}
+        title="Photos"
+        subtitle={selectedPet ? `Managing ${selectedPet.name}'s gallery` : undefined}
+        className="mb-5"
+      />
+
       {pets.length > 1 && (
         <PillTabs
           layoutId="photos-pet-pill"
