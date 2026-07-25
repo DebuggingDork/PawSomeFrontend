@@ -34,6 +34,7 @@ import {
   NavbarButton,
 } from './components/ui/resizable-navbar'
 import { GlobalLoader } from './components/ui/GlobalLoader'
+import { CursorClickEffect } from './components/ui/CursorClickEffect'
 import logoIcon from './assets/icon.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
@@ -156,6 +157,7 @@ function App() {
     <BrowserRouter>
       {/* Global Loader - shows loading states from anywhere in the app */}
       <GlobalLoader />
+      <CursorClickEffect />
       <OnboardingGate />
       <SessionExpiryWatcher />
       
