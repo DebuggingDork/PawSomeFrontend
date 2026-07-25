@@ -22,7 +22,7 @@ export function PreferencesTab() {
         preferred_age_min: ageMin ? Number(ageMin) : undefined,
         preferred_age_max: ageMax ? Number(ageMax) : undefined,
         preferred_gender: gender || undefined,
-        preferred_match_radius_km: radius,
+        preferred_radius_km: radius,
         breed_preferences: breeds
           .split(',')
           .map((b) => b.trim())

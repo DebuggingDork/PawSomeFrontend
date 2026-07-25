@@ -156,9 +156,8 @@ export interface ProfileCompletionStatus {
   active_pets: number
 }
 
-// Request field is preferred_match_radius_km; the response calls it preferred_radius_km.
 export interface MatchPreferencesUpdateInput {
-  preferred_match_radius_km?: number
+  preferred_radius_km?: number
   preferred_species?: string
   preferred_age_min?: number
   preferred_age_max?: number
