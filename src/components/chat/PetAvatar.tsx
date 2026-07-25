@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { PawPrint } from 'lucide-react'
 
 const GRADIENTS = [
@@ -17,7 +18,7 @@ function gradientFor(seed: string) {
 interface PetAvatarProps {
   name: string
   photoUrl?: string | null
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   online?: boolean
   className?: string
 }
@@ -26,17 +27,22 @@ const SIZE_CLASSES = {
   sm: 'h-9 w-9 text-xs',
   md: 'h-12 w-12 text-sm',
   lg: 'h-16 w-16 text-lg',
+  xl: 'h-28 w-28 text-3xl',
 }
 
 export function PetAvatar({ name, photoUrl, size = 'md', online, className = '' }: PetAvatarProps) {
   const initial = name.trim().charAt(0).toUpperCase()
+  // A URL that 404s, times out, or hits a flaky CDN shouldn't leave a blank
+  // circle — fall back to the same gradient+initial treatment as "no photo".
+  const [failed, setFailed] = useState(false)
 
   return (
     <div className={`relative flex-shrink-0 ${className}`}>
-      {photoUrl ? (
+      {photoUrl && !failed ? (
         <img
           src={photoUrl}
           alt={name}
+          onError={() => setFailed(true)}
           className={`${SIZE_CLASSES[size]} rounded-full object-cover ring-2 ring-white/10`}
         />
       ) : (

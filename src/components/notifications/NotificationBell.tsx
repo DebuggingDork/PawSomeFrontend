@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -7,7 +7,6 @@ import { useAuthStore } from '@/store/useAuthStore'
 import {
   acceptLike,
   clearNotifications,
-  connectNotificationSocket,
   deleteNotification,
   getNotifications,
   markAllNotificationsRead,
@@ -16,8 +15,8 @@ import {
 } from '@/lib/api/matches'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
-import { NOTIFICATION_TYPE_ACCENT, NOTIFICATION_TYPE_ICON, NotificationToastStack, type ToastItem } from './NotificationToast'
-import type { NotificationPushEvent } from '@/lib/api/types'
+import { useNotificationsStore } from '@/store/useNotificationsStore'
+import { NOTIFICATION_TYPE_ACCENT, NOTIFICATION_TYPE_ICON } from './NotificationToast'
 
 function timeAgo(iso: string) {
   const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000)
@@ -28,16 +27,19 @@ function timeAgo(iso: string) {
   return `${Math.floor(hours / 24)}d ago`
 }
 
+/** Presentational bell + dropdown. Rendered twice (desktop nav, mobile nav —
+ * see resizable-navbar.tsx, both always mounted regardless of viewport), so
+ * it must not own anything that shouldn't exist twice at once: the live
+ * socket connection and the toast/celebration overlays live in
+ * NotificationsRuntime (mounted once) instead, shared via useNotificationsStore. */
 export function NotificationBell() {
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [open, setOpen] = useState(false)
+  const open = useNotificationsStore((s) => s.open)
+  const setOpen = useNotificationsStore((s) => s.setOpen)
   const [respondingId, setRespondingId] = useState<string | null>(null)
-  const [toasts, setToasts] = useState<ToastItem[]>([])
   const panelRef = useRef<HTMLDivElement | null>(null)
-  const openRef = useRef(open)
-  openRef.current = open
 
   useOnClickOutside(panelRef, () => setOpen(false))
 
@@ -49,32 +51,6 @@ export function NotificationBell() {
   })
 
   const unreadCount = (notifications ?? []).filter((n) => !n.is_read).length
-
-  const dismissToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id))
-  }, [])
-
-  // Live push: new_like/new_match/new_message land instantly instead of
-  // waiting for the next poll or window-focus refetch. Only pops a toast
-  // when the dropdown isn't already open (it'd be redundant).
-  useEffect(() => {
-    if (!isAuthenticated) return
-
-    const socket = connectNotificationSocket((event) => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] })
-      if (!openRef.current) {
-        setToasts((prev) => [...prev, { id: event.data.id, event }])
-      }
-    })
-
-    return () => socket.close()
-  }, [isAuthenticated, queryClient])
-
-  const handleToastClick = (event: NotificationPushEvent) => {
-    setToasts((prev) => prev.filter((t) => t.id !== event.data.id))
-    if (event.data.match_id) navigate(`/chat?match=${event.data.match_id}`)
-    else setOpen(true)
-  }
 
   const markReadMutation = useMutation({
     mutationFn: markNotificationsRead,
@@ -113,7 +89,7 @@ export function NotificationBell() {
   return (
     <div ref={panelRef} className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
         aria-label="Notifications"
         className="relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10"
       >
@@ -245,8 +221,6 @@ export function NotificationBell() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <NotificationToastStack toasts={toasts} onDismiss={dismissToast} onClick={handleToastClick} />
     </div>
   )
 }

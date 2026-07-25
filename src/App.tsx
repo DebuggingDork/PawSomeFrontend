@@ -42,6 +42,7 @@ import { Heart, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { NotificationBell } from './components/notifications/NotificationBell'
+import { NotificationsRuntime } from './components/notifications/NotificationsRuntime'
 
 /** Placeholder for the navbar's auth-dependent controls while session state is still
  * resolving, so we never guess "signed out" and then flash into "signed in" (or vice
@@ -160,6 +161,7 @@ function App() {
       <CursorClickEffect />
       <OnboardingGate />
       <SessionExpiryWatcher />
+      <NotificationsRuntime />
       
       <div className="min-h-screen w-full max-w-full overflow-x-clip bg-neutral-950 text-white">
         {/* Sticky Navigation Bar — full-bleed translucent glass */}
