@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { X, Plus, CalendarHeart } from 'lucide-react'
+import { X, Plus, CalendarHeart, CalendarDays } from 'lucide-react'
 import { getPlaydates, proposePlaydate, respondToPlaydate, cancelPlaydate } from '@/lib/api/matches'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PlaydateCard } from './PlaydateCard'
@@ -15,12 +15,51 @@ interface PlaydatePanelProps {
 }
 
 const FIELD =
-  'w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
+
+/** `datetime-local` wants "YYYY-MM-DDTHH:mm" in *local* time, but toISOString
+ * emits UTC — hence shifting by the offset before slicing. */
+function toDateTimeLocal(d: Date): string {
+  const shifted = new Date(d)
+  shifted.setMinutes(shifted.getMinutes() - shifted.getTimezoneOffset())
+  return shifted.toISOString().slice(0, 16)
+}
+
+function at(daysAhead: number, hour: number): Date {
+  const d = new Date()
+  d.setDate(d.getDate() + daysAhead)
+  d.setHours(hour, 0, 0, 0)
+  return d
+}
+
+/** Next Saturday, or the one after if today is already Saturday. */
+function nextSaturday(hour: number): Date {
+  const d = new Date()
+  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7))
+  d.setHours(hour, 0, 0, 0)
+  return d
+}
+
+/** Most playdates get arranged for one of a handful of obvious slots, so offer
+ * those directly rather than making everyone drive the date picker. Anything
+ * already in the past is filtered out at render. */
+const QUICK_SLOTS: { label: string; get: () => Date }[] = [
+  { label: 'This evening', get: () => at(0, 18) },
+  { label: 'Tomorrow morning', get: () => at(1, 9) },
+  { label: 'Tomorrow evening', get: () => at(1, 18) },
+  { label: 'Saturday morning', get: () => nextSaturday(10) },
+]
+
+const WHEN_FORMAT = new Intl.DateTimeFormat(undefined, {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  hour: 'numeric',
+  minute: '2-digit',
+})
 
 function defaultDateTimeLocal(): string {
-  const d = new Date(Date.now() + 24 * 60 * 60 * 1000) // default: this time tomorrow
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
-  return d.toISOString().slice(0, 16)
+  return toDateTimeLocal(at(1, 18))
 }
 
 export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: PlaydatePanelProps) {
@@ -29,6 +68,18 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
   const [respondingId, setRespondingId] = useState<string | null>(null)
 
   const [when, setWhen] = useState(defaultDateTimeLocal())
+  // Read the clock once, when the panel opens, rather than on every render:
+  // rendering shouldn't produce different output depending on when React
+  // happens to re-run it. Also means the quick slots stay put while you're
+  // filling the form instead of disappearing as a boundary passes.
+  const [openedAt] = useState(() => Date.now())
+  const [minDateTime] = useState(() => toDateTimeLocal(new Date()))
+  const [quickSlots] = useState(() =>
+    QUICK_SLOTS.map((slot) => ({ label: slot.label, date: slot.get() }))
+      // A slot that's already gone isn't a shortcut, it's a dead end.
+      .filter((slot) => slot.date.getTime() > Date.now())
+      .map((slot) => ({ label: slot.label, value: toDateTimeLocal(slot.date) })),
+  )
   const [locationName, setLocationName] = useState('')
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
@@ -80,6 +131,12 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
   })
 
   const canSubmit = locationName.trim().length > 0 && lat !== null && lng !== null && when.length > 0
+
+  // `when` is free text until it parses — an empty or half-typed date shouldn't
+  // render "Invalid Date" under the field.
+  const parsed = when ? new Date(when) : null
+  const whenDate = parsed && !Number.isNaN(parsed.getTime()) ? parsed : null
+  const isSoon = whenDate !== null && whenDate.getTime() - openedAt < 24 * 60 * 60 * 1000
   const playdates = playdatesQuery.data?.items ?? []
 
   return (
@@ -121,18 +178,52 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           }}
           className="mb-3 space-y-3 rounded-xl border border-neutral-800 bg-neutral-950/70 p-3"
         >
-          <label className="block">
-            <span className="mb-1 block text-xs font-medium text-neutral-500">When</span>
-            <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className={FIELD} />
-          </label>
+          <div>
+            <span className="mb-1.5 block text-xs font-medium text-neutral-500">When</span>
+
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {quickSlots.map((slot) => (
+                <button
+                  key={slot.label}
+                  type="button"
+                  onClick={() => setWhen(slot.value)}
+                  className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                    slot.value === when
+                      ? 'border-[#ff6b35] bg-[#ff6b35]/15 text-[#ff6b35]'
+                      : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
+                  }`}
+                >
+                  {slot.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative">
+              <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+              <input
+                type="datetime-local"
+                value={when}
+                min={minDateTime}
+                onChange={(e) => setWhen(e.target.value)}
+                className={`${FIELD} datetime-field pl-9`}
+              />
+            </div>
+
+            {whenDate && (
+              <p className="mt-1.5 text-xs text-neutral-500">
+                {WHEN_FORMAT.format(whenDate)}
+                {isSoon && <span className="ml-1.5 text-[#ff6b35]">· within 24 hours</span>}
+              </p>
+            )}
+          </div>
 
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-neutral-500">Where (name)</span>
+            <span className="mb-1.5 block text-xs font-medium text-neutral-500">Where (name)</span>
             <input
               type="text"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              placeholder="Cubbon Park dog run"
+              placeholder="KBR Park walking track"
               className={FIELD}
             />
           </label>

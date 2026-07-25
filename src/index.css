@@ -79,6 +79,30 @@
   }
 }
 
+/* Native date/time inputs paint their own chrome from the OS colour scheme, so
+   on a dark field the calendar indicator came out as a near-black glyph on
+   near-black — invisible — and the popup calendar rendered light-on-white in
+   the middle of a dark app. `color-scheme: dark` is what tells the browser to
+   render both in dark mode; everything else here is just polish on the icon. */
+.datetime-field {
+  color-scheme: dark;
+}
+
+.datetime-field::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.5;
+  border-radius: 4px;
+  padding: 2px;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.datetime-field::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background-color: rgba(255, 107, 53, 0.18);
+}
+
 /* Indeterminate progress rail — a short pill sweeping through a track. Shared
    language with the pre-React splash in index.html so the app's two "we're
    working on it" moments look like they came from the same place. */
