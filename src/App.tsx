@@ -108,6 +108,13 @@ function App() {
     { name: 'Community', link: '/community' },
     { name: 'About', link: '/about' },
     { name: 'Events', link: '/events' },
+    ...(isAuthenticated
+      ? [
+          { name: 'Discover', link: '/discover' },
+          { name: 'Matches', link: '/matches' },
+          { name: 'Chat', link: '/chat' },
+        ]
+      : []),
   ]
 
   if (!isOnline) {
