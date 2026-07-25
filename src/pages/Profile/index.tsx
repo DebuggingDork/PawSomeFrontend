@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, type ComponentType } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
@@ -13,9 +14,9 @@ import { BlockedUsersTab } from './tabs/BlockedUsersTab'
 import { ActivityTab } from './tabs/ActivityTab'
 
 const TABS = [
+  { key: 'account', label: 'Account', icon: User },
   { key: 'pets', label: 'My Pets', icon: PawPrint },
   { key: 'photos', label: 'Photos', icon: Image },
-  { key: 'account', label: 'Account', icon: User },
   { key: 'preferences', label: 'Preferences', icon: SlidersHorizontal },
   { key: 'activity', label: 'Activity', icon: BarChart3 },
   { key: 'badges', label: 'Badges', icon: Award },
@@ -25,9 +26,21 @@ const TABS = [
 
 type TabKey = (typeof TABS)[number]['key']
 
+const TAB_PANELS: Record<TabKey, ComponentType> = {
+  account: AccountTab,
+  pets: PetsTab,
+  photos: PhotosTab,
+  preferences: PreferencesTab,
+  activity: ActivityTab,
+  badges: BadgesTab,
+  favorites: FavoritesTab,
+  blocked: BlockedUsersTab,
+}
+
 function ProfilePage() {
   const { isAuthenticated, isHydrating } = useAuthStore()
-  const [tab, setTab] = useState<TabKey>('pets')
+  const [tab, setTab] = useState<TabKey>('account')
+  const shouldReduceMotion = useReducedMotion()
 
   if (!isHydrating && !isAuthenticated) {
     return (
@@ -52,14 +65,20 @@ function ProfilePage() {
 
       <PillTabs layoutId="profile-tab-pill" active={tab} onChange={setTab} tabs={TABS} className="mb-6 w-full" />
 
-      {tab === 'pets' && <PetsTab />}
-      {tab === 'photos' && <PhotosTab />}
-      {tab === 'account' && <AccountTab />}
-      {tab === 'preferences' && <PreferencesTab />}
-      {tab === 'activity' && <ActivityTab />}
-      {tab === 'badges' && <BadgesTab />}
-      {tab === 'favorites' && <FavoritesTab />}
-      {tab === 'blocked' && <BlockedUsersTab />}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
+          transition={{ duration: shouldReduceMotion ? 0.01 : 0.18, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {(() => {
+            const ActivePanel = TAB_PANELS[tab]
+            return <ActivePanel />
+          })()}
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
