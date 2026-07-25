@@ -93,8 +93,14 @@ export function useSmoothScroll() {
 
       return () => {
         cancelAnimationFrame(rafId2)
-        // Safety net: always reveal so page is never stuck invisible
-        revealPage()
+        // NB: deliberately no unconditional revealPage() here. This cleanup also
+        // runs on React 18 StrictMode's dev-only mount→cleanup→remount cycle,
+        // which fires almost immediately — long before `hydrated` resolves. An
+        // unconditional reveal here showed the pre-hydration navbar (wrong nav
+        // links, skeleton avatar buttons) on every refresh, which then snapped
+        // to the real one a moment later. hydrate() always settles (see its
+        // try/catch), so the surviving mount's own finish()→hydrated.then()
+        // chain is guaranteed to reveal the page — no separate safety net needed.
         window.removeEventListener('beforeunload', handleBeforeUnload)
         cancelAnimationFrame(rafId)
         lenis.destroy()
