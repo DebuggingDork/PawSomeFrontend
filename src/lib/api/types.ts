@@ -25,6 +25,7 @@ export interface PetOwner {
   full_name: string | null
   occupation: string | null
   profile_photo_url: string | null
+  is_verified?: boolean
 }
 
 export interface Pet {

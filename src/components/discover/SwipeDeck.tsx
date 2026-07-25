@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
-import { Heart, X, Undo2, Star } from 'lucide-react'
+import { Heart, X, Undo2, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { SwipeCardContent } from './SwipeCard'
 import type { BrowseCandidate } from '@/lib/api/types'
 
 const SWIPE_THRESHOLD = 120
-const VISIBLE_CARDS = 3
+const VISIBLE_CARDS = 5
 
 type SwipeAction = 'like' | 'skip' | 'super_like'
 
@@ -17,6 +17,22 @@ const EXIT_VARIANTS: Record<SwipeAction, Record<string, number>> = {
   super_like: { y: -780, scale: 0.82, opacity: 0 },
 }
 
+/** Fan geometry for cards behind the top one — alternates left/right and grows
+ * the rotation/offset/fade the further back a card sits in the stack, so the
+ * deck reads as a hand of fanned cards rather than a flat pile. */
+function fanTransform(stackIndex: number) {
+  if (stackIndex === 0) return { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
+  const pair = Math.ceil(stackIndex / 2)
+  const side = stackIndex % 2 === 1 ? 1 : -1
+  return {
+    x: side * (56 + pair * 42),
+    y: pair * 6,
+    rotate: side * (6 + pair * 5),
+    scale: 1 - pair * 0.08,
+    opacity: 1 - pair * 0.24,
+  }
+}
+
 interface DraggableCardProps {
   candidate: BrowseCandidate
   isTop: boolean
@@ -26,63 +42,76 @@ interface DraggableCardProps {
 }
 
 function DraggableCard({ candidate, isTop, stackIndex, exitAction, onSwiped }: DraggableCardProps) {
-  const x = useMotionValue(0)
-  const rotate = useTransform(x, [-200, 200], [-12, 12])
-  const likeOpacity = useTransform(x, [20, 120], [0, 1])
-  const skipOpacity = useTransform(x, [-120, -20], [1, 0])
+  // Split in two layers so the fan position (outer, always driven by `animate`)
+  // and the drag gesture (inner, only live for the top card) never fight over
+  // the same x/rotate — mixing a raw drag-bound motion value with an `animate`
+  // target on the same property, toggled by whether a card is currently on top,
+  // left cards stuck mid-transition when they swapped roles.
+  const dragX = useMotionValue(0)
+  const dragRotate = useTransform(dragX, [-200, 200], [-12, 12])
+  const likeOpacity = useTransform(dragX, [20, 120], [0, 1])
+  const skipOpacity = useTransform(dragX, [-120, -20], [1, 0])
+  const fan = isTop ? { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 } : fanTransform(stackIndex)
 
   return (
     <motion.div
       className="absolute inset-0"
-      style={isTop ? { x, rotate } : undefined}
-      animate={!isTop ? { scale: 1 - stackIndex * 0.04, y: stackIndex * 12 } : undefined}
+      style={{ zIndex: VISIBLE_CARDS - stackIndex }}
+      animate={{ x: fan.x, y: fan.y, rotate: fan.rotate, scale: fan.scale, opacity: fan.opacity }}
+      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       initial={false}
       exit={{ ...EXIT_VARIANTS[exitAction], transition: { duration: exitAction === 'super_like' ? 0.45 : 0.32, ease: [0.4, 0, 0.2, 1] } }}
-      drag={isTop ? 'x' : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.9}
-      onDragEnd={(_, info) => {
-        if (info.offset.x > SWIPE_THRESHOLD) onSwiped('like')
-        else if (info.offset.x < -SWIPE_THRESHOLD) onSwiped('skip')
-      }}
     >
-      <SwipeCardContent candidate={candidate} />
-      {isTop && (
-        <>
-          <motion.div
-            style={{ opacity: likeOpacity }}
-            className="pointer-events-none absolute left-6 top-6 rotate-[-12deg] rounded-lg border-4 border-emerald-400 px-3 py-1 text-lg font-bold text-emerald-400"
-          >
-            LIKE
-          </motion.div>
-          <motion.div
-            style={{ opacity: skipOpacity }}
-            className="pointer-events-none absolute right-6 top-6 rotate-[12deg] rounded-lg border-4 border-red-400 px-3 py-1 text-lg font-bold text-red-400"
-          >
-            SKIP
-          </motion.div>
+      <motion.div
+        className="absolute inset-0"
+        style={{ x: dragX, rotate: dragRotate }}
+        initial={false}
+        drag={isTop ? 'x' : false}
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.9}
+        onDragEnd={(_, info) => {
+          if (info.offset.x > SWIPE_THRESHOLD) onSwiped('like')
+          else if (info.offset.x < -SWIPE_THRESHOLD) onSwiped('skip')
+        }}
+      >
+        <SwipeCardContent candidate={candidate} />
+        {isTop && (
+          <>
+            <motion.div
+              style={{ opacity: likeOpacity }}
+              className="pointer-events-none absolute left-6 top-6 rotate-[-12deg] rounded-lg border-4 border-emerald-400 px-3 py-1 text-lg font-bold text-emerald-400"
+            >
+              LIKE
+            </motion.div>
+            <motion.div
+              style={{ opacity: skipOpacity }}
+              className="pointer-events-none absolute right-6 top-6 rotate-[12deg] rounded-lg border-4 border-red-400 px-3 py-1 text-lg font-bold text-red-400"
+            >
+              SKIP
+            </motion.div>
 
-          {/* Super Woof starburst — only while this card is flying up. */}
-          {exitAction === 'super_like' && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <motion.div
-                initial={{ scale: 0.2, opacity: 0, rotate: -18 }}
-                animate={{ scale: 1, opacity: 1, rotate: -8 }}
-                transition={{ type: 'spring', bounce: 0.5, duration: 0.5 }}
-                className="flex flex-col items-center gap-2"
-              >
-                <div className="relative">
-                  <span className="absolute inset-0 -z-10 rounded-full bg-sky-400/40 blur-2xl" />
-                  <Star className="h-24 w-24 text-sky-300 drop-shadow-[0_0_18px_rgba(56,189,248,0.9)]" fill="currentColor" />
-                </div>
-                <span className="rounded-full bg-sky-400/90 px-4 py-1 text-lg font-extrabold uppercase tracking-widest text-neutral-950 shadow-lg shadow-sky-400/40">
-                  Super Woof
-                </span>
-              </motion.div>
-            </div>
-          )}
-        </>
-      )}
+            {/* Super Woof starburst — only while this card is flying up. */}
+            {exitAction === 'super_like' && (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  initial={{ scale: 0.2, opacity: 0, rotate: -18 }}
+                  animate={{ scale: 1, opacity: 1, rotate: -8 }}
+                  transition={{ type: 'spring', bounce: 0.5, duration: 0.5 }}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="relative">
+                    <span className="absolute inset-0 -z-10 rounded-full bg-sky-400/40 blur-2xl" />
+                    <Star className="h-24 w-24 text-sky-300 drop-shadow-[0_0_18px_rgba(56,189,248,0.9)]" fill="currentColor" />
+                  </div>
+                  <span className="rounded-full bg-sky-400/90 px-4 py-1 text-lg font-extrabold uppercase tracking-widest text-neutral-950 shadow-lg shadow-sky-400/40">
+                    Super Woof
+                  </span>
+                </motion.div>
+              </div>
+            )}
+          </>
+        )}
+      </motion.div>
     </motion.div>
   )
 }
@@ -99,7 +128,30 @@ interface SwipeDeckProps {
 export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, superWoofRemaining }: SwipeDeckProps) {
   const [exiting, setExiting] = useState(false)
   const [exitAction, setExitAction] = useState<SwipeAction>('like')
-  const visible = candidates.slice(0, VISIBLE_CARDS)
+
+  // Local fan order — lets the prev/next arrows reshuffle who's up front without
+  // touching the real candidate list. Reconciled against `candidates` whenever it
+  // changes (a swipe removing the true top card, a fresh deck load, etc.) so ids
+  // that left the deck drop out and any new ones join the back of the line.
+  // Done during render (comparing against the last-seen `candidates` reference,
+  // React's documented pattern for adjusting state from a prop change) rather
+  // than in an effect, so there's no extra post-commit render showing stale order.
+  const [order, setOrder] = useState<string[]>(() => candidates.map((c) => c.pet.id))
+  const [reconciledFor, setReconciledFor] = useState(candidates)
+  if (candidates !== reconciledFor) {
+    setReconciledFor(candidates)
+    const stillPresent = new Set(candidates.map((c) => c.pet.id))
+    const kept = order.filter((id) => stillPresent.has(id))
+    const knownIds = new Set(kept)
+    const additions = candidates.map((c) => c.pet.id).filter((id) => !knownIds.has(id))
+    setOrder([...kept, ...additions])
+  }
+
+  const candidateById = new Map(candidates.map((c) => [c.pet.id, c]))
+  const visible = order
+    .slice(0, VISIBLE_CARDS)
+    .map((id) => candidateById.get(id))
+    .filter((c): c is BrowseCandidate => Boolean(c))
   const top = visible[0]
 
   const handleSwiped = (action: SwipeAction) => {
@@ -109,8 +161,25 @@ export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, super
     onSwipe(top, action)
   }
 
+  // Cycle who's fanned out front-and-center without recording a swipe decision —
+  // rotates only the currently-visible window, leaving the rest of the deck order
+  // untouched so nothing is skipped or lost track of.
+  const rotateWindow = (direction: 1 | -1) => {
+    if (exiting) return
+    setOrder((prev) => {
+      const windowSize = Math.min(VISIBLE_CARDS, prev.length)
+      if (windowSize < 2) return prev
+      const front = prev.slice(0, windowSize)
+      const rest = prev.slice(windowSize)
+      const rotated =
+        direction === 1 ? [...front.slice(1), front[0]] : [front[windowSize - 1], ...front.slice(0, windowSize - 1)]
+      return [...rotated, ...rest]
+    })
+  }
+
   const superWoofAvailable = superWoofRemaining == null || superWoofRemaining > 0
   const superWoofDisabled = !top || !superWoofAvailable
+  const canCycle = order.length > 1 && !exiting
 
   return (
     <div className="flex flex-col items-center">
@@ -127,9 +196,28 @@ export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, super
             />
           ))}
         </AnimatePresence>
+
+        <button
+          type="button"
+          onClick={() => rotateWindow(-1)}
+          disabled={!canCycle}
+          aria-label="Show previous"
+          className="absolute left-1 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => rotateWindow(1)}
+          disabled={!canCycle}
+          aria-label="Show next"
+          className="absolute right-1 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
-      <div className="mt-6 flex items-center gap-4">
+      <div className="mt-10 flex items-end gap-5">
         <button
           onClick={onUndo}
           disabled={!canUndo || undoing}
@@ -138,51 +226,62 @@ export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, super
         >
           <Undo2 className="h-5 w-5" />
         </button>
-        <button
-          onClick={() => handleSwiped('skip')}
-          disabled={!top}
-          aria-label="Skip"
-          className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-lg transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
-        >
-          <X className="h-7 w-7" />
-        </button>
-        <button
-          onClick={() => handleSwiped('like')}
-          disabled={!top}
-          aria-label="Like"
-          className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
-        >
-          <Heart className="h-7 w-7" fill="currentColor" />
-        </button>
+
+        <div className="flex flex-col items-center gap-1.5">
+          <button
+            onClick={() => handleSwiped('skip')}
+            disabled={!top}
+            aria-label="Pass"
+            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-lg transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <X className="h-7 w-7" />
+          </button>
+          <span className="text-xs font-medium text-neutral-500">Pass</span>
+        </div>
 
         {/* Super Woof — glowing, limited-use priority like. */}
-        <div className="relative">
-          {superWoofAvailable && (
-            <motion.span
-              aria-hidden
-              className="pointer-events-none absolute -inset-1.5 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
-              animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          )}
+        <div className="flex flex-col items-center gap-1.5">
+          <div className="relative">
+            {superWoofAvailable && (
+              <motion.span
+                aria-hidden
+                className="pointer-events-none absolute -inset-1.5 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
+                animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            )}
+            <button
+              onClick={() => handleSwiped('super_like')}
+              disabled={superWoofDisabled}
+              aria-label="Super Woof"
+              title={superWoofAvailable ? 'Super Woof — jump to the top of their likes' : "You've used today's Super Woof"}
+              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-lg shadow-sky-400/40 ring-2 ring-sky-300/50 transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-500 disabled:opacity-60 disabled:shadow-none disabled:ring-0"
+            >
+              <Star className="h-6 w-6" fill="currentColor" />
+            </button>
+            {superWoofRemaining != null && superWoofRemaining > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-950 px-1 text-[11px] font-extrabold text-sky-300 ring-2 ring-sky-400">
+                {superWoofRemaining}
+              </span>
+            )}
+          </div>
+          <span className="text-xs font-medium text-neutral-500">Super Woof</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-1.5">
           <button
-            onClick={() => handleSwiped('super_like')}
-            disabled={superWoofDisabled}
-            aria-label="Super Woof"
-            title={superWoofAvailable ? 'Super Woof — jump to the top of their likes' : "You've used today's Super Woof"}
-            className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-lg shadow-sky-400/40 ring-2 ring-sky-300/50 transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-500 disabled:opacity-60 disabled:shadow-none disabled:ring-0"
+            onClick={() => handleSwiped('like')}
+            disabled={!top}
+            aria-label="Like"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
           >
-            <Star className="h-6 w-6" fill="currentColor" />
+            <Heart className="h-7 w-7" fill="currentColor" />
           </button>
-          {superWoofRemaining != null && superWoofRemaining > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-950 px-1 text-[11px] font-extrabold text-sky-300 ring-2 ring-sky-400">
-              {superWoofRemaining}
-            </span>
-          )}
+          <span className="text-xs font-medium text-neutral-500">Like</span>
         </div>
       </div>
 
-      <p className="mt-3 h-4 text-center text-xs text-neutral-500">
+      <p className="mt-4 h-4 text-center text-xs text-neutral-500">
         {superWoofRemaining === 0 ? "Super Woof back tomorrow ⭐" : superWoofAvailable ? 'Tap the star to Super Woof' : ''}
       </p>
     </div>

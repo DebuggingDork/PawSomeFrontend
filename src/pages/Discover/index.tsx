@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MapPinOff } from 'lucide-react'
@@ -19,7 +19,7 @@ import { BrowseFiltersPanel } from '@/components/discover/BrowseFiltersPanel'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { Skeleton } from '@/components/ui/Skeleton'
-import type { BrowseCandidate, BrowseFilters } from '@/lib/api/types'
+import type { BrowseCandidate, BrowseFilters, BrowsePetsResponse } from '@/lib/api/types'
 
 type Tab = 'discover' | 'likes'
 
@@ -61,10 +61,13 @@ function DiscoverPage() {
   // explicitly rather than by data reference, so a background refetch (e.g. after
   // an unrelated mutation invalidates the 'browse' query) never silently wipes
   // out the swipes the user has already made against the currently-loaded deck.
+  // Tracked in state (not a ref) and compared during render — React's documented
+  // pattern for "adjust state when an input changes" — since mutating a ref while
+  // rendering isn't safe under concurrent rendering.
   const browseKey = JSON.stringify([activePet?.id, filters])
-  const seededKeyRef = useRef<string | null>(null)
-  if (browseQuery.data && seededKeyRef.current !== browseKey) {
-    seededKeyRef.current = browseKey
+  const [seededKey, setSeededKey] = useState<string | null>(null)
+  if (browseQuery.data && seededKey !== browseKey) {
+    setSeededKey(browseKey)
     setDeck(browseQuery.data.candidates)
   }
 
@@ -113,18 +116,35 @@ function DiscoverPage() {
     onSettled: () => setRespondingId(null),
   })
 
+  // Keep the underlying 'browse' query cache in sync with every swipe, not just
+  // the local `deck` state. Without this, the cache still holds the pre-swipe
+  // candidate list; if the component ever remounts (e.g. the user leaves
+  // Discover and comes back), `seededKey` resets and reseeds `deck` straight
+  // from that stale cache — resurfacing pets already swiped away in this
+  // session. Patching the cache here means a reseed always reflects reality.
+  const browseQueryKey = ['browse', activePet?.id, filters] as const
+  const patchBrowseCache = (updater: (candidates: BrowseCandidate[]) => BrowseCandidate[]) => {
+    queryClient.setQueryData<BrowsePetsResponse>(browseQueryKey, (old) =>
+      old ? { ...old, candidates: updater(old.candidates) } : old,
+    )
+  }
+
   const handleSwipe = (candidate: BrowseCandidate, action: 'like' | 'skip' | 'super_like') => {
     if (!activePet) {
       // If no active pet, just show a message or redirect to onboarding
       return
     }
-    
+
     setDeck((prev) => prev.filter((c) => c.pet.id !== candidate.pet.id))
+    patchBrowseCache((candidates) => candidates.filter((c) => c.pet.id !== candidate.pet.id))
     swipeMutation.mutate(
       { pet_id: activePet!.id, target_pet_id: candidate.pet.id, action },
       {
         onSuccess: (result) => setLastSwipe({ swipeId: result.id, candidate }),
-        onError: () => setDeck((prev) => [candidate, ...prev]),
+        onError: () => {
+          setDeck((prev) => [candidate, ...prev])
+          patchBrowseCache((candidates) => [candidate, ...candidates])
+        },
       },
     )
   }
