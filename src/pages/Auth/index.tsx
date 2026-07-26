@@ -347,7 +347,7 @@ function AuthPage() {
                   <div className="flex justify-end">
                     <button
                       type="button"
-                      onClick={() => switchMode('forgot')}
+                      onClick={() => navigate('/forgot-password')}
                       className="text-xs font-medium text-neutral-400 hover:text-[#ff6b35]"
                     >
                       Forgot password?

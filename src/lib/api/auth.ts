@@ -65,6 +65,30 @@ export function forgotPassword(email: string): Promise<{ message: string }> {
   })
 }
 
+export function forgotPasswordOTP(email: string): Promise<SendCodeResponse> {
+  return apiFetch<SendCodeResponse>('/auth/forgot-password-otp', {
+    method: 'POST',
+    auth: false,
+    body: { email },
+  })
+}
+
+export function verifyPasswordResetOTP(email: string, code: string): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>('/auth/verify-password-reset-otp', {
+    method: 'POST',
+    auth: false,
+    body: { email, code },
+  })
+}
+
+export function resetPasswordWithOTP(email: string, code: string, newPassword: string): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>('/auth/reset-password-with-otp', {
+    method: 'POST',
+    auth: false,
+    body: { email, code, new_password: newPassword },
+  })
+}
+
 export function resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
   return apiFetch<{ message: string }>('/auth/reset-password', {
     method: 'POST',

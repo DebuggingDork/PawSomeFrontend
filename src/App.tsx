@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate 
 import { useQuery } from '@tanstack/react-query'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
+import ForgotPasswordPage from './pages/ForgotPassword'
 import ResetPasswordPage from './pages/ResetPassword'
 import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
@@ -397,6 +398,7 @@ function App() {
               }
             />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/about" element={<AboutPage />} />
