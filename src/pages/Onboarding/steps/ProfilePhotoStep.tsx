@@ -1,4 +1,5 @@
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
+import { AVATAR_ASPECT } from '@/components/ui/ImageCropper'
 import { confirmProfilePhoto, presignProfilePhoto } from '@/lib/api/users'
 import { SkipAction } from '../fields'
 
@@ -21,6 +22,10 @@ export function ProfilePhotoStep({ currentPhotoUrl, onDraft, onSaved, onSkip }: 
         photoAlt="Your profile photo"
         variant="card"
         className="mx-auto max-w-[260px]"
+        cropAspect={AVATAR_ASPECT}
+        cropShape="circle"
+        cropTitle="Frame your photo"
+        cropHint="Drag to centre your face. Zoom in if you're far away."
       />
       <p className="mx-auto max-w-[38ch] text-center text-sm leading-relaxed text-neutral-400">
         Your face sits beside your pet's name on every card. Profiles with one get replied to far more often.

@@ -13,6 +13,7 @@ import {
 import { contentTypeOf, uploadToPresignedUrl } from '@/lib/api/upload'
 import { ApiError } from '@/lib/api/client'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
+import { PET_CARD_ASPECT } from '@/components/ui/ImageCropper'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { SectionHeader } from '@/components/ui/SectionHeader'
@@ -187,6 +188,9 @@ export function PhotosTab() {
           label={`Add a photo of ${selectedPet.name}`}
           presign={(contentType) => presignPetPhoto(selectedPet.id, contentType)}
           confirm={(key) => confirmPetPhoto(selectedPet.id, key).then(() => invalidate())}
+          cropAspect={PET_CARD_ASPECT}
+          cropTitle={`Frame ${selectedPet.name}'s photo`}
+          cropHint="This is exactly what other owners will see on the card."
         />
       )}
     </div>

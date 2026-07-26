@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, AlertTriangle, Loader2, Check, RotateCcw } from 'lucide-react'
 import { ApiError } from '@/lib/api/client'
+import { ImageCropper } from './ImageCropper'
 import { contentTypeOf, uploadToPresignedUrl } from '@/lib/api/upload'
 import type { PresignResponse } from '@/lib/api/types'
 
@@ -33,6 +34,16 @@ interface PhotoUploaderProps {
    */
   onLocalPreview?: (objectUrl: string) => void
   /**
+   * Aspect ratio (width / height) the photo will actually be displayed at. When
+   * set, picking a file opens the cropper first so the user chooses the framing
+   * instead of letting object-cover decide it for them. Omit to upload as-is.
+   */
+  cropAspect?: number
+  /** Circular crop mask, for avatars. Presentational only. */
+  cropShape?: 'rect' | 'circle'
+  cropTitle?: string
+  cropHint?: string
+  /**
    * 'card' renders a large photo preview that replaces the dropzone once a file is chosen
    * (used where there's no photo shown elsewhere, e.g. onboarding). 'compact' keeps the
    * slim inline button with a small thumbnail beside it, for screens that already show
@@ -59,7 +70,14 @@ export function PhotoUploader({
   currentPhotoUrl = null,
   photoAlt = '',
   onLocalPreview,
+  cropAspect,
+  cropShape = 'rect',
+  cropTitle,
+  cropHint,
 }: PhotoUploaderProps) {
+  // Held between "file picked" and "framing confirmed". Nothing is uploaded
+  // until the cropper hands back the framed version.
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [status, setStatus] = useState<Status>('idle')
   const [message, setMessage] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -128,7 +146,12 @@ export function PhotoUploader({
       className="hidden"
       onChange={(e) => {
         const file = e.target.files?.[0]
-        if (file) handleFile(file)
+        if (!file) return
+        // Reset immediately so re-picking the same file after cancelling still
+        // fires a change event.
+        e.target.value = ''
+        if (cropAspect) setPendingFile(file)
+        else handleFile(file)
       }}
     />
   )
@@ -156,6 +179,23 @@ export function PhotoUploader({
   return (
     <div className={className}>
       {fileInput}
+
+      {pendingFile && cropAspect && (
+        <ImageCropper
+          // Remount per file: the cropper derives its object URL once on mount.
+          key={`${pendingFile.name}-${pendingFile.size}-${pendingFile.lastModified}`}
+          file={pendingFile}
+          aspect={cropAspect}
+          shape={cropShape}
+          title={cropTitle}
+          hint={cropHint}
+          onCancel={() => setPendingFile(null)}
+          onCropped={(cropped) => {
+            setPendingFile(null)
+            handleFile(cropped)
+          }}
+        />
+      )}
 
       {isCard ? (
         <motion.button

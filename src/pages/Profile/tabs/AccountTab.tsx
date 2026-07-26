@@ -11,6 +11,7 @@ import {
 } from '@/lib/api/users'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
+import { AVATAR_ASPECT } from '@/components/ui/ImageCropper'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 import type { UserProfile } from '@/lib/api/types'
@@ -176,6 +177,10 @@ function AccountForm({
                 className="mx-auto max-w-[180px]"
                 currentPhotoUrl={profile.profile_photo_url}
                 photoAlt="Your profile photo"
+                cropAspect={AVATAR_ASPECT}
+                cropShape="circle"
+                cropTitle="Frame your photo"
+                cropHint="Drag to centre your face. Zoom in if you're far away."
               />
               {profile.profile_photo_url && (
                 <button
