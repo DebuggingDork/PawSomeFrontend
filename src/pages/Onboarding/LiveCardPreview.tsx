@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { PawPrint, MapPin, Sparkles, BadgeCheck, Camera } from 'lucide-react'
 import { formatAge } from '@/lib/formatAge'
+import { speciesEmoji } from '@/lib/species'
 
 /** Everything the preview card can show. Values arrive as the user types, before
  * anything is saved, so this is deliberately all-optional: the card has to look
@@ -19,14 +20,6 @@ export interface CardDraft {
 }
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const
-
-const SPECIES_EMOJI: Record<string, string> = {
-  dog: '🐕',
-  cat: '🐈',
-  rabbit: '🐇',
-  bird: '🦜',
-  other: '🐾',
-}
 
 /**
  * A pixel-honest replica of the Discover card (see components/discover/SwipeCard),
@@ -170,7 +163,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
           </div>
 
           <p className={`mb-2 text-sm ${draft.breed ? 'text-neutral-300' : 'text-neutral-600'}`}>
-            {draft.breed || `${SPECIES_EMOJI[draft.species] ?? '🐾'} Breed`}
+            {draft.breed || `${speciesEmoji(draft.species)} Breed`}
           </p>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-400">

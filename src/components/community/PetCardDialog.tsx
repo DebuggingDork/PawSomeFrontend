@@ -18,6 +18,7 @@ import { swipe as swipeApi } from '@/lib/api/matches'
 import { useAuthStore } from '@/store/useAuthStore'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
+import { speciesEmoji, speciesLabel } from '@/lib/species'
 
 interface PetCardDialogProps {
   petId: string
@@ -81,8 +82,18 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
             <X className="h-4.5 w-4.5" />
           </button>
           {pet && (
-            <span className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-base text-white backdrop-blur-sm">
-              {pet.species === 'dog' ? '🐕' : '🐈'} {pet.gender === 'male' ? '♂' : '♀'}
+            /* A pill, not a 36px circle. Two glyphs never fitted side by side in
+               a fixed w-9, so they wrapped onto a second line and spilled out of
+               the rounded box. Auto width plus nowrap keeps them on one line
+               however wide the emoji renders on a given platform. */
+            <span className="absolute left-3 top-3 inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full bg-black/60 px-3 text-base leading-none text-white backdrop-blur-sm">
+              <span aria-hidden="true">{speciesEmoji(pet.species)}</span>
+              <span aria-hidden="true" className="text-lg">
+                {pet.gender === 'male' ? '♂' : '♀'}
+              </span>
+              <span className="sr-only">
+                {speciesLabel(pet.species)}, {pet.gender === 'male' ? 'male' : 'female'}
+              </span>
             </span>
           )}
         </div>
