@@ -40,6 +40,7 @@ function AuthPage() {
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -48,15 +49,26 @@ function AuthPage() {
   const isSignUp = mode === 'signup'
   const isForgot = mode === 'forgot'
 
+  // Only complain once there's something to compare against — nagging while the
+  // second field is still being typed is noise, not help.
+  const passwordsMismatch = isSignUp && confirmPassword.length > 0 && confirmPassword !== password
+
   const switchMode = (m: Mode) => {
     setMode(m)
     setError(null)
     setResetSent(false)
+    setConfirmPassword('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (isSignUp && password !== confirmPassword) {
+      setError("Those passwords don't match. Please re-enter them.")
+      return
+    }
+
     setSubmitting(true)
 
     if (isForgot) {
@@ -86,12 +98,19 @@ function AuthPage() {
       setTokens(tokens.access_token, tokens.refresh_token)
 
       const [user, pets] = await Promise.all([authApi.me(), petsApi.listMyPets()])
+      // Clears the previous session's query cache before anything can render with it.
       login(user, pets)
 
+      // A brand-new account has no name, no photo and no pet, so onboarding is the
+      // only screen that makes sense next. We route there explicitly instead of
+      // leaving it to OnboardingGate: the gate has to wait on /onboarding/status
+      // before it can decide, which meant a new user landed on Discover first and
+      // got yanked away a moment later.
       // `replace` so the sign-in screen drops out of the history stack entirely —
       // pressing Back from the app should go wherever the user came from, not
       // return them to a login form for the session they just started.
-      navigate(pets.length > 0 ? '/chat' : '/discover', { replace: true })
+      const destination = isSignUp ? '/onboarding' : pets.length > 0 ? '/chat' : '/discover'
+      navigate(destination, { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
         setError(typeof err.detail === 'string' ? err.detail : 'Something went wrong. Please try again.')
@@ -285,6 +304,40 @@ function AuthPage() {
                   </div>
                 )}
 
+                {isSignUp && (
+                  <div>
+                    <div className="relative">
+                      <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Confirm password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className={`w-full rounded-xl border bg-white/5 py-3 pl-11 pr-11 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:bg-white/10 focus:outline-none focus:ring-2 ${
+                          passwordsMismatch
+                            ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/30'
+                            : 'border-white/15 focus:border-[#ff6b35] focus:ring-[#ff6b35]/30'
+                        }`}
+                        required
+                        minLength={8}
+                        autoComplete="new-password"
+                        aria-invalid={passwordsMismatch}
+                        aria-describedby={passwordsMismatch ? 'confirm-password-error' : undefined}
+                      />
+                      {/* Confirmed match is worth showing — it's the one moment the
+                          user can't verify for themselves behind the dots. */}
+                      {!passwordsMismatch && confirmPassword.length > 0 && (
+                        <CheckCircle2 className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-400" />
+                      )}
+                    </div>
+                    {passwordsMismatch && (
+                      <p id="confirm-password-error" className="mt-1.5 pl-1 text-xs text-red-400">
+                        Passwords don't match.
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 {mode === 'signin' && (
                   <div className="flex justify-end">
                     <button
@@ -299,9 +352,9 @@ function AuthPage() {
 
                 <motion.button
                   type="submit"
-                  disabled={submitting}
-                  whileHover={{ scale: submitting ? 1 : 1.01 }}
-                  whileTap={{ scale: submitting ? 1 : 0.98 }}
+                  disabled={submitting || passwordsMismatch}
+                  whileHover={{ scale: submitting || passwordsMismatch ? 1 : 1.01 }}
+                  whileTap={{ scale: submitting || passwordsMismatch ? 1 : 0.98 }}
                   className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {submitting ? (
