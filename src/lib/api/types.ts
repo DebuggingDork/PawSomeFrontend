@@ -194,15 +194,27 @@ export interface MatchPreferences {
 // --- Achievements ---
 
 export type AchievementType =
-  | 'profile_photo'
   | 'full_name'
+  | 'verified_email'
+  | 'profile_photo'
+  | 'on_the_map'
+  | 'storyteller'
   | 'pet_created'
   | 'pet_photo'
+  | 'profile_complete'
+  | 'first_swipe'
+  | 'fifty_swipes'
+  | 'super_woof'
   | 'first_match'
   | 'five_matches'
+  | 'ten_matches'
   | 'first_message'
-  | 'profile_complete'
-  | 'verified_email'
+  | 'hundred_messages'
+  | 'first_playdate'
+  | 'playdate_confirmed'
+  | 'full_gallery'
+  | 'multi_pet'
+  | 'week_one'
 
 export interface AchievementBadge {
   type: AchievementType
@@ -219,6 +231,9 @@ export interface AchievementSummary {
   completion_percentage: number
   badges: AchievementBadge[]
   recent_achievements: { id: string; achievement_type: AchievementType; earned_at: string }[]
+  /** Badges awarded by this very request. The client celebrates these; the next
+   * read returns an empty list, so each badge is announced exactly once. */
+  newly_earned: AchievementBadge[]
 }
 
 // --- Browse / swipe / notifications ---
