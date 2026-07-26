@@ -75,25 +75,24 @@ function MatchesPage() {
               key={conversation.matchId}
               className="group relative flex min-h-[180px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:border-[#ff6b35]/60 hover:shadow-xl"
             >
-              {conversation.otherPet.owner?.id && (
-                <SafetyMenu
-                  userId={conversation.otherPet.owner.id}
-                  petId={conversation.otherPet.id}
-                  matchId={conversation.matchId}
-                  otherName={conversation.otherPet.name}
-                  className="absolute right-2 top-2 z-10"
-                  onBlocked={() => conversationsQuery.refetch()}
-                  onUnmatched={() => conversationsQuery.refetch()}
-                />
-              )}
-              
-              <div className="mb-4 flex items-start gap-4 pr-6">
+              <div className="mb-4 flex items-start gap-4">
                 <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="xl" />
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                   <h3 className="truncate text-lg font-semibold text-white">{conversation.otherPet.name}</h3>
                   <p className="truncate text-sm text-neutral-400">{conversation.otherPet.breed}</p>
                   <p className="mt-1 text-xs text-neutral-500">{timeAgo(conversation.createdAt)}</p>
                 </div>
+                {conversation.otherPet.owner?.id && (
+                  <SafetyMenu
+                    userId={conversation.otherPet.owner.id}
+                    petId={conversation.otherPet.id}
+                    matchId={conversation.matchId}
+                    otherName={conversation.otherPet.name}
+                    className="flex-shrink-0"
+                    onBlocked={() => conversationsQuery.refetch()}
+                    onUnmatched={() => conversationsQuery.refetch()}
+                  />
+                )}
               </div>
 
               <Link
