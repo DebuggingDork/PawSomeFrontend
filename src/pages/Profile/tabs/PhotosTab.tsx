@@ -108,9 +108,9 @@ export function PhotosTab() {
         />
       )}
 
-      {photos.length === 0 && (
-        <EmptyState icon={ImageIcon} title={`No photos of ${selectedPet?.name} yet`} className="py-10" />
-      )}
+      {/* No "no photos yet" empty state: the add tile occupies the grid's first
+          cell and already says what to do, so a separate placeholder above it
+          was just saying it twice. */}
 
       {/* Shared across tiles — startReplace() points it at the right photo before opening it. */}
       <input
@@ -175,23 +175,33 @@ export function PhotosTab() {
           </div>
           )
         })}
+
+        {/* The add control is the last cell of the grid, not a bar underneath it.
+            It used to be a full-width "Change photo" button below the grid that
+            kept the thumbnail of whatever was uploaded last, so after adding a
+            photo there was no visible way to add another: the control described
+            replacing the one just added. As a tile it stays in the place your eye
+            already is, and it resets itself after each upload. */}
+        {selectedPet && photos.length < MAX_PHOTOS_PER_PET && (
+          <PhotoUploader
+            key={selectedPet.id}
+            variant="tile"
+            label={photos.length === 0 ? `Add a photo of ${selectedPet.name}` : 'Add another'}
+            presign={(contentType) => presignPetPhoto(selectedPet.id, contentType)}
+            confirm={(key) => confirmPetPhoto(selectedPet.id, key).then(() => invalidate())}
+            cropAspect={PET_CARD_ASPECT}
+            cropTitle={`Frame ${selectedPet.name}'s photo`}
+            cropHint="This is exactly what other owners will see on the card."
+          />
+        )}
       </div>
 
-      {selectedPet && photos.length >= MAX_PHOTOS_PER_PET && (
-        <p className="rounded-xl border border-dashed border-neutral-800 bg-neutral-900/40 px-4 py-3 text-center text-xs text-neutral-500">
-          You've reached the {MAX_PHOTOS_PER_PET}-photo limit — remove one to add another.
+      {selectedPet && (
+        <p className="text-xs text-neutral-500">
+          {photos.length >= MAX_PHOTOS_PER_PET
+            ? `That's the ${MAX_PHOTOS_PER_PET}-photo limit. Remove one to add another.`
+            : `${photos.length} of ${MAX_PHOTOS_PER_PET} photos. The primary one is what people see first in Discover.`}
         </p>
-      )}
-
-      {selectedPet && photos.length < MAX_PHOTOS_PER_PET && (
-        <PhotoUploader
-          label={`Add a photo of ${selectedPet.name}`}
-          presign={(contentType) => presignPetPhoto(selectedPet.id, contentType)}
-          confirm={(key) => confirmPetPhoto(selectedPet.id, key).then(() => invalidate())}
-          cropAspect={PET_CARD_ASPECT}
-          cropTitle={`Frame ${selectedPet.name}'s photo`}
-          cropHint="This is exactly what other owners will see on the card."
-        />
       )}
     </div>
   )

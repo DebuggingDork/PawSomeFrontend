@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, AlertTriangle, Loader2, Check, RotateCcw } from 'lucide-react'
+import { Camera, AlertTriangle, Loader2, Check, RotateCcw, ImagePlus } from 'lucide-react'
 import { ApiError } from '@/lib/api/client'
 import { ImageCropper } from './ImageCropper'
 import { contentTypeOf, uploadToPresignedUrl } from '@/lib/api/upload'
@@ -47,9 +47,21 @@ interface PhotoUploaderProps {
    * 'card' renders a large photo preview that replaces the dropzone once a file is chosen
    * (used where there's no photo shown elsewhere, e.g. onboarding). 'compact' keeps the
    * slim inline button with a small thumbnail beside it, for screens that already show
-   * the photo elsewhere (profile avatar, photo gallery).
+   * the photo elsewhere (profile avatar). 'tile' is a square dashed cell sized to sit as
+   * the last item of a photo grid, for adding to a gallery.
    */
-  variant?: 'card' | 'compact'
+  variant?: 'card' | 'compact' | 'tile'
+  /**
+   * Clears the preview once the upload is confirmed, returning the control to its
+   * empty "add" state.
+   *
+   * Single-slot uploaders (the profile avatar) should keep showing what was just
+   * set. Gallery uploaders must not: holding on to the last file made the control
+   * read "Change photo" over a thumbnail, which describes replacing the photo you
+   * just added rather than adding another, and left no way to add a third without
+   * reloading the page. Defaults on for 'tile', which only ever appends.
+   */
+  resetAfterUpload?: boolean
 }
 
 type Status = 'idle' | 'uploading' | 'unavailable' | 'error'
@@ -74,6 +86,7 @@ export function PhotoUploader({
   cropShape = 'rect',
   cropTitle,
   cropHint,
+  resetAfterUpload = variant === 'tile',
 }: PhotoUploaderProps) {
   // Held between "file picked" and "framing confirmed". Nothing is uploaded
   // until the cropper hands back the framed version.
@@ -117,6 +130,14 @@ export function PhotoUploader({
       await confirm(presigned.object_key)
       setStatus('idle')
       setJustSaved(true)
+      if (resetAfterUpload) {
+        // Back to an empty "add" affordance, ready for the next one. The saved
+        // tick still flashes below so the upload doesn't just vanish silently.
+        setPreviewUrl((prev) => {
+          if (prev) URL.revokeObjectURL(prev)
+          return null
+        })
+      }
       if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current)
       savedTimeoutRef.current = setTimeout(() => setJustSaved(false), 2200)
     } catch (err) {
@@ -197,7 +218,38 @@ export function PhotoUploader({
         />
       )}
 
-      {isCard ? (
+      {variant === 'tile' ? (
+        <motion.button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={status === 'uploading'}
+          whileHover={status === 'uploading' ? undefined : { scale: 1.01 }}
+          whileTap={status === 'uploading' ? undefined : { scale: 0.99 }}
+          aria-label={label}
+          className="group relative flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/40 transition-colors hover:border-[#ff6b35] hover:bg-neutral-900/70 disabled:cursor-wait"
+        >
+          {status === 'uploading' ? (
+            <>
+              <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+              <span className="text-xs font-medium text-neutral-400">Uploading…</span>
+            </>
+          ) : justSaved ? (
+            <>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500">
+                <Check className="h-5 w-5 text-white" strokeWidth={3} />
+              </span>
+              <span className="text-xs font-medium text-emerald-400">Added</span>
+            </>
+          ) : (
+            <>
+              <ImagePlus className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-[#ff6b35]" />
+              <span className="px-2 text-center text-xs font-medium text-neutral-300 group-hover:text-white">
+                {label}
+              </span>
+            </>
+          )}
+        </motion.button>
+      ) : isCard ? (
         <motion.button
           type="button"
           onClick={() => inputRef.current?.click()}
