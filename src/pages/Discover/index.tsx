@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MapPinOff } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useDiscoverStore } from '@/store/useDiscoverStore'
 import { ApiError } from '@/lib/api/client'
 import {
   browsePets,
@@ -19,9 +20,7 @@ import { BrowseFiltersPanel } from '@/components/discover/BrowseFiltersPanel'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { Skeleton } from '@/components/ui/Skeleton'
-import type { BrowseCandidate, BrowseFilters, BrowsePetsResponse } from '@/lib/api/types'
-
-type Tab = 'discover' | 'likes'
+import type { BrowseCandidate, BrowsePetsResponse } from '@/lib/api/types'
 
 function LocationNeededPrompt() {
   return (
@@ -44,8 +43,14 @@ function LocationNeededPrompt() {
 function DiscoverPage() {
   const { activePet } = useAuthStore()
   const queryClient = useQueryClient()
-  const [tab, setTab] = useState<Tab>('discover')
-  const [filters, setFilters] = useState<BrowseFilters>({ radius: 5000 }) // Default to 5000km to show all
+  // Tab and filters live in the Discover store rather than local state: this page
+  // unmounts on every navigation, and resetting them meant a trip to Community and
+  // back dropped you on the default tab with the default radius, looking at the
+  // deck from the top again.
+  const tab = useDiscoverStore((s) => s.tab)
+  const setTab = useDiscoverStore((s) => s.setTab)
+  const filters = useDiscoverStore((s) => s.filters)
+  const setFilters = useDiscoverStore((s) => s.setFilters)
   const [deck, setDeck] = useState<BrowseCandidate[]>([])
   const [lastSwipe, setLastSwipe] = useState<{ swipeId: string; candidate: BrowseCandidate } | null>(null)
   const [respondingId, setRespondingId] = useState<string | null>(null)
@@ -152,6 +157,14 @@ function DiscoverPage() {
   // Remove the "no pet" requirement for browsing
   // if (!activePet) return <NoPetPrompt />
 
+  // Set when the server rejects a swipe because the address isn't confirmed. Read
+  // from the rejection rather than from user.is_verified so the banner reflects
+  // what the API will actually allow, including when enforcement is switched off.
+  const needsVerification =
+    swipeMutation.error instanceof ApiError &&
+    swipeMutation.error.status === 403 &&
+    swipeMutation.error.detail === 'EMAIL_VERIFICATION_REQUIRED'
+
   const locationError =
     browseQuery.error instanceof ApiError && browseQuery.error.status === 400 ? browseQuery.error : null
 
@@ -190,15 +203,29 @@ function DiscoverPage() {
 
           {!locationError && deck.length > 0 && (
             <>
-              {!activePet && (
-                <div className="mb-4 rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-center text-sm text-amber-400">
+              {/* Verification is checked first: an unverified user with a pet would
+                  otherwise see no banner at all and have every swipe silently
+                  rejected by the server. */}
+              {needsVerification ? (
+                <div className="mb-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-center text-sm text-amber-400">
                   <Link to="/onboarding" className="underline hover:text-amber-300">
-                    Create a pet profile
-                  </Link> to start swiping and matching!
+                    Verify your email
+                  </Link>{' '}
+                  to start swiping and matching.
                 </div>
+              ) : (
+                !activePet && (
+                  <div className="mb-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-center text-sm text-amber-400">
+                    <Link to="/onboarding" className="underline hover:text-amber-300">
+                      Create a pet profile
+                    </Link>{' '}
+                    to start swiping and matching.
+                  </div>
+                )
               )}
               <SwipeDeck
                 candidates={deck}
+                deckKey={browseKey}
                 onSwipe={handleSwipe}
                 onUndo={() => lastSwipe && activePet && undoMutation.mutate(lastSwipe.swipeId)}
                 canUndo={!!lastSwipe && !!activePet}

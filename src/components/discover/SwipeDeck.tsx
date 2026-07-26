@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { Heart, X, Undo2, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { SwipeCardContent } from './SwipeCard'
+import { useDiscoverStore } from '@/store/useDiscoverStore'
 import type { BrowseCandidate } from '@/lib/api/types'
 
 const SWIPE_THRESHOLD = 120
@@ -118,6 +119,10 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, onSwiped }: D
 
 interface SwipeDeckProps {
   candidates: BrowseCandidate[]
+  /** Identity of this deck (active pet + filters). The fan order is remembered
+   * against it, so paging through the deck survives leaving the page and coming
+   * back, while changing filters correctly starts fresh. */
+  deckKey: string
   onSwipe: (candidate: BrowseCandidate, action: SwipeAction) => void
   onUndo: () => void
   canUndo: boolean
@@ -125,27 +130,36 @@ interface SwipeDeckProps {
   superWoofRemaining?: number
 }
 
-export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, superWoofRemaining }: SwipeDeckProps) {
+export function SwipeDeck({
+  candidates,
+  deckKey,
+  onSwipe,
+  onUndo,
+  canUndo,
+  undoing,
+  superWoofRemaining,
+}: SwipeDeckProps) {
   const [exiting, setExiting] = useState(false)
   const [exitAction, setExitAction] = useState<SwipeAction>('like')
 
-  // Local fan order — lets the prev/next arrows reshuffle who's up front without
-  // touching the real candidate list. Reconciled against `candidates` whenever it
-  // changes (a swipe removing the true top card, a fresh deck load, etc.) so ids
-  // that left the deck drop out and any new ones join the back of the line.
-  // Done during render (comparing against the last-seen `candidates` reference,
-  // React's documented pattern for adjusting state from a prop change) rather
-  // than in an effect, so there's no extra post-commit render showing stale order.
-  const [order, setOrder] = useState<string[]>(() => candidates.map((c) => c.pet.id))
-  const [reconciledFor, setReconciledFor] = useState(candidates)
-  if (candidates !== reconciledFor) {
-    setReconciledFor(candidates)
-    const stillPresent = new Set(candidates.map((c) => c.pet.id))
-    const kept = order.filter((id) => stillPresent.has(id))
-    const knownIds = new Set(kept)
-    const additions = candidates.map((c) => c.pet.id).filter((id) => !knownIds.has(id))
-    setOrder([...kept, ...additions])
-  }
+  // The fan order lives in the Discover store, not here, so it outlives this
+  // component being unmounted by a navigation. Only reused when it describes the
+  // deck currently on screen.
+  const savedOrder = useDiscoverStore((s) => (s.deckKey === deckKey ? s.order : null))
+  const setSavedOrder = useDiscoverStore((s) => s.setOrder)
+
+  // Derived, not stored: reconciling the remembered order against the live
+  // candidate list is a pure function of the two, so there's no state to adjust
+  // during render and no effect that could paint a stale order first. Ids that
+  // left the deck (swiped away) drop out; ids that arrived join the back.
+  const order = useMemo(() => {
+    const ids = candidates.map((c) => c.pet.id)
+    if (!savedOrder) return ids
+    const present = new Set(ids)
+    const kept = savedOrder.filter((id) => present.has(id))
+    const known = new Set(kept)
+    return [...kept, ...ids.filter((id) => !known.has(id))]
+  }, [candidates, savedOrder])
 
   const candidateById = new Map(candidates.map((c) => [c.pet.id, c]))
   const visible = order
@@ -166,15 +180,13 @@ export function SwipeDeck({ candidates, onSwipe, onUndo, canUndo, undoing, super
   // untouched so nothing is skipped or lost track of.
   const rotateWindow = (direction: 1 | -1) => {
     if (exiting) return
-    setOrder((prev) => {
-      const windowSize = Math.min(VISIBLE_CARDS, prev.length)
-      if (windowSize < 2) return prev
-      const front = prev.slice(0, windowSize)
-      const rest = prev.slice(windowSize)
-      const rotated =
-        direction === 1 ? [...front.slice(1), front[0]] : [front[windowSize - 1], ...front.slice(0, windowSize - 1)]
-      return [...rotated, ...rest]
-    })
+    const windowSize = Math.min(VISIBLE_CARDS, order.length)
+    if (windowSize < 2) return
+    const front = order.slice(0, windowSize)
+    const rest = order.slice(windowSize)
+    const rotated =
+      direction === 1 ? [...front.slice(1), front[0]] : [front[windowSize - 1], ...front.slice(0, windowSize - 1)]
+    setSavedOrder(deckKey, [...rotated, ...rest])
   }
 
   const superWoofAvailable = superWoofRemaining == null || superWoofRemaining > 0
