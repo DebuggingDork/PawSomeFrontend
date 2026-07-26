@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3, BadgeCheck } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getMyProfile } from '@/lib/api/users'
+import { membershipLine } from '@/lib/membership'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
@@ -80,6 +81,15 @@ function ProfileIdentityHeader() {
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400">
               <BadgeCheck className="h-3.5 w-3.5" />
               Verified
+            </span>
+          )}
+          {profile.created_at && (
+            <span
+              title={`Joined ${new Date(profile.created_at).toLocaleDateString()}`}
+              className="inline-flex items-center gap-1 rounded-full bg-[#ff6b35]/10 px-2 py-0.5 text-xs font-medium text-[#ff6b35]"
+            >
+              <PawPrint className="h-3.5 w-3.5" />
+              {membershipLine(profile.created_at)}
             </span>
           )}
         </div>

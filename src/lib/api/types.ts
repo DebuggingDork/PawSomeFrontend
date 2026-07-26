@@ -142,6 +142,9 @@ export interface UserProfile {
   is_verified?: boolean
   latitude?: number | null
   longitude?: number | null
+  /** When the account was created. Owner-only, so it is absent from the public
+   * and matched-connection profile shapes. */
+  created_at?: string
   pets: PetSummary[]
 }
 
