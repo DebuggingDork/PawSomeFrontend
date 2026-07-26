@@ -590,3 +590,51 @@ export interface EventAttendeesResponse {
   items: EventAttendee[]
   total: number
 }
+
+// --- Location enrichment (weather, nearby places, travel) -------------------
+// These decorate playdates and events using the coordinates already stored on
+// them. Every field past `available` is nullable: the two upstream feeds have
+// different horizons and can fail independently, and a partial answer is worth
+// showing.
+
+export type AqiBand =
+  | 'good'
+  | 'moderate'
+  | 'unhealthy_sensitive'
+  | 'unhealthy'
+  | 'very_unhealthy'
+  | 'hazardous'
+
+export interface Conditions {
+  available: boolean
+  observed_for: string | null
+  temperature_c: number | null
+  precipitation_probability: number | null
+  weather_code: number | null
+  summary: string | null
+  wind_speed_kmh: number | null
+  us_aqi: number | null
+  aqi_band: AqiBand | null
+}
+
+export type PlaceKind = 'dog_park' | 'park' | 'vet'
+
+export interface NearbyPlace {
+  name: string
+  kind: PlaceKind
+  latitude: number
+  longitude: number
+  distance_m: number
+}
+
+export interface NearbyPlaceList {
+  items: NearbyPlace[]
+  total: number
+}
+
+export interface TravelEstimate {
+  distance_km: number
+  /** Null when no routing provider is configured — straight-line only. */
+  duration_minutes: number | null
+  source: 'ola' | 'straight_line'
+}

@@ -2,6 +2,9 @@ import { motion } from 'framer-motion'
 import { Calendar, MapPin, X, Check, Ban, Clock, CheckCircle2, XCircle } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Playdate } from '@/lib/api/types'
+import { ShowInMap } from '@/components/ui/ShowInMap'
+import { AddToCalendar } from '@/components/ui/AddToCalendar'
+import { ConditionsBadge } from '@/components/conditions/ConditionsBadge'
 
 function parts(iso: string) {
   const d = new Date(iso)
@@ -38,6 +41,18 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
   const StatusIcon = s.icon
   const when = parts(playdate.scheduled_at)
   const dimmed = playdate.status === 'declined' || playdate.status === 'cancelled'
+
+  const point = {
+    latitude: playdate.latitude,
+    longitude: playdate.longitude,
+    locationName: playdate.location_name,
+    address: playdate.address,
+  }
+
+  // Conditions matter while the meetup is still a live question. Nobody needs
+  // the forecast for one that was declined, cancelled, or already happened.
+  const upcoming = !dimmed && new Date(playdate.scheduled_at) > new Date()
+  const confirmed = playdate.status === 'accepted' && upcoming
 
   return (
     <motion.div
@@ -76,11 +91,36 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
             {playdate.address && (
               <p className="ml-5 line-clamp-2 text-[11px] leading-relaxed text-neutral-600">{playdate.address}</p>
             )}
+            <ShowInMap className="ml-5 mt-1.5" point={point} />
           </div>
+
+          {upcoming && (
+            <ConditionsBadge
+              className="mt-2"
+              latitude={playdate.latitude}
+              longitude={playdate.longitude}
+              at={playdate.scheduled_at}
+            />
+          )}
 
           {playdate.note && <p className="mt-1 text-xs italic text-neutral-500">"{playdate.note}"</p>}
 
           <p className="mt-1.5 text-[11px] text-neutral-600">Proposed by {isProposer ? 'you' : playdate.proposed_by_pet.name}</p>
+
+          {/* Only once it's actually on — an unanswered proposal isn't a plan. */}
+          {confirmed && (
+            <AddToCalendar
+              className="mt-2"
+              filename={`playdate-${playdate.location_name}`}
+              event={{
+                title: `Playdate with ${isProposer ? playdate.proposed_to_pet.name : playdate.proposed_by_pet.name}`,
+                start: playdate.scheduled_at,
+                description: playdate.note ?? undefined,
+                location: point,
+                locationText: playdate.address ?? playdate.location_name,
+              }}
+            />
+          )}
 
           {playdate.is_mine_to_respond && (
             <div className="mt-2 flex gap-2">

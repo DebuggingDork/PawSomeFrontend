@@ -3,6 +3,10 @@ import { MapPin, Users, Check } from 'lucide-react'
 import { gradientForId } from '@/lib/gradients'
 import { useAuthStore } from '@/store/useAuthStore'
 import type { CommunityEvent } from '@/lib/api/types'
+import { ShowInMap } from '@/components/ui/ShowInMap'
+import { AddToCalendar } from '@/components/ui/AddToCalendar'
+import { DistanceBadge } from '@/components/ui/DistanceBadge'
+import { ConditionsBadge } from '@/components/conditions/ConditionsBadge'
 
 const SPECIES_EMOJI: Record<string, string> = { dog: '🐕', cat: '🐈', rabbit: '🐇', bird: '🐦', other: '🐾' }
 
@@ -27,6 +31,14 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
   const when = parts(event.event_time)
   const isGoing = event.your_rsvp_status === 'going'
   const emoji = event.species ? (SPECIES_EMOJI[event.species] ?? '🐾') : '🐾'
+
+  const point = {
+    latitude: event.latitude,
+    longitude: event.longitude,
+    locationName: event.location_name,
+    address: event.address,
+  }
+  const upcoming = !event.is_cancelled && new Date(event.event_time) > new Date()
 
   return (
     <motion.div
@@ -68,7 +80,34 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
         </p>
         {event.address && <p className="ml-5 truncate text-xs text-neutral-600">{event.address}</p>}
 
+        <DistanceBadge className="ml-5 mt-1.5" latitude={event.latitude} longitude={event.longitude} />
+
+        <ShowInMap className="ml-5 mt-2" point={point} />
+
+        {upcoming && (
+          <ConditionsBadge
+            className="mt-2.5"
+            latitude={event.latitude}
+            longitude={event.longitude}
+            at={event.event_time}
+          />
+        )}
+
         {event.description && <p className="mt-3 line-clamp-2 text-sm text-neutral-300">{event.description}</p>}
+
+        {isGoing && upcoming && (
+          <AddToCalendar
+            className="mt-3"
+            filename={`event-${event.title}`}
+            event={{
+              title: event.title,
+              start: event.event_time,
+              description: event.description ?? undefined,
+              location: point,
+              locationText: event.address ?? event.location_name,
+            }}
+          />
+        )}
 
         <div className="mt-4 flex items-center justify-between border-t border-neutral-800 pt-3">
           <p className="flex items-center gap-1.5 text-xs text-neutral-500">

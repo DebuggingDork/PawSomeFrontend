@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { LocateFixed, MapPin, Loader2 } from 'lucide-react'
 import { searchAddress, reverseGeocode, type GeocodeResult } from '@/lib/api/geocoding'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
+import { rememberUserLocation } from '@/hooks/useUserLocation'
+import { ShowInMap } from './ShowInMap'
+import { NearbyPlaces } from './NearbyPlaces'
 
 const SEARCH_DEBOUNCE_MS = 450
 
@@ -118,6 +121,10 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude: lat, longitude: lng } = position.coords
+        // The one moment the user has deliberately shared where they are —
+        // remember it so distance labels elsewhere can work without ever
+        // raising a permission prompt of their own.
+        rememberUserLocation(lat, lng)
         try {
           const result = await reverseGeocode(lat, lng)
           skipNextSearchRef.current = true
@@ -191,11 +198,28 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
 
       {error && <p className="mt-2 text-xs text-amber-400">{error}</p>}
 
+      {/* Once there's a pin, let people actually look at it before committing —
+       * an address string that reads right can still resolve to the wrong side
+       * of the city, and a playdate is a real-world meetup. */}
       {latitude !== null && longitude !== null && (
-        <p className="mt-2 flex items-center gap-1.5 text-xs text-neutral-500">
-          <MapPin className="h-3.5 w-3.5" />
-          {latitude.toFixed(4)}, {longitude.toFixed(4)}
-        </p>
+        <>
+          <p className="mt-2 flex items-center gap-1.5 text-xs text-neutral-500">
+            <MapPin className="h-3.5 w-3.5" />
+            {latitude.toFixed(4)}, {longitude.toFixed(4)}
+          </p>
+          <ShowInMap className="mt-2" point={{ latitude, longitude, address }} />
+          <NearbyPlaces
+            className="mt-3"
+            latitude={latitude}
+            longitude={longitude}
+            onPick={(place) => {
+              skipNextSearchRef.current = true
+              setQuery(place.name)
+              setShowSuggestions(false)
+              onChange({ lat: place.latitude, lng: place.longitude, address: place.name })
+            }}
+          />
+        </>
       )}
     </div>
   )
