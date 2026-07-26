@@ -2,7 +2,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { PawPrint, MapPin, Sparkles, BadgeCheck, Camera } from 'lucide-react'
 import { formatAge } from '@/lib/formatAge'
 import { speciesEmoji } from '@/lib/species'
-import { genderMark } from '@/lib/petBadges'
+import { GenderBadge } from '@/components/ui/GenderBadge'
 
 /** Everything the preview card can show. Values arrive as the user types, before
  * anything is saved, so this is deliberately all-optional: the card has to look
@@ -130,9 +130,9 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
               {...rise}
               transition={riseTransition}
               aria-hidden
-              className={`absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-base backdrop-blur-sm ${genderMark(draft.gender).className}`}
+              className="absolute right-3 top-3"
             >
-              {genderMark(draft.gender).glyph}
+              <GenderBadge gender={draft.gender} size="xl" decorative className="shadow-lg" />
             </motion.span>
           )}
         </AnimatePresence>

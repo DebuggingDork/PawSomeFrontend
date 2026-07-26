@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { GraduationCap, Scissors, ShieldCheck } from 'lucide-react'
+import { GraduationCap, Mars, Scissors, ShieldCheck, Venus } from 'lucide-react'
 import type { Pet } from './api/types'
 
 const NEW_HERE_WINDOW_MS = 24 * 60 * 60 * 1000
@@ -24,22 +24,30 @@ export function isNewHere(createdAt: string | null | undefined): boolean {
 }
 
 export interface GenderMark {
-  glyph: string
+  Icon: LucideIcon
   label: string
-  /** Text colour only — these sit on the existing translucent-black pills. */
-  className: string
+  /** Solid fill for the chip the icon sits in. */
+  fillClassName: string
 }
 
 /**
- * Pink for female, blue for male, so gender is readable at a glance instead of
- * requiring the viewer to parse a small ♀/♂ glyph. The colour carries the
- * meaning redundantly, never alone: every caller keeps the glyph and its
- * accessible label, so this still works for anyone who cannot pick the hues
- * apart.
+ * Pink for female, blue for male, so gender is readable at a glance.
+ *
+ * This started as a coloured `♀`/`♂` text glyph and was unreadable at card
+ * size. Two reasons, and colour alone fixed neither: those codepoints fall back
+ * to whatever symbol font the platform happens to have, which draws them
+ * hairline-thin and inconsistently across machines; and a thin stroke on a
+ * translucent pill over a photo has almost nothing to contrast against.
+ *
+ * So: a Lucide SVG — stroke weight we control, identical on every platform —
+ * knocked out in white on a solid colour chip. The fill is what the eye
+ * catches first, which is the whole point; the icon shape and an accessible
+ * label still carry the meaning for anyone who cannot separate the hues, so
+ * colour is never the only cue.
  */
 const GENDER_MARKS: Record<'male' | 'female', GenderMark> = {
-  male: { glyph: '♂', label: 'Male', className: 'text-sky-400' },
-  female: { glyph: '♀', label: 'Female', className: 'text-pink-400' },
+  male: { Icon: Mars, label: 'Male', fillClassName: 'bg-sky-500' },
+  female: { Icon: Venus, label: 'Female', fillClassName: 'bg-pink-500' },
 }
 
 /** Anything that isn't explicitly male reads as female, matching prior behaviour. */

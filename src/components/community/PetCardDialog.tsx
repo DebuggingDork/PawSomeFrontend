@@ -20,6 +20,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { speciesEmoji, speciesLabel } from '@/lib/species'
 import { genderMark } from '@/lib/petBadges'
+import { GenderBadge } from '@/components/ui/GenderBadge'
 
 interface PetCardDialogProps {
   petId: string
@@ -87,11 +88,9 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
                a fixed w-9, so they wrapped onto a second line and spilled out of
                the rounded box. Auto width plus nowrap keeps them on one line
                however wide the emoji renders on a given platform. */
-            <span className="absolute left-3 top-3 inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full bg-black/60 px-3 text-base leading-none text-white backdrop-blur-sm">
+            <span className="absolute left-3 top-3 inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full bg-black/60 py-0 pl-3 pr-1.5 text-base leading-none text-white backdrop-blur-sm">
               <span aria-hidden="true">{speciesEmoji(pet.species)}</span>
-              <span aria-hidden="true" className={`text-lg ${genderMark(pet.gender).className}`}>
-                {genderMark(pet.gender).glyph}
-              </span>
+              <GenderBadge gender={pet.gender} size="lg" decorative />
               <span className="sr-only">
                 {speciesLabel(pet.species)}, {genderMark(pet.gender).label}
               </span>

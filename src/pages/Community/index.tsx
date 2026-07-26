@@ -5,6 +5,7 @@ import { BadgeCheck, PawPrint, Search, Sparkles, Users, Venus } from 'lucide-rea
 import { browsePets } from '@/lib/api/pets'
 import { getBreeds } from '@/lib/api/matches'
 import { activeHealthTags, genderMark, isNewHere } from '@/lib/petBadges'
+import { GenderBadge } from '@/components/ui/GenderBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
@@ -54,11 +55,9 @@ function PetCard({ pet, index, onOpen }: { pet: Pet; index: number; onOpen: (id:
         )}
 
         {/* Species & Gender Badge */}
-        <div className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-          <span aria-hidden="true">{pet.species === 'dog' ? '🐕' : '🐈'}</span>{' '}
-          <span aria-hidden="true" className={`text-sm ${genderMark(pet.gender).className}`}>
-            {genderMark(pet.gender).glyph}
-          </span>
+        <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/60 py-1 pl-2.5 pr-1.5 text-xs font-medium text-white backdrop-blur">
+          <span aria-hidden="true">{pet.species === 'dog' ? '🐕' : '🐈'}</span>
+          <GenderBadge gender={pet.gender} size="sm" decorative />
           <span className="sr-only">
             {pet.species === 'dog' ? 'Dog' : 'Cat'}, {genderMark(pet.gender).label}
           </span>

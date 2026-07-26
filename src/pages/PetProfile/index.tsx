@@ -9,6 +9,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { genderMark } from '@/lib/petBadges'
+import { GenderBadge } from '@/components/ui/GenderBadge'
 
 function PetProfilePage() {
   const { petId } = useParams<{ petId: string }>()
@@ -74,11 +75,9 @@ function PetProfilePage() {
               <PawPrint className="h-20 w-20 text-neutral-700" />
             </div>
           )}
-          <div className="absolute top-4 right-4 rounded-full bg-black/60 px-3 py-1.5 text-sm font-medium text-white backdrop-blur">
-            <span aria-hidden="true">{pet.species === 'dog' ? '🐕' : '🐈'}</span>{' '}
-            <span aria-hidden="true" className={`text-base ${genderMark(pet.gender).className}`}>
-              {genderMark(pet.gender).glyph}
-            </span>
+          <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-black/60 py-1.5 pl-3 pr-1.5 text-sm font-medium text-white backdrop-blur">
+            <span aria-hidden="true">{pet.species === 'dog' ? '🐕' : '🐈'}</span>
+            <GenderBadge gender={pet.gender} size="lg" decorative />
             <span className="sr-only">
               {pet.species === 'dog' ? 'Dog' : 'Cat'}, {genderMark(pet.gender).label}
             </span>
