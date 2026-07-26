@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, PawPrint, Search, Calendar } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
-import { getConversations } from '@/lib/api/matches'
+import { getConversations, getPlaydates } from '@/lib/api/matches'
 import type { Conversation } from '@/lib/api/types'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { ChatBubble } from '@/components/chat/ChatBubble'
@@ -31,6 +32,7 @@ function ChatPage() {
   const [selected, setSelected] = useState<Conversation | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [playdatesOpen, setPlaydatesOpen] = useState(false)
+  const [playdatesViewed, setPlaydatesViewed] = useState(false)
 
   const scrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -87,7 +89,20 @@ function ChatPage() {
   useEffect(() => {
     setSearchOpen(false)
     setPlaydatesOpen(false)
+    setPlaydatesViewed(false)
   }, [selected?.matchId])
+
+  // Query playdates to check for pending responses
+  const playdatesQuery = useQuery({
+    queryKey: ['playdates', selected?.matchId],
+    queryFn: () => getPlaydates(selected!.matchId),
+    enabled: !!selected?.matchId,
+    refetchInterval: 30_000, // Refresh every 30 seconds
+  })
+
+  const pendingPlaydatesCount =
+    playdatesQuery.data?.items.filter((p) => p.is_mine_to_respond && p.status === 'pending').length ?? 0
+  const hasUnviewedPendingPlaydates = !playdatesViewed && pendingPlaydatesCount > 0
 
   const jumpToMessage = (messageId: string) => {
     setSearchOpen(false)
@@ -141,14 +156,18 @@ function ChatPage() {
                   onClick={() => {
                     setPlaydatesOpen((v) => !v)
                     setSearchOpen(false)
+                    setPlaydatesViewed(true)
                   }}
                   aria-label="Schedule playdate"
                   title="Playdates"
-                  className={`rounded-full p-2 transition-colors ${
+                  className={`relative rounded-full p-2 transition-colors ${
                     playdatesOpen ? 'bg-neutral-800 text-white' : 'text-neutral-400 hover:text-white'
                   }`}
                 >
                   <Calendar className="h-4 w-4" />
+                  {hasUnviewedPendingPlaydates && (
+                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#ff6b35] ring-2 ring-neutral-900" />
+                  )}
                 </button>
                 <button
                   type="button"
