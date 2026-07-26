@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { BadgeCheck, PawPrint, Search, Sparkles, Users, Venus } from 'lucide-react'
+import { BadgeCheck, PawPrint, Sparkles, Users, Venus } from 'lucide-react'
 import { browsePets } from '@/lib/api/pets'
 import { getBreeds } from '@/lib/api/matches'
 import { activeHealthTags, genderMark, isNewHere } from '@/lib/petBadges'
@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { PetCardDialog } from '@/components/community/PetCardDialog'
 import type { Pet } from '@/lib/api/types'
+import { Combobox } from '@/components/ui/Combobox'
 
 const PAGE_SIZE = 6
 
@@ -206,22 +207,13 @@ function CommunityPage() {
 
         <div className="min-w-[200px] flex-1">
           <label className="mb-1.5 block text-xs font-medium text-neutral-500">Breed</label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-            <input
-              type="text"
-              list="pets-breed-options"
-              placeholder="Search breed..."
-              value={filters.breed ?? ''}
-              onChange={(e) => setFilters((f) => ({ ...f, breed: e.target.value || undefined }))}
-              className="w-full rounded-lg border border-neutral-700 bg-neutral-800 pl-10 pr-4 py-2 text-sm text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
-            />
-            <datalist id="pets-breed-options">
-              {(breedsQuery.data ?? []).map((breed) => (
-                <option key={breed} value={breed} />
-              ))}
-            </datalist>
-          </div>
+          <Combobox
+            value={filters.breed}
+            onChange={(breed) => setFilters((f) => ({ ...f, breed }))}
+            options={breedsQuery.data ?? []}
+            placeholder="Search breed..."
+            emptyLabel="No breed found"
+          />
         </div>
 
         {activeFilterCount > 0 && (

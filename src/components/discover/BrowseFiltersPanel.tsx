@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { SlidersHorizontal, ChevronDown, X } from 'lucide-react'
 import { getBreeds } from '@/lib/api/matches'
 import type { BrowseFilters } from '@/lib/api/types'
+import { Combobox } from '@/components/ui/Combobox'
 
 interface Props {
   filters: BrowseFilters
@@ -118,19 +119,13 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
 
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-neutral-500">Breed</label>
-                <input
-                  type="text"
-                  list="discover-breed-options"
+                <Combobox
+                  value={filters.breed}
+                  onChange={(breed) => set({ breed })}
+                  options={breedsQuery.data ?? []}
                   placeholder="Any breed"
-                  value={filters.breed ?? ''}
-                  onChange={(e) => set({ breed: e.target.value || undefined })}
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+                  emptyLabel="No breed found"
                 />
-                <datalist id="discover-breed-options">
-                  {(breedsQuery.data ?? []).map((breed) => (
-                    <option key={breed} value={breed} />
-                  ))}
-                </datalist>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

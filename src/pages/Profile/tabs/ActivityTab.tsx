@@ -9,6 +9,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { Combobox } from '@/components/ui/Combobox'
 
 type SubView = 'stats' | 'history'
 
@@ -116,19 +117,13 @@ function HistoryView({ petId }: { petId: string }) {
           <option value="skip">Skips</option>
         </select>
 
-        <input
-          type="text"
-          list="history-breed-options"
+        <Combobox
+          value={filters.breed}
+          onChange={(breed) => set({ breed })}
+          options={breedsQuery.data ?? []}
           placeholder="Any breed"
-          value={filters.breed ?? ''}
-          onChange={(e) => set({ breed: e.target.value || undefined })}
-          className={filterInputClass}
+          emptyLabel="No breed found"
         />
-        <datalist id="history-breed-options">
-          {(breedsQuery.data ?? []).map((breed) => (
-            <option key={breed} value={breed} />
-          ))}
-        </datalist>
 
         <input
           type="date"
