@@ -6,6 +6,7 @@ import { PetForm } from '@/components/profile/PetForm'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useAuthStore } from '@/store/useAuthStore'
 import type { Pet, PetCreateInput } from '@/lib/api/types'
 
 const MAX_PETS = 5
@@ -17,9 +18,16 @@ export function PetsTab() {
   const [mode, setMode] = useState<Mode>({ kind: 'list' })
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
+  const refreshSession = useAuthStore((s) => s.refreshSession)
+
   const petsQuery = useQuery({ queryKey: ['pets', 'me'], queryFn: listMyPets })
 
-  const invalidatePets = () => queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
+  const invalidatePets = () => {
+    queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
+    // The auth store keeps its own pet list, and `activePet` off it decides whether
+    // Discover lets you swipe. Adding or removing a pet here has to reach it too.
+    void refreshSession()
+  }
 
   const createMutation = useMutation({
     mutationFn: createPet,

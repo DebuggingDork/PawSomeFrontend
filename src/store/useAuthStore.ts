@@ -3,6 +3,7 @@ import { clearTokens, getAccessToken } from '@/lib/api/tokens'
 import { onSessionExpired } from '@/lib/api/client'
 import { me } from '@/lib/api/auth'
 import { listMyPets } from '@/lib/api/pets'
+import { resetClientState } from '@/lib/queryClient'
 import type { Pet, UserResponse } from '@/lib/api/types'
 
 export type { Pet }
@@ -21,6 +22,17 @@ interface AuthState {
   login: (user: User, pets: Pet[]) => void
   logout: () => void
   setActivePet: (pet: Pet | null) => void
+  /**
+   * Re-reads the signed-in user and their pets from the API.
+   *
+   * `pets` is otherwise a snapshot taken at login, which went stale the moment
+   * anything created a pet mid-session: onboarding would add one, invalidate the
+   * React Query caches, and leave `activePet` null, so Discover kept showing
+   * "Create a pet profile to start swiping" and silently dropped every swipe for a
+   * user who plainly had a pet. Anything that adds, edits or removes a pet must
+   * call this.
+   */
+  refreshSession: () => Promise<void>
   /** Resumes a session from a persisted access token on app boot. Safe to call once. */
   hydrate: () => Promise<void>
   clearSessionExpiredFlag: () => void
@@ -34,21 +46,48 @@ export const useAuthStore = create<AuthState>((set) => ({
   isHydrating: true,
   sessionJustExpired: false,
 
-  login: (user, pets) =>
+  login: (user, pets) => {
+    // Every cached query belongs to whoever was signed in when it was fetched. The
+    // store used to swap the user out from under a cache that still held the previous
+    // account, so a fresh sign-in (or sign-up) rendered the *old* user's avatar, name
+    // and onboarding status until a reload happened to drop the in-memory cache.
+    resetClientState()
     set({
       user,
       pets,
       activePet: pets[0] ?? null,
       isAuthenticated: true,
       isHydrating: false,
-    }),
+    })
+  },
 
   logout: () => {
     clearTokens()
+    // Same reason as login(), plus: leaving the cache populated after sign-out means
+    // the next account to sign in on this tab starts by seeing this one's data.
+    resetClientState()
     set({ user: null, pets: [], activePet: null, isAuthenticated: false })
   },
 
   setActivePet: (activePet) => set({ activePet }),
+
+  refreshSession: async () => {
+    if (!getAccessToken()) return
+    try {
+      const [user, pets] = await Promise.all([me(), listMyPets()])
+      set((state) => ({
+        user,
+        pets,
+        // Keep whatever the user had selected if it still exists, so refreshing
+        // after an unrelated edit can't quietly switch which pet they're swiping as.
+        activePet: pets.find((p) => p.id === state.activePet?.id) ?? pets[0] ?? null,
+        isAuthenticated: true,
+      }))
+    } catch {
+      // A failed refresh means "couldn't update just now", never "signed out" —
+      // same reasoning as hydrate(). Leave the existing state in place.
+    }
+  },
 
   clearSessionExpiredFlag: () => set({ sessionJustExpired: false }),
 
@@ -93,6 +132,7 @@ onSessionExpired(() => {
   const wasActivelySignedIn = useAuthStore.getState().isAuthenticated
 
   clearTokens()
+  resetClientState()
   useAuthStore.setState({
     user: null,
     pets: [],

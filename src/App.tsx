@@ -20,6 +20,7 @@ import OfflinePage from './pages/Offline'
 import ServerErrorPage from './pages/ServerError'
 import MaintenancePage from './pages/Maintenance'
 import { getOnboardingStatus } from './lib/api/onboarding'
+import { ONBOARDING_DISMISSED_KEY } from './lib/queryClient'
 import { onBackendReachable, onBackendUnreachable } from './lib/api/client'
 import { getMyProfile } from './lib/api/users'
 import { PetAvatar } from './components/chat/PetAvatar'
@@ -76,7 +77,13 @@ function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-/** Redirects a freshly-authenticated user into /onboarding once per session until required steps are done. */
+/** Redirects a freshly-authenticated user into /onboarding once per session until
+ * required steps are done.
+ *
+ * Sign-up itself no longer relies on this: AuthPage routes new accounts straight to
+ * /onboarding, because waiting on /onboarding/status here meant a new user landed on
+ * Discover first and got pulled away a beat later. This still covers the other way
+ * in, signing back into an account whose setup was never finished. */
 function OnboardingGate() {
   const { isAuthenticated, isHydrating } = useAuthStore()
   const location = useLocation()
@@ -97,7 +104,7 @@ function OnboardingGate() {
     // into /onboarding using a stale status for a session that no longer exists.
     if (!isAuthenticated) return
     if (!status?.should_show_wizard) return
-    if (sessionStorage.getItem('onboarding-dismissed') === '1') return
+    if (sessionStorage.getItem(ONBOARDING_DISMISSED_KEY) === '1') return
     if (location.pathname === '/onboarding' || location.pathname === '/auth') return
     navigate('/onboarding')
   }, [isAuthenticated, status, location.pathname, navigate])
