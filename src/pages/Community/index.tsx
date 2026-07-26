@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { BadgeCheck, PawPrint, Search, Sparkles, Users, Venus } from 'lucide-react'
 import { browsePets } from '@/lib/api/pets'
 import { getBreeds } from '@/lib/api/matches'
-import { activeHealthTags, isNewHere } from '@/lib/petBadges'
+import { activeHealthTags, genderMark, isNewHere } from '@/lib/petBadges'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
@@ -55,7 +55,13 @@ function PetCard({ pet, index, onOpen }: { pet: Pet; index: number; onOpen: (id:
 
         {/* Species & Gender Badge */}
         <div className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-          {pet.species === 'dog' ? '🐕' : '🐈'} {pet.gender === 'male' ? '♂' : '♀'}
+          <span aria-hidden="true">{pet.species === 'dog' ? '🐕' : '🐈'}</span>{' '}
+          <span aria-hidden="true" className={`text-sm ${genderMark(pet.gender).className}`}>
+            {genderMark(pet.gender).glyph}
+          </span>
+          <span className="sr-only">
+            {pet.species === 'dog' ? 'Dog' : 'Cat'}, {genderMark(pet.gender).label}
+          </span>
         </div>
 
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />

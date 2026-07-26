@@ -19,6 +19,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { speciesEmoji, speciesLabel } from '@/lib/species'
+import { genderMark } from '@/lib/petBadges'
 
 interface PetCardDialogProps {
   petId: string
@@ -88,11 +89,11 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
                however wide the emoji renders on a given platform. */
             <span className="absolute left-3 top-3 inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full bg-black/60 px-3 text-base leading-none text-white backdrop-blur-sm">
               <span aria-hidden="true">{speciesEmoji(pet.species)}</span>
-              <span aria-hidden="true" className="text-lg">
-                {pet.gender === 'male' ? '♂' : '♀'}
+              <span aria-hidden="true" className={`text-lg ${genderMark(pet.gender).className}`}>
+                {genderMark(pet.gender).glyph}
               </span>
               <span className="sr-only">
-                {speciesLabel(pet.species)}, {pet.gender === 'male' ? 'male' : 'female'}
+                {speciesLabel(pet.species)}, {genderMark(pet.gender).label}
               </span>
             </span>
           )}

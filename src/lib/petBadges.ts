@@ -2,11 +2,49 @@ import type { LucideIcon } from 'lucide-react'
 import { GraduationCap, Scissors, ShieldCheck } from 'lucide-react'
 import type { Pet } from './api/types'
 
-const NEW_HERE_WINDOW_MS = 14 * 24 * 60 * 60 * 1000
+const NEW_HERE_WINDOW_MS = 24 * 60 * 60 * 1000
 
-/** A pet reads as "new here" for its first two weeks on PawSome. */
+/**
+ * A pet reads as "new here" only on its first day.
+ *
+ * This was two weeks, which meant that any burst of signups — and every seeded
+ * account — wore the ribbon at once. A badge that nearly everyone has stops
+ * reading as "say hello to this one" and starts reading as decoration, or worse,
+ * as padding to make the community look busier than it is. One day keeps it rare
+ * enough to mean something.
+ *
+ * A rolling 24 hours rather than "the same calendar day" on purpose: a pet that
+ * joined at 11:50pm should not lose the ribbon ten minutes later.
+ */
 export function isNewHere(createdAt: string | null | undefined): boolean {
-  return createdAt != null && Date.now() - new Date(createdAt).getTime() < NEW_HERE_WINDOW_MS
+  if (createdAt == null) return false
+  const age = Date.now() - new Date(createdAt).getTime()
+  // A future timestamp means clock skew, not a brand-new pet.
+  return age >= 0 && age < NEW_HERE_WINDOW_MS
+}
+
+export interface GenderMark {
+  glyph: string
+  label: string
+  /** Text colour only — these sit on the existing translucent-black pills. */
+  className: string
+}
+
+/**
+ * Pink for female, blue for male, so gender is readable at a glance instead of
+ * requiring the viewer to parse a small ♀/♂ glyph. The colour carries the
+ * meaning redundantly, never alone: every caller keeps the glyph and its
+ * accessible label, so this still works for anyone who cannot pick the hues
+ * apart.
+ */
+const GENDER_MARKS: Record<'male' | 'female', GenderMark> = {
+  male: { glyph: '♂', label: 'Male', className: 'text-sky-400' },
+  female: { glyph: '♀', label: 'Female', className: 'text-pink-400' },
+}
+
+/** Anything that isn't explicitly male reads as female, matching prior behaviour. */
+export function genderMark(gender: string | null | undefined): GenderMark {
+  return gender === 'male' ? GENDER_MARKS.male : GENDER_MARKS.female
 }
 
 export interface HealthTag {

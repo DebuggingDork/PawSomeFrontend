@@ -1,6 +1,6 @@
 import { PawPrint, MapPin, Sparkles, BadgeCheck } from 'lucide-react'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
-import { activeHealthTags, isNewHere } from '@/lib/petBadges'
+import { activeHealthTags, genderMark, isNewHere } from '@/lib/petBadges'
 // Shared with the onboarding preview, which mirrors this card so what a new owner
 // builds during setup is literally what everyone else will swipe on.
 import { formatAge } from '@/lib/formatAge'
@@ -43,10 +43,10 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
       {/* Top-right: gender + safety menu */}
       <div className="absolute right-3 top-3 flex items-center gap-2">
         <span
-          aria-label={pet.gender === 'male' ? 'Male' : 'Female'}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-base text-white backdrop-blur-sm"
+          aria-label={genderMark(pet.gender).label}
+          className={`flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-base backdrop-blur-sm ${genderMark(pet.gender).className}`}
         >
-          {pet.gender === 'male' ? '♂' : '♀'}
+          {genderMark(pet.gender).glyph}
         </span>
         {pet.owner?.id && (
           <SafetyMenu
