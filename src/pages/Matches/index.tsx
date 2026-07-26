@@ -71,10 +71,9 @@ function MatchesPage() {
       {!isLoading && conversations.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {conversations.map((conversation) => (
-            <Link
+            <div
               key={conversation.matchId}
-              to={`/chat?match=${conversation.matchId}`}
-              className="group relative flex min-h-[160px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:-translate-y-0.5 hover:border-[#ff6b35]/60 hover:shadow-xl"
+              className="group relative flex min-h-[180px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:border-[#ff6b35]/60 hover:shadow-xl"
             >
               {conversation.otherPet.owner?.id && (
                 <SafetyMenu
@@ -82,24 +81,29 @@ function MatchesPage() {
                   petId={conversation.otherPet.id}
                   matchId={conversation.matchId}
                   otherName={conversation.otherPet.name}
-                  className="absolute right-3 top-3"
+                  className="absolute right-2 top-2 z-10"
                   onBlocked={() => conversationsQuery.refetch()}
                   onUnmatched={() => conversationsQuery.refetch()}
                 />
               )}
-              <div className="mb-3 flex items-center gap-3">
-                <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="lg" />
-                <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  <p className="truncate font-semibold text-white">{conversation.otherPet.name}</p>
-                  <p className="truncate text-xs text-neutral-500">{conversation.otherPet.breed}</p>
+              
+              <div className="mb-4 flex items-start gap-4 pr-6">
+                <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="xl" />
+                <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+                  <h3 className="truncate text-lg font-semibold text-white">{conversation.otherPet.name}</h3>
+                  <p className="truncate text-sm text-neutral-400">{conversation.otherPet.breed}</p>
+                  <p className="mt-1 text-xs text-neutral-500">{timeAgo(conversation.createdAt)}</p>
                 </div>
               </div>
-              <p className="mb-3 text-xs text-neutral-500">{timeAgo(conversation.createdAt)}</p>
-              <div className="mt-auto flex items-center gap-1.5 text-sm font-semibold text-[#ff8c5c] group-hover:text-[#ff6b35]">
+
+              <Link
+                to={`/chat?match=${conversation.matchId}`}
+                className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/20 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/30"
+              >
                 <MessageCircle className="h-4 w-4" />
-                Message
-              </div>
-            </Link>
+                Send Message
+              </Link>
+            </div>
           ))}
         </div>
       )}
