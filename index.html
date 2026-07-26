@@ -11,8 +11,8 @@
     <!--
       Loaded non-render-blocking (media=print flips to all on load). A blocking
       stylesheet here meant nothing at all painted until Google Fonts answered,
-      which is dead time on every single reload. The splash below is drawn with
-      inline SVG + a system-font fallback, so it paints without waiting on this.
+      which is dead time on every single reload. The splash below falls back to a
+      system script face, so it paints without waiting on this.
     -->
     <link
       href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
@@ -24,6 +24,9 @@
       <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     </noscript>
     <title>PawSome — Premium Pet Matching</title>
+    <!-- Fetch the mark alongside the HTML so it's decoded before the splash is
+         allowed to become visible 450ms in. -->
+    <link rel="preload" as="image" href="/logo-256.png" />
     <script>
       // Disable the browser's built-in scroll restoration so Lenis can own it.
       if ('scrollRestoration' in history) {
@@ -48,13 +51,19 @@
       }
 
       /* ── Pre-React splash ──────────────────────────────────────────────────
-         Drawn entirely with inline SVG + CSS: zero network requests, so it can
-         paint on the very first frame. (It used to <img> an 842 KB PNG, which
-         made the "loading" screen itself the slowest thing on the page.)
+         Shows the real PawSome mark (the 256px derivative, 47 KB — not the
+         828 KB original, which once made the "loading" screen the slowest thing
+         on the page). An earlier pass swapped it for a hand-drawn inline SVG to
+         avoid the request entirely; that saved a few milliseconds and cost the
+         brand, which is a bad trade for the first thing anyone sees.
 
-         Crucially it stays INVISIBLE for the first SPLASH_DELAY ms — a reload
-         that resolves quickly shows nothing but the app background, and the
-         splash only fades in when there is genuinely something to wait for. */
+         It stays INVISIBLE for the first 450ms, so a reload that resolves
+         quickly shows nothing but the app background, and the splash only fades
+         in when there is genuinely something to wait for.
+
+         Motion is limited to the one indeterminate rail. Everything here used to
+         breathe, pulse, step and shimmer at once, which reads as fidgeting
+         rather than loading. */
       #pre-loader {
         position: fixed;
         inset: 0;
@@ -70,15 +79,15 @@
         animation: preloader-in 350ms ease 450ms forwards;
       }
 
-      /* Soft brand-warm glow so the mark isn't floating in flat black. */
+      /* Static brand-warm glow so the mark isn't floating in flat black. It used
+         to pulse, which drew the eye to the background instead of the logo. */
       #pre-loader::before {
         content: '';
         position: absolute;
         width: min(560px, 80vw);
         aspect-ratio: 1;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255, 107, 53, 0.13), transparent 68%);
-        animation: glow-breathe 3.6s ease-in-out infinite;
+        background: radial-gradient(circle, rgba(255, 107, 53, 0.1), transparent 68%);
       }
 
       .preloader-stack {
@@ -86,41 +95,27 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 22px;
+        gap: 20px;
       }
 
-      /* ── Paw mark ── */
+      /* ── Logo ── */
       .preloader-mark {
-        width: 74px;
-        height: 74px;
-        transform-origin: 50% 62%;
-        animation: mark-breathe 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-        filter: drop-shadow(0 6px 22px rgba(255, 107, 53, 0.32));
+        width: 88px;
+        height: 88px;
+        display: block;
+        filter: drop-shadow(0 8px 26px rgba(255, 107, 53, 0.28));
       }
 
-      /* Toes fade up one after another, like a paw settling down. */
-      .preloader-toe {
-        transform-origin: 50% 50%;
-        animation: toe-step 2.6s ease-in-out infinite;
-      }
-      .preloader-toe:nth-of-type(1) { animation-delay: 0ms; }
-      .preloader-toe:nth-of-type(2) { animation-delay: 110ms; }
-      .preloader-toe:nth-of-type(3) { animation-delay: 220ms; }
-      .preloader-toe:nth-of-type(4) { animation-delay: 330ms; }
-
-      /* ── Wordmark ── */
+      /* ── Wordmark ──
+         One solid brand colour. The gradient-clipped shimmer it replaces was the
+         loudest thing on an otherwise still screen, and gradient-filled text is
+         thin and hard to read at any size. */
       .preloader-wordmark {
         font-family: 'Pacifico', 'Segoe Script', 'Brush Script MT', cursive;
         font-size: 1.75rem;
         line-height: 1;
         letter-spacing: 0.01em;
-        background: linear-gradient(100deg, #ff5f6d 0%, #ff6b35 45%, #ffb347 100%);
-        background-size: 220% auto;
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-        animation: shimmer 3s linear infinite;
+        color: #ff6b35;
       }
 
       /* ── Indeterminate rail ──
@@ -138,10 +133,12 @@
         content: '';
         position: absolute;
         inset: 0;
-        width: 42%;
+        width: 40%;
         border-radius: inherit;
-        background: linear-gradient(90deg, transparent, #ff6b35, #ffb347, transparent);
-        animation: rail-sweep 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+        background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.85), transparent);
+        /* Slower and gentler than before: this is the only motion on the screen,
+           so it should read as a pulse of activity, not a strobe. */
+        animation: rail-sweep 1.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
       }
 
       /* Screen-reader-only status text. */
@@ -169,36 +166,14 @@
         from { opacity: 0; }
         to   { opacity: 1; }
       }
-      @keyframes glow-breathe {
-        0%, 100% { opacity: 0.55; transform: scale(0.94); }
-        50%      { opacity: 1;    transform: scale(1.04); }
-      }
-      @keyframes mark-breathe {
-        0%, 100% { transform: scale(1)     translateY(0); }
-        50%      { transform: scale(1.055) translateY(-2px); }
-      }
-      @keyframes toe-step {
-        0%, 100% { opacity: 0.5; transform: translateY(1.5px); }
-        45%      { opacity: 1;   transform: translateY(-1.5px); }
-      }
-      @keyframes shimmer {
-        from { background-position: 0% center; }
-        to   { background-position: 220% center; }
-      }
       @keyframes rail-sweep {
         0%   { transform: translateX(-115%); }
         100% { transform: translateX(355%); }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        #pre-loader::before,
-        .preloader-mark,
-        .preloader-toe,
-        .preloader-wordmark,
         .preloader-rail::after {
           animation: none;
-        }
-        .preloader-rail::after {
           width: 100%;
           opacity: 0.6;
         }
@@ -206,34 +181,10 @@
     </style>
   </head>
   <body>
-    <!-- Instant splash — no network requests, held invisible for the first 450ms -->
+    <!-- Splash — the real mark, held invisible for the first 450ms -->
     <div id="pre-loader" role="status" aria-live="polite">
       <div class="preloader-stack">
-        <svg
-          class="preloader-mark"
-          viewBox="0 0 100 100"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient id="pawGrad" x1="8" y1="6" x2="92" y2="94" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#ff5f6d" />
-              <stop offset="52%" stop-color="#ff6b35" />
-              <stop offset="100%" stop-color="#ffb347" />
-            </linearGradient>
-          </defs>
-          <!-- Four toe beans, arced above the pad -->
-          <ellipse class="preloader-toe" cx="17" cy="43" rx="8.6" ry="11.6" transform="rotate(-24 17 43)" fill="url(#pawGrad)" />
-          <ellipse class="preloader-toe" cx="37" cy="26" rx="9.2" ry="12.6" transform="rotate(-9 37 26)" fill="url(#pawGrad)" />
-          <ellipse class="preloader-toe" cx="63" cy="26" rx="9.2" ry="12.6" transform="rotate(9 63 26)" fill="url(#pawGrad)" />
-          <ellipse class="preloader-toe" cx="83" cy="43" rx="8.6" ry="11.6" transform="rotate(24 83 43)" fill="url(#pawGrad)" />
-          <!-- Main pad, shaped as a heart — the brand's whole idea in one shape -->
-          <path
-            d="M50 93C50 93 21.5 74.8 21.5 60.2C21.5 51.2 28.4 45.6 35.8 45.6C41.9 45.6 46.9 49.6 50 54.9C53.1 49.6 58.1 45.6 64.2 45.6C71.6 45.6 78.5 51.2 78.5 60.2C78.5 74.8 50 93 50 93Z"
-            fill="url(#pawGrad)"
-          />
-        </svg>
+        <img class="preloader-mark" src="/logo-256.png" alt="" width="88" height="88" decoding="sync" />
 
         <span class="preloader-wordmark">PawSome</span>
 
