@@ -22,11 +22,15 @@ export const queryClient = new QueryClient({
   },
 })
 
-/** Key for the flag that suppresses the onboarding wizard after the user chooses
- * "Skip for now". It is per-tab, not per-account, so it must be cleared whenever the
- * signed-in identity changes — otherwise one user's skip silently swallows the next
- * user's onboarding. */
-export const ONBOARDING_DISMISSED_KEY = 'onboarding-dismissed'
+/** Marks that this tab has already steered the user towards onboarding once,
+ * whether they were auto-redirected into it or chose "Skip for now" on their way
+ * out. Set once, it stops the wizard being offered again for the rest of the
+ * session.
+ *
+ * Per-tab, not per-account, so it must be cleared whenever the signed-in identity
+ * changes — otherwise one user's skip silently swallows the next user's
+ * onboarding. */
+export const ONBOARDING_PROMPTED_KEY = 'onboarding-prompted'
 
 /** Wipes every trace of the previous session from client-side caches.
  *
@@ -37,7 +41,7 @@ export const ONBOARDING_DISMISSED_KEY = 'onboarding-dismissed'
  * reload (which drops the in-memory cache) showed the real one. */
 export function resetClientState() {
   queryClient.clear()
-  sessionStorage.removeItem(ONBOARDING_DISMISSED_KEY)
+  sessionStorage.removeItem(ONBOARDING_PROMPTED_KEY)
   // Where the previous account had got to in Discover describes pets that account
   // was shown, keyed to its pet id. Carrying it into the next session on this tab
   // would restore one user's browsing position over another user's deck.

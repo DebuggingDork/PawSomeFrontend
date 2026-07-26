@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react'
 import { getOnboardingStatus } from '@/lib/api/onboarding'
 import { getMyProfile } from '@/lib/api/users'
 import { listMyPets } from '@/lib/api/pets'
-import { ONBOARDING_DISMISSED_KEY } from '@/lib/queryClient'
+import { ONBOARDING_PROMPTED_KEY } from '@/lib/queryClient'
 import { useAuthStore } from '@/store/useAuthStore'
 import { Skeleton } from '@/components/ui/Skeleton'
 import type { OnboardingStep } from '@/lib/api/types'
@@ -99,7 +99,7 @@ function OnboardingPage() {
   }, [])
 
   const leaveWizard = useCallback(() => {
-    sessionStorage.setItem(ONBOARDING_DISMISSED_KEY, '1')
+    sessionStorage.setItem(ONBOARDING_PROMPTED_KEY, '1')
     navigate('/discover')
   }, [navigate])
 

@@ -21,7 +21,7 @@ import ServerErrorPage from './pages/ServerError'
 import MaintenancePage from './pages/Maintenance'
 import { getOnboardingStatus } from './lib/api/onboarding'
 import { POST_LOGIN_ROUTE } from './lib/routes'
-import { ONBOARDING_DISMISSED_KEY } from './lib/queryClient'
+import { ONBOARDING_PROMPTED_KEY } from './lib/queryClient'
 import { onBackendReachable, onBackendUnreachable } from './lib/api/client'
 import { getMyProfile } from './lib/api/users'
 import { PetAvatar } from './components/chat/PetAvatar'
@@ -92,6 +92,14 @@ function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
  * /onboarding, because waiting on /onboarding/status here meant a new user landed on
  * Discover first and got pulled away a beat later. This still covers the other way
  * in, signing back into an account whose setup was never finished. */
+/** Routes the onboarding nudge must never fire on.
+ *
+ * /onboarding and /auth are the obvious ones. /profile matters just as much:
+ * every step the wizard wants is also doable there, so hijacking someone who is
+ * already editing their profile interrupts them doing the exact thing being
+ * asked of them. */
+const EXEMPT_FROM_ONBOARDING_REDIRECT = new Set(['/onboarding', '/auth', '/profile'])
+
 function OnboardingGate() {
   const { isAuthenticated, isHydrating } = useAuthStore()
   const location = useLocation()
@@ -112,8 +120,15 @@ function OnboardingGate() {
     // into /onboarding using a stale status for a session that no longer exists.
     if (!isAuthenticated) return
     if (!status?.should_show_wizard) return
-    if (sessionStorage.getItem(ONBOARDING_DISMISSED_KEY) === '1') return
-    if (location.pathname === '/onboarding' || location.pathname === '/auth') return
+    if (sessionStorage.getItem(ONBOARDING_PROMPTED_KEY) === '1') return
+    if (EXEMPT_FROM_ONBOARDING_REDIRECT.has(location.pathname)) return
+
+    // Record the offer before making it. This used to only be written when the
+    // user reached the wizard and chose "Skip for now", so any reload that landed
+    // on a non-exempt route re-ran the redirect: someone editing their profile got
+    // thrown into the photo step, went back, reloaded and got thrown in again.
+    // Onboarding is a suggestion, and a suggestion is made once.
+    sessionStorage.setItem(ONBOARDING_PROMPTED_KEY, '1')
     navigate('/onboarding')
   }, [isAuthenticated, status, location.pathname, navigate])
 
