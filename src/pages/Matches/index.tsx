@@ -89,7 +89,7 @@ function MatchesPage() {
               )}
               <div className="mb-3 flex items-center gap-3">
                 <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="lg" />
-                <div className="min-w-0 flex-1">
+                <div className="flex min-w-0 flex-1 flex-col justify-center">
                   <p className="truncate font-semibold text-white">{conversation.otherPet.name}</p>
                   <p className="truncate text-xs text-neutral-500">{conversation.otherPet.breed}</p>
                 </div>
