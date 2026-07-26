@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import {
   Mail,
@@ -385,8 +385,18 @@ function AuthPage() {
             )}
           </div>
 
+          {/* These were plain text before. Asking someone to agree to terms while
+              giving them no way to read them is not a real agreement. */}
           <p className="mt-6 text-center text-xs text-neutral-400">
-            By continuing you agree to PawSome's Terms of Use and Privacy Policy.
+            By continuing you agree to PawSome's{' '}
+            <Link to="/terms" className="text-neutral-200 underline underline-offset-2 transition-colors hover:text-[#ff6b35]">
+              Terms of Use
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy" className="text-neutral-200 underline underline-offset-2 transition-colors hover:text-[#ff6b35]">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </motion.div>
       </div>

@@ -8,6 +8,9 @@ import VerifyEmailPage from './pages/VerifyEmail'
 import DiscoverPage from './pages/Discover'
 import CommunityPage from './pages/Community'
 import AboutPage from './pages/About'
+import PrivacyPage from './pages/Privacy'
+import TermsPage from './pages/Terms'
+import FAQPage from './pages/FAQ'
 import PetProfilePage from './pages/PetProfile'
 import OwnerProfilePage from './pages/OwnerProfile'
 import NotFoundPage from './pages/NotFound'
@@ -37,6 +40,7 @@ import {
   NavbarButton,
 } from './components/ui/resizable-navbar'
 import { GlobalLoader } from './components/ui/GlobalLoader'
+import { ScrollToHash } from './components/routing/ScrollToHash'
 import { CursorClickEffect } from './components/ui/CursorClickEffect'
 // 256px master-derived logo (icon.png is the 1254px original, kept as the source
 // art). The full-size file was 828 KB shipped on every page load to render a
@@ -385,6 +389,8 @@ function App() {
           </MobileNav>
         </Navbar>
 
+        <ScrollToHash />
+
         {/* Main Content Area */}
         <main className="w-full">
           <Routes>
@@ -402,6 +408,9 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/faq" element={<FAQPage />} />
             <Route path="/pets/:petId" element={<PetProfilePage />} />
             <Route path="/owners/:userId" element={<OwnerProfilePage />} />
             <Route path="/discover" element={<DiscoverPage />} />

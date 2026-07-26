@@ -1,57 +1,49 @@
-import { Mail, Heart, Share2, Globe, Rss, ExternalLink } from "lucide-react";
+import { Mail, Heart } from "lucide-react";
+import { Link } from "react-router";
 import {
   FooterBackgroundGradient,
   TextHoverEffect,
 } from "@/components/ui/hover-footer";
 
 function PawsomeFooter() {
-  // Footer link data
+  // Every entry points at a route that exists. These were all href="#" before,
+  // which meant a footer full of links that silently did nothing and, worse,
+  // jumped you back to the top of the page when clicked.
   const footerLinks = [
     {
       title: "Matches",
       links: [
-        { label: "Browse Nearby Pets", href: "#" },
-        { label: "How Matching Works", href: "#" },
-        { label: "Safety & Verification", href: "#" },
+        { label: "Browse nearby pets", to: "/community" },
+        { label: "How matching works", to: "/faq#matching" },
+        { label: "Safety and verification", to: "/faq#safety" },
       ],
     },
     {
-      title: "About Us",
+      title: "About us",
       links: [
-        { label: "Our Story", href: "#" },
-        { label: "Community Guidelines", href: "#" },
-        { label: "FAQ", href: "#" },
+        { label: "Our story", to: "/about#our-story" },
+        { label: "Community guidelines", to: "/terms#conduct" },
+        { label: "FAQ", to: "/faq" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { label: "Parenting Articles", href: "#" },
-        { label: "Safety Tips", href: "#" },
-        {
-          label: "Live Chat",
-          href: "#",
-          pulse: true,
-        },
+        { label: "Events near you", to: "/events" },
+        { label: "Safety tips", to: "/faq#safety" },
+        { label: "Your chats", to: "/chat", pulse: true },
       ],
     },
   ];
 
-  // Contact info data
+  // A real, monitored inbox. This pointed at hello@pawsome.com, a domain the
+  // project does not own, so every support request went nowhere.
   const contactInfo = [
     {
       icon: <Mail size={18} className="text-[#ff6b35]" />,
-      text: "Support",
-      href: "mailto:hello@pawsome.com",
+      text: "Email support",
+      href: "mailto:pawsome.breeding@gmail.com",
     },
-  ];
-
-  // Social media icons
-  const socialLinks = [
-    { icon: <Globe size={20} />, label: "Website", href: "#" },
-    { icon: <Share2 size={20} />, label: "Share", href: "#" },
-    { icon: <Rss size={20} />, label: "Feed", href: "#" },
-    { icon: <ExternalLink size={20} />, label: "Link", href: "#" },
   ];
 
   return (
@@ -84,12 +76,12 @@ function PawsomeFooter() {
               <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.label} className="relative">
-                    <a
-                      href={link.href}
+                    <Link
+                      to={link.to}
                       className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                     {link.pulse && (
                       <span className="absolute top-0 right-[-10px] w-2 h-2 rounded-full bg-[#ff6b35] animate-pulse"></span>
                     )}
@@ -121,17 +113,13 @@ function PawsomeFooter() {
                   )}
                 </li>
               ))}
-              <li className="flex gap-4 pt-2">
-                {socialLinks.map(({ icon, label, href }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    aria-label={label}
-                    className="text-neutral-400 hover:text-[#ff6b35] transition-colors"
-                  >
-                    {icon}
-                  </a>
-                ))}
+              <li>
+                <Link
+                  to="/faq"
+                  className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
+                >
+                  Help and FAQ
+                </Link>
               </li>
             </ul>
           </div>
@@ -148,12 +136,15 @@ function PawsomeFooter() {
 
           {/* Links */}
           <div className="flex gap-6 text-neutral-500">
-            <a href="#" className="hover:text-neutral-400 transition-colors">
+            <Link to="/privacy" className="hover:text-neutral-300 transition-colors">
               Privacy Policy
-            </a>
-            <a href="#" className="hover:text-neutral-400 transition-colors">
+            </Link>
+            <Link to="/terms" className="hover:text-neutral-300 transition-colors">
               Terms of Use
-            </a>
+            </Link>
+            <Link to="/faq" className="hover:text-neutral-300 transition-colors">
+              FAQ
+            </Link>
           </div>
         </div>
       </div>
