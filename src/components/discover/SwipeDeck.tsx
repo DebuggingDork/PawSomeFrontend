@@ -39,10 +39,11 @@ interface DraggableCardProps {
   isTop: boolean
   stackIndex: number
   exitAction: SwipeAction
+  isExiting: boolean
   onSwiped: (action: SwipeAction) => void
 }
 
-function DraggableCard({ candidate, isTop, stackIndex, exitAction, onSwiped }: DraggableCardProps) {
+function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, onSwiped }: DraggableCardProps) {
   // Split in two layers so the fan position (outer, always driven by `animate`)
   // and the drag gesture (inner, only live for the top card) never fight over
   // the same x/rotate — mixing a raw drag-bound motion value with an `animate`
@@ -92,7 +93,7 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, onSwiped }: D
             </motion.div>
 
             {/* Super Woof starburst — only while this card is flying up. */}
-            {exitAction === 'super_like' && (
+            {isExiting && exitAction === 'super_like' && (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <motion.div
                   initial={{ scale: 0.2, opacity: 0, rotate: -18 }}
@@ -204,6 +205,7 @@ export function SwipeDeck({
               isTop={i === 0}
               stackIndex={i}
               exitAction={exitAction}
+              isExiting={exiting && i === 0}
               onSwiped={handleSwiped}
             />
           ))}
