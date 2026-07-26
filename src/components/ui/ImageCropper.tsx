@@ -79,9 +79,7 @@ export function ImageCropper({
     null,
   )
 
-  // Created once per mount. PhotoUploader keys this component by file, so a
-  // different pick always remounts rather than mutating the URL underneath us.
-  const [url] = useState(() => URL.createObjectURL(file))
+  const [url, setUrl] = useState<string | null>(null)
   const [natural, setNatural] = useState<Size | null>(null)
   const [frame, setFrame] = useState<Size | null>(null)
   const [zoom, setZoom] = useState(1)
@@ -89,7 +87,23 @@ export function ImageCropper({
   const [exporting, setExporting] = useState(false)
   const [failed, setFailed] = useState(false)
 
-  useEffect(() => () => URL.revokeObjectURL(url), [url])
+  // Read as a data URL rather than an object URL.
+  //
+  // The object-URL version of this hoarded the URL in a useState initialiser and
+  // revoked it in an effect cleanup. Under StrictMode, which mounts, unmounts and
+  // remounts every component, the cleanup fired on the fake unmount and revoked a
+  // URL that useState then preserved across the remount: the <img> pointed at a
+  // dead blob, onLoad never fired, and the cropper span forever.
+  //
+  // FileReader has no such lifecycle to get wrong. Creation and teardown are
+  // paired inside one effect, so a StrictMode remount simply reads again.
+  useEffect(() => {
+    const reader = new FileReader()
+    reader.onload = () => setUrl(typeof reader.result === 'string' ? reader.result : null)
+    reader.onerror = () => setFailed(true)
+    reader.readAsDataURL(file)
+    return () => reader.abort()
+  }, [file])
 
   // The frame is responsive, so its pixel size has to be measured rather than
   // assumed: every offset bound and the export rect are expressed in frame px.
@@ -269,7 +283,7 @@ export function ImageCropper({
                   shape === 'circle' ? 'rounded-full' : 'rounded-2xl'
                 } ${exporting ? 'cursor-wait' : 'cursor-grab active:cursor-grabbing'}`}
               >
-                {(
+                {url && (
                   <img
                     ref={imgRef}
                     src={url}
@@ -278,6 +292,9 @@ export function ImageCropper({
                     onLoad={(e) =>
                       setNatural({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })
                     }
+                    // Without this a file the browser can't decode leaves the
+                    // spinner turning with nothing to say.
+                    onError={() => setFailed(true)}
                     style={
                       displayed
                         ? {
@@ -305,9 +322,14 @@ export function ImageCropper({
                   />
                 </div>
 
-                {!ready && (
+                {!ready && !failed && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Loader2 className="h-5 w-5 animate-spin text-neutral-500" />
+                  </div>
+                )}
+                {failed && !ready && (
+                  <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+                    <p className="text-sm text-neutral-400">Couldn't read that image.</p>
                   </div>
                 )}
               </div>
