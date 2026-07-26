@@ -26,6 +26,13 @@ interface PhotoUploaderProps {
    * the surrounding section themselves. */
   photoAlt?: string
   /**
+   * Fires with a local object URL the instant a file is picked, before the upload
+   * starts. Onboarding uses it to drop the photo onto its live card preview
+   * immediately; waiting for the round trip would leave the card blank through the
+   * one moment the user is most curious about how it looks.
+   */
+  onLocalPreview?: (objectUrl: string) => void
+  /**
    * 'card' renders a large photo preview that replaces the dropzone once a file is chosen
    * (used where there's no photo shown elsewhere, e.g. onboarding). 'compact' keeps the
    * slim inline button with a small thumbnail beside it, for screens that already show
@@ -51,6 +58,7 @@ export function PhotoUploader({
   variant = 'compact',
   currentPhotoUrl = null,
   photoAlt = '',
+  onLocalPreview,
 }: PhotoUploaderProps) {
   const [status, setStatus] = useState<Status>('idle')
   const [message, setMessage] = useState<string | null>(null)
@@ -75,10 +83,12 @@ export function PhotoUploader({
       return
     }
 
+    const objectUrl = URL.createObjectURL(file)
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev)
-      return URL.createObjectURL(file)
+      return objectUrl
     })
+    onLocalPreview?.(objectUrl)
     setJustSaved(false)
     setStatus('uploading')
     setMessage(null)

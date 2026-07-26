@@ -1,5 +1,5 @@
 import { apiFetch } from './client'
-import type { TokenResponse, UserResponse } from './types'
+import type { SendCodeResponse, TokenResponse, UserResponse } from './types'
 
 export function login(email: string, password: string): Promise<TokenResponse> {
   return apiFetch<TokenResponse>('/auth/login', {
@@ -41,6 +41,19 @@ export function resendVerification(email: string): Promise<{ message: string }> 
     method: 'POST',
     auth: false,
     body: { email },
+  })
+}
+
+/** Mails a fresh 6-digit code to the signed-in user. Authenticated rather than
+ * email-keyed so it can't be pointed at an address the caller doesn't own. */
+export function sendVerificationCode(): Promise<SendCodeResponse> {
+  return apiFetch<SendCodeResponse>('/auth/send-verification-code', { method: 'POST' })
+}
+
+export function verifyCode(code: string): Promise<UserResponse> {
+  return apiFetch<UserResponse>('/auth/verify-code', {
+    method: 'POST',
+    body: { code },
   })
 }
 

@@ -13,6 +13,16 @@ export interface UserResponse {
   is_verified: boolean
 }
 
+export interface SendCodeResponse {
+  message: string
+  /** Seconds until another code may be requested. Drives the resend countdown. */
+  retry_after_seconds: number
+  /** False when mail is unconfigured or the provider rejected the message. The code
+   * still exists server-side, but no inbox received it, so the UI must say so
+   * instead of telling the user to go looking. */
+  delivered: boolean
+}
+
 export interface PetPhoto {
   id: string
   url: string

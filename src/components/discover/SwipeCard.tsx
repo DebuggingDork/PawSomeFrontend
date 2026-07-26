@@ -1,15 +1,10 @@
 import { PawPrint, MapPin, Sparkles, BadgeCheck } from 'lucide-react'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
 import { activeHealthTags, isNewHere } from '@/lib/petBadges'
+// Shared with the onboarding preview, which mirrors this card so what a new owner
+// builds during setup is literally what everyone else will swipe on.
+import { formatAge } from '@/lib/formatAge'
 import type { BrowseCandidate } from '@/lib/api/types'
-
-function formatAge(months: number) {
-  const years = Math.floor(months / 12)
-  const remMonths = months % 12
-  if (years === 0) return `${months}mo`
-  if (remMonths === 0) return `${years}y`
-  return `${years}y ${remMonths}mo`
-}
 
 interface SwipeCardContentProps {
   candidate: BrowseCandidate
