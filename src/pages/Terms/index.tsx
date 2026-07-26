@@ -1,7 +1,12 @@
 import { Link } from 'react-router'
 import { LegalDocument, P, H3, UL, LI, Note, Term, type LegalSection } from '@/components/legal/LegalDocument'
 
-const CONTACT = 'pawsome.breeding@gmail.com'
+import { SupportLink } from '@/components/support/SupportLink'
+
+/** Renders the support address as a Gmail compose link, subject already set. */
+const Contact = ({ subject }: { subject: string }) => (
+  <SupportLink subject={subject} className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" />
+)
 
 const SECTIONS: LegalSection[] = [
   {
@@ -41,7 +46,7 @@ const SECTIONS: LegalSection[] = [
       <>
         <P>
           You are responsible for what happens under your account, so use a password you have not used anywhere else
-          and do not share your sign-in details. Tell us at {CONTACT} if you think someone else has got in.
+          and do not share your sign-in details. Tell us at <Contact subject="Possible account compromise" /> if you think someone else has got in.
         </P>
         <P>
           We ask you to verify your email address before you can start matching. That is not bureaucracy for its own
@@ -92,7 +97,7 @@ const SECTIONS: LegalSection[] = [
           <LI>Attempt to break, overload or reverse engineer the service, or probe it for vulnerabilities uninvited.</LI>
         </UL>
         <Note>
-          Found a security flaw? We would rather hear about it than not. Email {CONTACT} with what you found and how
+          Found a security flaw? We would rather hear about it than not. Email <Contact subject="Security report" /> with what you found and how
           to reproduce it, and give us a reasonable chance to fix it before telling anyone else. We will not come
           after anyone who reports a problem in good faith and does not go digging through other people's data.
         </Note>
@@ -170,7 +175,7 @@ const SECTIONS: LegalSection[] = [
     content: (
       <>
         <P>
-          Report anything that looks wrong to {CONTACT}. Include a link or a username and enough detail for us to find
+          Report anything that looks wrong to <Contact subject="Reporting a user" />. Include a link or a username and enough detail for us to find
           it.
         </P>
         <P>
@@ -225,7 +230,7 @@ const SECTIONS: LegalSection[] = [
     title: 'Ending it',
     content: (
       <P>
-        You can stop using PawSome and ask us to delete your account at any time by emailing {CONTACT}. We can suspend
+        You can stop using PawSome and ask us to delete your account at any time by emailing <Contact subject="Account deletion request" />. We can suspend
         or close an account that breaks these terms, or if we stop running the service. The sections that should
         survive the end of this agreement, including content licences already granted, liability and governing law,
         do survive it.
@@ -242,7 +247,7 @@ const SECTIONS: LegalSection[] = [
           arising from them, and you agree to that.
         </P>
         <P>
-          Before anyone involves a court, email {CONTACT} and describe the problem. Most disagreements turn out to be
+          Before anyone involves a court, email <Contact subject="Dispute" /> and describe the problem. Most disagreements turn out to be
           a misunderstanding that a conversation fixes faster and more cheaply than a legal process does.
         </P>
       </>
@@ -254,7 +259,7 @@ const SECTIONS: LegalSection[] = [
     content: (
       <>
         <P>
-          Questions about these terms, reports, or requests: <Term>{CONTACT}</Term>.
+          Questions about these terms, reports, or requests: <Contact subject="Question about the Terms" />.
         </P>
         <P>
           How we handle the data behind all of this is set out separately in the{' '}

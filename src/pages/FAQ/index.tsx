@@ -2,6 +2,8 @@ import { useId, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ArrowLeft, ChevronDown } from 'lucide-react'
 import PawsomeFooter from '@/components/ui/PawsomeFooter'
+import { SupportLink } from '@/components/support/SupportLink'
+import { SUPPORT_EMAIL } from '@/lib/support'
 
 interface QA {
   q: string
@@ -161,7 +163,7 @@ const CATEGORIES: Category[] = [
         q: 'Someone is behaving badly. What do I do?',
         a: (
           <p className={A}>
-            Email pawsome.breeding@gmail.com with their username and what happened. We can restrict features, suspend
+            Email <SupportLink subject="Reporting a user" className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" /> with their username and what happened. We can restrict features, suspend
             or remove accounts. Reports about animal welfare or someone's safety go to the front of the queue.
           </p>
         ),
@@ -219,7 +221,7 @@ const CATEGORIES: Category[] = [
         q: 'How do I delete my account?',
         a: (
           <p className={A}>
-            Email pawsome.breeding@gmail.com and we will remove your personal data within 30 days. Deleting a single
+            Email <SupportLink subject="Account deletion request" className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" /> and we will remove your personal data within 30 days. Deleting a single
             pet is instant from its profile: it disappears from browsing and matching straight away.
           </p>
         ),
@@ -237,7 +239,7 @@ const CATEGORIES: Category[] = [
           <p className={A}>
             Check spam first, that is where most of them are. If it is genuinely missing, request another from the
             sign-in screen. Still nothing after a few minutes and it is on us, so email
-            pawsome.breeding@gmail.com and we will verify you by hand.
+            <SupportLink subject="Verification email did not arrive" className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" /> and we will verify you by hand.
           </p>
         ),
       },
@@ -263,7 +265,7 @@ const CATEGORIES: Category[] = [
         q: 'Something else is wrong, or I have an idea.',
         a: (
           <p className={A}>
-            Email pawsome.breeding@gmail.com. This is a small enough project that suggestions from real users
+            Email <SupportLink subject="PawSome feedback" className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" />. This is a small enough project that suggestions from real users
             genuinely change what gets built next.
           </p>
         ),
@@ -372,12 +374,15 @@ function FAQPage() {
           <p className="mx-auto mt-3 max-w-[52ch] text-pretty leading-relaxed text-neutral-300">
             Write to us and describe what happened. Real replies, from the person who built this.
           </p>
-          <a
-            href="mailto:pawsome.breeding@gmail.com"
+          <SupportLink
+            subject="PawSome support"
             className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#ff6b35] px-7 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-[transform,background-color] duration-200 ease-out hover:bg-[#ff5722] active:scale-[0.97] motion-reduce:transition-none"
           >
             Email support
-          </a>
+          </SupportLink>
+          <p className="mt-4 text-sm text-neutral-400">
+            Opens a Gmail compose window. Not a Gmail user? Write to {SUPPORT_EMAIL}.
+          </p>
         </section>
       </div>
 

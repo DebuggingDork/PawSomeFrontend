@@ -1,6 +1,10 @@
 import { LegalDocument, P, H3, UL, LI, Note, Term, type LegalSection } from '@/components/legal/LegalDocument'
+import { SupportLink } from '@/components/support/SupportLink'
 
-const CONTACT = 'pawsome.breeding@gmail.com'
+/** Renders the address as a Gmail compose link, subject already set. */
+const Contact = ({ subject }: { subject: string }) => (
+  <SupportLink subject={subject} className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" />
+)
 
 const SECTIONS: LegalSection[] = [
   {
@@ -222,7 +226,7 @@ const SECTIONS: LegalSection[] = [
           <LI>Nominate someone to exercise these rights on your behalf if you die or become incapacitated.</LI>
         </UL>
         <P>
-          Email <Term>{CONTACT}</Term> and we will respond within 30 days. There is no charge. If you are unhappy with
+          Email <Contact subject="Data request" /> and we will respond within 30 days. There is no charge. If you are unhappy with
           how we handle a request, you have the right to complain to the Data Protection Board of India.
         </P>
       </>
@@ -252,7 +256,7 @@ const SECTIONS: LegalSection[] = [
       <P>
         PawSome is for adults. You must be 18 or older to create an account. We do not knowingly collect data from
         children, and if we find out an account belongs to one, we will delete it. If you believe a child has given us
-        their data, email {CONTACT} and we will remove it.
+        their data, email <Contact subject="Report a child’s account" /> and we will remove it.
       </P>
     ),
   },
@@ -274,7 +278,7 @@ const SECTIONS: LegalSection[] = [
       <>
         <P>
           Questions, corrections, deletion requests, or a suspicion that something here does not match what the app
-          actually does: <Term>{CONTACT}</Term>.
+          actually does: <Contact subject="Privacy question" />.
         </P>
         <P>
           A real person reads that inbox. If something in this policy is unclear or looks wrong, telling us is

@@ -1,5 +1,6 @@
 import { Mail, Heart } from "lucide-react";
 import { Link } from "react-router";
+import { SupportLink } from "@/components/support/SupportLink";
 import {
   FooterBackgroundGradient,
   TextHoverEffect,
@@ -42,7 +43,7 @@ function PawsomeFooter() {
     {
       icon: <Mail size={18} className="text-[#ff6b35]" />,
       text: "Email support",
-      href: "mailto:pawsome.breeding@gmail.com",
+      subject: "PawSome support",
     },
   ];
 
@@ -99,18 +100,12 @@ function PawsomeFooter() {
             <ul className="space-y-4">
               {contactInfo.map((item, i) => (
                 <li key={i} className="flex items-center space-x-3">
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
-                    >
-                      {item.text}
-                    </a>
-                  ) : (
-                    <span className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors">
-                      {item.text}
-                    </span>
-                  )}
+                  <SupportLink
+                    subject={item.subject}
+                    className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
+                  >
+                    {item.text}
+                  </SupportLink>
                 </li>
               ))}
               <li>
