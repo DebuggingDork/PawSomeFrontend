@@ -1,7 +1,11 @@
 import { clearTokens, getAccessToken, getAccessTokenExpiryMs, getRefreshToken, onTokensChanged, setTokens } from './tokens'
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-export const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000'
+// 127.0.0.1 rather than localhost: on Windows, localhost resolves to ::1 before
+// 127.0.0.1, and a backend bound to IPv4 only leaves every new connection
+// waiting ~2s for the IPv6 attempt to be refused before it falls back. That was
+// the whole of the chat socket's "Connecting…" delay.
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+export const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://127.0.0.1:8000'
 
 type SessionExpiredListener = () => void
 const sessionExpiredListeners: SessionExpiredListener[] = []
