@@ -20,6 +20,7 @@ import * as petsApi from '@/lib/api/pets'
 import { setTokens } from '@/lib/api/tokens'
 import { ApiError } from '@/lib/api/client'
 import { PillTabs } from '@/components/ui/PillTabs'
+import { POST_LOGIN_ROUTE } from '@/lib/routes'
 import logoIcon from '@/assets/logo-256.png'
 import { siteImages } from '@/lib/siteImages'
 
@@ -106,11 +107,15 @@ function AuthPage() {
       // leaving it to OnboardingGate: the gate has to wait on /onboarding/status
       // before it can decide, which meant a new user landed on Discover first and
       // got yanked away a moment later.
+      //
+      // Everyone else goes to Discover. Signing in used to drop anyone with a pet
+      // into /chat, which opens on an empty "pick a match" pane unless they
+      // already have conversations. Discover is the thing you came back to do.
+      //
       // `replace` so the sign-in screen drops out of the history stack entirely —
       // pressing Back from the app should go wherever the user came from, not
       // return them to a login form for the session they just started.
-      const destination = isSignUp ? '/onboarding' : pets.length > 0 ? '/chat' : '/discover'
-      navigate(destination, { replace: true })
+      navigate(isSignUp ? '/onboarding' : POST_LOGIN_ROUTE, { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
         setError(typeof err.detail === 'string' ? err.detail : 'Something went wrong. Please try again.')

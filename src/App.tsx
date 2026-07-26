@@ -20,6 +20,7 @@ import OfflinePage from './pages/Offline'
 import ServerErrorPage from './pages/ServerError'
 import MaintenancePage from './pages/Maintenance'
 import { getOnboardingStatus } from './lib/api/onboarding'
+import { POST_LOGIN_ROUTE } from './lib/routes'
 import { ONBOARDING_DISMISSED_KEY } from './lib/queryClient'
 import { onBackendReachable, onBackendUnreachable } from './lib/api/client'
 import { getMyProfile } from './lib/api/users'
@@ -63,8 +64,8 @@ function NavAuthSkeleton() {
 /** Wraps routes that only make sense while signed out (i.e. /auth). Hitting Back
  * after signing in used to land the user right back on the sign-in form while the
  * navbar above it showed them signed in, with a "Sign In" button that would just
- * re-authenticate an already-live session. Signed-in visitors get sent home
- * instead — with `replace`, so Back doesn't bounce them straight back here. */
+ * re-authenticate an already-live session. Signed-in visitors get sent into the
+ * app instead — with `replace`, so Back doesn't bounce them straight back here. */
 function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isHydrating } = useAuthStore()
 
@@ -72,7 +73,14 @@ function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
   // user (or, worse, redirect a genuinely signed-out one). #root stays hidden
   // until hydration settles, so rendering nothing here costs no visible time.
   if (isHydrating) return null
-  if (isAuthenticated) return <Navigate to="/" replace />
+  // Discover, not "/". This used to send them to the landing page, and it raced
+  // AuthPage's own post-login navigate: the auth store publishes through
+  // useSyncExternalStore, which re-renders subscribers synchronously, so
+  // login() could re-render this guard while the location was still /auth and
+  // before the next line's navigate() had run. The guard's redirect then won and
+  // dropped a freshly signed-in user on the marketing page. Both routes now lead
+  // to the same place, so whichever wins the race the result is identical.
+  if (isAuthenticated) return <Navigate to={POST_LOGIN_ROUTE} replace />
 
   return <>{children}</>
 }
