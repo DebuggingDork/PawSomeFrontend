@@ -68,11 +68,15 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
             </span>
           </div>
 
-          <p className="flex items-center gap-1.5 text-xs text-neutral-400">
-            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="truncate">{playdate.location_name}</span>
-          </p>
-          {playdate.address && <p className="ml-5 truncate text-[11px] text-neutral-600">{playdate.address}</p>}
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-xs text-neutral-400">
+              <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+              <span className="truncate">{playdate.location_name}</span>
+            </p>
+            {playdate.address && (
+              <p className="ml-5 line-clamp-2 text-[11px] leading-relaxed text-neutral-600">{playdate.address}</p>
+            )}
+          </div>
 
           {playdate.note && <p className="mt-1 text-xs italic text-neutral-500">"{playdate.note}"</p>}
 
