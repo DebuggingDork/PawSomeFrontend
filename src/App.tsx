@@ -48,6 +48,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { NotificationBell } from './components/notifications/NotificationBell'
 import { NotificationsRuntime } from './components/notifications/NotificationsRuntime'
+import { BadgeUnlockWatcher } from './components/notifications/BadgeUnlockWatcher'
 
 /** Placeholder for the navbar's auth-dependent controls while session state is still
  * resolving, so we never guess "signed out" and then flash into "signed in" (or vice
@@ -85,13 +86,6 @@ function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-/** Redirects a freshly-authenticated user into /onboarding once per session until
- * required steps are done.
- *
- * Sign-up itself no longer relies on this: AuthPage routes new accounts straight to
- * /onboarding, because waiting on /onboarding/status here meant a new user landed on
- * Discover first and got pulled away a beat later. This still covers the other way
- * in, signing back into an account whose setup was never finished. */
 /** Routes the onboarding nudge must never fire on.
  *
  * /onboarding and /auth are the obvious ones. /profile matters just as much:
@@ -100,6 +94,12 @@ function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
  * asked of them. */
 const EXEMPT_FROM_ONBOARDING_REDIRECT = new Set(['/onboarding', '/auth', '/profile'])
 
+/** Offers /onboarding once per session to a user whose required steps aren't done.
+ *
+ * Sign-up itself no longer relies on this: AuthPage routes new accounts straight to
+ * /onboarding, because waiting on /onboarding/status here meant a new user landed on
+ * Discover first and got pulled away a beat later. This still covers the other way
+ * in, signing back into an account whose setup was never finished. */
 function OnboardingGate() {
   const { isAuthenticated, isHydrating } = useAuthStore()
   const location = useLocation()
@@ -153,7 +153,7 @@ function SessionExpiryWatcher() {
 function App() {
   useSmoothScroll()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isAuthenticated, isHydrating, hydrate, logout } = useAuthStore()
+  const { isAuthenticated, isHydrating, hydrate, logout, user } = useAuthStore()
   const isOnline = useOnlineStatus()
   const [backendUnreachable, setBackendUnreachable] = useState(false)
 
@@ -220,6 +220,9 @@ function App() {
       <OnboardingGate />
       <SessionExpiryWatcher />
       <NotificationsRuntime />
+      {/* Keyed by account so signing in as someone else gets a fresh instance
+          rather than inheriting the previous user's queued badges. */}
+      <BadgeUnlockWatcher key={user?.id ?? 'signed-out'} />
       
       <div className="min-h-screen w-full max-w-full overflow-x-clip bg-neutral-950 text-white">
         {/* Sticky Navigation Bar — full-bleed translucent glass */}

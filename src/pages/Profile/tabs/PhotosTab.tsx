@@ -35,7 +35,11 @@ export function PhotosTab() {
   const replaceInputRef = useRef<HTMLInputElement | null>(null)
   const replaceTargetRef = useRef<string | null>(null)
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
+    // A photo can complete the gallery badge, or be this pet's first.
+    queryClient.invalidateQueries({ queryKey: ['achievements', 'me'] })
+  }
 
   const setPrimaryMutation = useMutation({
     mutationFn: (photoId: string) => setPrimaryPhoto(selectedPet!.id, photoId),

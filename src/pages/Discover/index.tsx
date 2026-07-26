@@ -98,6 +98,10 @@ function DiscoverPage() {
       if (variables.action === 'super_like') {
         queryClient.invalidateQueries({ queryKey: ['super-woof-remaining'] })
       }
+      // Swiping is the single richest source of badges (first swipe, fifty
+      // swipes, a Super Woof, and any match that results). Re-reading lets the
+      // server award them and the watcher celebrate without waiting for a poll.
+      queryClient.invalidateQueries({ queryKey: ['achievements', 'me'] })
     },
   })
 

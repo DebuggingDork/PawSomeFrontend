@@ -48,6 +48,8 @@ export function AccountTab() {
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['users', 'me'] })
     queryClient.invalidateQueries({ queryKey: ['users', 'completion'] })
+    // Name, bio, location and photo each carry a badge of their own.
+    queryClient.invalidateQueries({ queryKey: ['achievements', 'me'] })
   }
 
   if (profileQuery.isLoading || !profileQuery.data) {

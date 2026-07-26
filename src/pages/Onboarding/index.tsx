@@ -87,6 +87,7 @@ function OnboardingPage() {
     queryClient.invalidateQueries({ queryKey: ['onboarding', 'status'] })
     queryClient.invalidateQueries({ queryKey: ['users', 'me'] })
     queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
+    queryClient.invalidateQueries({ queryKey: ['achievements', 'me'] })
     // The auth store holds its own copy of the pet list, and Discover reads
     // `activePet` from it to decide whether swiping is allowed. Without this, the
     // pet created two steps ago doesn't exist as far as Discover is concerned.
