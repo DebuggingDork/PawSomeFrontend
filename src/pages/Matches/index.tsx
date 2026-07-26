@@ -74,7 +74,7 @@ function MatchesPage() {
             <Link
               key={conversation.matchId}
               to={`/chat?match=${conversation.matchId}`}
-              className="group relative flex flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:-translate-y-0.5 hover:border-[#ff6b35]/60 hover:shadow-xl"
+              className="group relative flex min-h-[160px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:-translate-y-0.5 hover:border-[#ff6b35]/60 hover:shadow-xl"
             >
               {conversation.otherPet.owner?.id && (
                 <SafetyMenu
@@ -87,14 +87,14 @@ function MatchesPage() {
                   onUnmatched={() => conversationsQuery.refetch()}
                 />
               )}
-              <div className="mb-4 flex items-center gap-3">
+              <div className="mb-3 flex items-center gap-3">
                 <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="lg" />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-white">{conversation.otherPet.name}</p>
                   <p className="truncate text-xs text-neutral-500">{conversation.otherPet.breed}</p>
                 </div>
               </div>
-              <p className="mb-4 text-xs text-neutral-500">{timeAgo(conversation.createdAt)}</p>
+              <p className="mb-3 text-xs text-neutral-500">{timeAgo(conversation.createdAt)}</p>
               <div className="mt-auto flex items-center gap-1.5 text-sm font-semibold text-[#ff8c5c] group-hover:text-[#ff6b35]">
                 <MessageCircle className="h-4 w-4" />
                 Message
