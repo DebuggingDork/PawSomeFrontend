@@ -1,4 +1,4 @@
-import { PawPrint, MapPin, Sparkles, BadgeCheck } from 'lucide-react'
+import { PawPrint, MapPin, RotateCcw, Sparkles, BadgeCheck } from 'lucide-react'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
 import { activeHealthTags, isNewHere } from '@/lib/petBadges'
 import { GenderBadge } from '@/components/ui/GenderBadge'
@@ -12,7 +12,7 @@ interface SwipeCardContentProps {
 }
 
 export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
-  const { pet, distance_km, compatibility_score } = candidate
+  const { pet, distance_km, compatibility_score, previously_passed } = candidate
   const photo = pet.primary_photo_url
   const activeTags = activeHealthTags(pet)
 
@@ -28,7 +28,15 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
 
       {/* Top-left: "new here" ribbon + compatibility score, stacked */}
       <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
-        {isNewHere(pet.created_at) && (
+        {/* Says why a familiar face is back, so a recycled card doesn't read as
+            the deck repeating itself by mistake. */}
+        {previously_passed && (
+          <div className="flex items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-neutral-300 backdrop-blur-sm">
+            <RotateCcw className="h-3 w-3" />
+            You passed earlier
+          </div>
+        )}
+        {!previously_passed && isNewHere(pet.created_at) && (
           <div className="flex items-center gap-1 rounded-full bg-[#ff6b35] px-3 py-1 text-xs font-bold text-white shadow-lg shadow-[#ff6b35]/40">
             <Sparkles className="h-3 w-3" />
             New here!
