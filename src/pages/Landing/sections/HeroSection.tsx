@@ -28,8 +28,8 @@ function HeartMark({ className }: { className?: string }) {
 
 /**
  * Full-bleed hero matching the reference placement:
- * "Find your" upper-left, "perfect match" lower-right over the dogs,
- * tagline lower-center, CTAs + breeds note clustered bottom-right.
+ * "Find your" upper-left, "perfect match" mid-right over the dogs,
+ * CTAs clustered lower-right, tagline near the bottom center.
  *
  * Below md the diagonal collapses into a centered stack so nothing
  * collides on a narrow phone.
@@ -67,7 +67,7 @@ export const HeroSection = () => {
             <HeroEntranceItem>
               <h1 className="font-display font-bold leading-[1.05] tracking-[-0.03em] md:contents">
                 <span
-                  className="block text-white md:absolute md:left-[3.5%] md:top-[14%] md:text-left lg:left-[4%] lg:top-[13%]"
+                  className="block text-white md:absolute md:left-8 md:top-[24%] md:text-left lg:left-8 lg:top-[24%]"
                   style={{
                     fontSize: 'clamp(2.5rem, 6vw, 4.75rem)',
                     textShadow: '0 2px 28px rgba(0,0,0,0.45)',
@@ -76,7 +76,7 @@ export const HeroSection = () => {
                   Find your
                 </span>
                 <span
-                  className="mt-1 block whitespace-nowrap text-[#ff6b35] md:absolute md:bottom-[34%] md:right-[5%] md:mt-0 md:text-left lg:bottom-[32%] lg:right-[6%]"
+                  className="mt-1 flex whitespace-nowrap text-[#ff6b35] md:absolute md:left-[49%] md:top-[64%] md:mt-0 md:text-left lg:left-[49%] lg:top-[64%]"
                   style={{
                     fontSize: 'clamp(2.5rem, 6vw, 4.75rem)',
                     textShadow: '0 2px 28px rgba(0,0,0,0.35)',
@@ -89,7 +89,7 @@ export const HeroSection = () => {
 
             <HeroEntranceItem delay={0.1}>
               <p
-                className="mt-4 max-w-xl text-pretty text-base text-white/95 sm:text-lg md:absolute md:inset-x-0 md:bottom-[18%] md:mx-auto md:mt-0 md:px-6 md:text-lg lg:bottom-[17%] lg:text-xl"
+                className="mt-4 max-w-xl text-pretty text-base text-white/95 sm:text-lg md:absolute md:inset-x-0 md:bottom-[3%] md:mx-auto md:mt-0 md:px-6 md:text-lg lg:bottom-[3%] lg:text-xl"
                 style={{ textShadow: '0 1px 16px rgba(0,0,0,0.55)' }}
               >
                 Connecting dogs and humans for better weekends
@@ -97,7 +97,7 @@ export const HeroSection = () => {
             </HeroEntranceItem>
 
             <HeroEntranceItem delay={0.15}>
-              <div className="mt-7 flex w-full max-w-xl flex-col items-center gap-3 md:absolute md:bottom-[5%] md:right-[4%] md:mt-0 md:max-w-[min(92vw,40rem)] md:items-end lg:bottom-[5.5%] lg:right-[5%]">
+              <div className="mt-7 flex w-full max-w-xl flex-col items-center gap-3 md:absolute md:left-[45%] md:top-[80%] md:mt-0 md:max-w-[min(92vw,40rem)] md:items-end lg:left-[45%] lg:top-[80%]">
                 {!isLoading && pets.breedCount > 0 && (
                   <p
                     className="flex items-center gap-2 text-sm text-white/90 md:text-right"
