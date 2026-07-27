@@ -1,7 +1,7 @@
 import { useState, type ComponentType } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
-import { PawPrint, Image, User, SlidersHorizontal, Award, Heart, ShieldOff, BarChart3, BadgeCheck } from 'lucide-react'
+import { PawPrint, Image, User, SlidersHorizontal, Award, Bookmark, ShieldOff, BarChart3, BadgeCheck } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getMyProfile } from '@/lib/api/users'
 import { membershipLine } from '@/lib/membership'
@@ -25,7 +25,7 @@ const TABS = [
   { key: 'preferences', label: 'Preferences', icon: SlidersHorizontal },
   { key: 'activity', label: 'Activity', icon: BarChart3 },
   { key: 'badges', label: 'Badges', icon: Award },
-  { key: 'favorites', label: 'Favorites', icon: Heart },
+  { key: 'favorites', label: 'Saved', icon: Bookmark },
   { key: 'blocked', label: 'Blocked Users', icon: ShieldOff },
 ] as const
 
