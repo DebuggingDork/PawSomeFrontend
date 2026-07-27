@@ -1,10 +1,11 @@
-import { Mail, Heart } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Link } from "react-router";
 import { SupportLink } from "@/components/support/SupportLink";
 import {
   FooterBackgroundGradient,
   TextHoverEffect,
 } from "@/components/ui/hover-footer";
+import logoIcon from "@/assets/logo-256.png";
 
 function PawsomeFooter() {
   // Every entry points at a route that exists. These were all href="#" before,
@@ -54,7 +55,18 @@ function PawsomeFooter() {
           {/* Brand section */}
           <div className="flex flex-col space-y-4">
             <div className="flex items-center space-x-2">
-              <Heart className="text-[#ff6b35] fill-[#ff6b35]" size={32} />
+              {/* The actual mark, not a stand-in. This was a Lucide heart,
+                  which meant the footer was the one place in the app showing a
+                  generic icon where the navbar and the splash both show the
+                  paw. Same 256px derivative the navbar imports — the 1254px
+                  original is 828 KB to render a 40px logo. */}
+              <img
+                src={logoIcon}
+                alt=""
+                width={40}
+                height={40}
+                className="h-10 w-10 drop-shadow-lg"
+              />
               {/* One solid brand colour. Gradient-clipped text renders thinner
                   and washes out at the ends of the ramp, and it made the footer
                   wordmark a different colour from the identical wordmark in the
