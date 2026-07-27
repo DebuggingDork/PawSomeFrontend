@@ -17,10 +17,11 @@ import {
 import { SwipeDeck } from '@/components/discover/SwipeDeck'
 import { LikesReceivedList } from '@/components/discover/LikesReceivedList'
 import { BrowseFiltersPanel } from '@/components/discover/BrowseFiltersPanel'
+import { PetAvatar } from '@/components/chat/PetAvatar'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PillTabs } from '@/components/ui/PillTabs'
 import { Skeleton } from '@/components/ui/Skeleton'
-import type { BrowseCandidate, BrowsePetsResponse } from '@/lib/api/types'
+import type { BrowseCandidate, BrowsePetsResponse, Pet } from '@/lib/api/types'
 
 function LocationNeededPrompt() {
   return (
@@ -40,8 +41,54 @@ function LocationNeededPrompt() {
   )
 }
 
+/** Which of your pets is doing the swiping.
+ *
+ * The deck only ever contains pets of the same species as this one, so with
+ * more than one pet there has to be a way to change it — `activePet` was fixed
+ * at pets[0] for the whole session because nothing in the UI ever set it, which
+ * left owners of a dog and a cat permanently unable to reach half the app. */
+function SwipingAsSelector({
+  pets,
+  activePet,
+  onSelect,
+}: {
+  pets: Pet[]
+  activePet: Pet | null
+  onSelect: (pet: Pet) => void
+}) {
+  const selectable = pets.filter((p) => p.is_active)
+  if (selectable.length < 2) return null
+
+  return (
+    <div className="mb-4 flex flex-wrap items-center gap-2">
+      <span className="text-xs font-medium text-neutral-500">Swiping as</span>
+      {selectable.map((pet) => {
+        const isActive = pet.id === activePet?.id
+        return (
+          <button
+            key={pet.id}
+            type="button"
+            onClick={() => onSelect(pet)}
+            aria-pressed={isActive}
+            className={`flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-3 text-sm font-medium transition-colors ${
+              isActive
+                ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-white'
+                : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
+            }`}
+          >
+            <PetAvatar name={pet.name} photoUrl={pet.primary_photo_url} size="sm" />
+            {pet.name}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 function DiscoverPage() {
-  const { activePet } = useAuthStore()
+  const activePet = useAuthStore((s) => s.activePet)
+  const myPets = useAuthStore((s) => s.pets)
+  const setActivePet = useAuthStore((s) => s.setActivePet)
   const queryClient = useQueryClient()
   // Tab and filters live in the Discover store rather than local state: this page
   // unmounts on every navigation, and resetting them meant a trip to Community and
@@ -94,7 +141,7 @@ function DiscoverPage() {
 
   const swipeMutation = useMutation({
     mutationFn: swipeApi,
-    onSuccess: (_result, variables) => {
+    onSuccess: (result, variables) => {
       if (variables.action === 'super_like') {
         queryClient.invalidateQueries({ queryKey: ['super-woof-remaining'] })
       }
@@ -102,6 +149,14 @@ function DiscoverPage() {
       // swipes, a Super Woof, and any match that results). Re-reading lets the
       // server award them and the watcher celebrate without waiting for a poll.
       queryClient.invalidateQueries({ queryKey: ['achievements', 'me'] })
+
+      // A mutual like matches on the spot, which means a new conversation
+      // exists — drop the cached match/chat lists so it's there when the user
+      // follows the celebration into the chat.
+      if (result.is_match) {
+        queryClient.invalidateQueries({ queryKey: ['matches'] })
+        queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      }
     },
   })
 
@@ -150,7 +205,14 @@ function DiscoverPage() {
       { pet_id: activePet!.id, target_pet_id: candidate.pet.id, action },
       {
         onSuccess: (result) => setLastSwipe({ swipeId: result.id, candidate }),
-        onError: () => {
+        onError: (error) => {
+          // Only put the card back when the swipe could plausibly succeed on a
+          // retry. A 400 means this pair is permanently un-swipeable (wrong
+          // species, already swiped), and restoring it to the *front* of the
+          // deck is what turned those into an unbreakable loop: the same
+          // handful of cards came back on every attempt and nothing else could
+          // be reached behind them.
+          if (error instanceof ApiError && error.status === 400) return
           setDeck((prev) => [candidate, ...prev])
           patchBrowseCache((candidates) => [candidate, ...candidates])
         },
@@ -172,6 +234,13 @@ function DiscoverPage() {
   const locationError =
     browseQuery.error instanceof ApiError && browseQuery.error.status === 400 ? browseQuery.error : null
 
+  // Every other way a swipe can be refused. These were swallowed entirely, so a
+  // rejected like was indistinguishable from a card that simply came back.
+  const swipeError =
+    !needsVerification && swipeMutation.error instanceof ApiError && typeof swipeMutation.error.detail === 'string'
+      ? swipeMutation.error.detail
+      : null
+
   return (
     <div className="mx-auto max-w-2xl px-6 pb-16 pt-24 md:pt-28">
       <div className="mb-6 flex items-center justify-between">
@@ -189,6 +258,8 @@ function DiscoverPage() {
 
       {tab === 'discover' && (
         <>
+          <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
+
           <BrowseFiltersPanel filters={filters} onChange={setFilters} />
 
           {locationError && <LocationNeededPrompt />}
@@ -200,8 +271,20 @@ function DiscoverPage() {
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (
             <EmptyState
               icon={Heart}
-              title="No pets available right now"
-              description="Try adjusting your filters or check back later."
+              title={
+                activePet
+                  ? `No more ${activePet.species === 'cat' ? 'cats' : 'dogs'} for ${activePet.name} right now`
+                  : 'No pets available right now'
+              }
+              // The deck only holds pets of the active pet's species, so an
+              // empty one usually means "you've seen them all as this pet",
+              // not "the app is broken" — and with another pet there may well
+              // be a full deck one click away.
+              description={
+                activePet && myPets.filter((p) => p.is_active).length > 1
+                  ? 'You’ve seen everyone here. Switch pets above, widen the radius, or check back later.'
+                  : 'You’ve seen everyone nearby. Try adjusting your filters or check back later.'
+              }
             />
           )}
 
@@ -226,6 +309,11 @@ function DiscoverPage() {
                     to start swiping and matching.
                   </div>
                 )
+              )}
+              {swipeError && (
+                <div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 p-3 text-center text-sm text-rose-400">
+                  {swipeError}
+                </div>
               )}
               <SwipeDeck
                 candidates={deck}
