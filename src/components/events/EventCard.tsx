@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { MapPin, Users, Check } from 'lucide-react'
+import { MapPin, Users, Check, Crown, Ban } from 'lucide-react'
 import { gradientForId } from '@/lib/gradients'
 import { useAuthStore } from '@/store/useAuthStore'
 import type { CommunityEvent } from '@/lib/api/types'
@@ -117,26 +117,52 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
             {event.creator.full_name ?? 'a PawSome owner'}
           </p>
 
-          {isAuthenticated && (
+          {/* The host is attending by definition, so there is nothing to opt
+              into — offering "I'm going" on your own meetup only invited people
+              to un-RSVP from an event they were running. */}
+          {isAuthenticated && event.is_host && (
+            <span className="flex items-center gap-1 rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-3 py-1.5 text-xs font-semibold text-[#ff8c5c]">
+              <Crown className="h-3.5 w-3.5" />
+              You're hosting
+            </span>
+          )}
+
+          {isAuthenticated && !event.is_host && isGoing && (
             <button
               onClick={() => onToggleGoing(event)}
               disabled={togglingId === event.id}
-              className={`flex items-center gap-1 rounded-full px-4 py-1.5 text-xs font-semibold transition-all disabled:opacity-50 ${
-                isGoing
-                  ? 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:border-red-400/50 hover:bg-red-400/10 hover:text-red-400'
-                  : 'bg-gradient-to-r from-[#ff6b35] to-pink-500 text-white shadow-md shadow-[#ff6b35]/30 hover:-translate-y-0.5'
-              }`}
+              className="flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-400 transition-all hover:border-red-400/50 hover:bg-red-400/10 hover:text-red-400 disabled:opacity-50"
             >
-              {isGoing ? (
-                <>
-                  <Check className="h-3.5 w-3.5" /> Going
-                </>
-              ) : (
-                "I'm going"
-              )}
+              <Check className="h-3.5 w-3.5" /> Going
             </button>
           )}
+
+          {isAuthenticated && !event.is_host && !isGoing && event.can_rsvp && (
+            <button
+              onClick={() => onToggleGoing(event)}
+              disabled={togglingId === event.id}
+              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-1.5 text-xs font-semibold text-white shadow-md shadow-[#ff6b35]/30 transition-all hover:-translate-y-0.5 disabled:opacity-50"
+            >
+              I'm going
+            </button>
+          )}
+
+          {/* No pet of the right species. Stated rather than presented as a
+              button that could only ever be refused. */}
+          {isAuthenticated && !event.is_host && !isGoing && !event.can_rsvp && upcoming && (
+            <span
+              title={event.rsvp_blocked_reason ?? undefined}
+              className="flex items-center gap-1 rounded-full border border-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-500"
+            >
+              <Ban className="h-3.5 w-3.5" />
+              {event.species ? `${event.species}s only` : 'Unavailable'}
+            </span>
+          )}
         </div>
+
+        {isAuthenticated && !event.is_host && !event.can_rsvp && !isGoing && event.rsvp_blocked_reason && upcoming && (
+          <p className="mt-2 text-xs text-neutral-500">{event.rsvp_blocked_reason}</p>
+        )}
       </div>
     </motion.div>
   )

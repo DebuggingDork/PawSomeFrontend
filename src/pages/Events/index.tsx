@@ -4,6 +4,8 @@ import { CalendarDays, Plus, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { listEvents, rsvpToEvent, cancelRsvp } from '@/lib/api/events'
 import { CreateEventModal } from '@/components/events/CreateEventModal'
+import { AttendEventDialog } from '@/components/events/AttendEventDialog'
+import { ApiError } from '@/lib/api/client'
 import { EventCard } from '@/components/events/EventCard'
 import { StaggerRevealContainer, StaggerRevealItem } from '@/components/animations/StaggerReveal'
 import { PillTabs } from '@/components/ui/PillTabs'
@@ -27,6 +29,7 @@ function EventsPage() {
   const [showCreate, setShowCreate] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [species, setSpecies] = useState<string>('')
+  const [attending, setAttending] = useState<CommunityEvent | null>(null)
 
   const eventsQuery = useQuery({
     queryKey: ['events', species],
@@ -34,8 +37,12 @@ function EventsPage() {
   })
 
   const rsvpMutation = useMutation({
-    mutationFn: (eventId: string) => rsvpToEvent(eventId, { status: 'going' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['events'] }),
+    mutationFn: ({ eventId, petId }: { eventId: string; petId: string | null }) =>
+      rsvpToEvent(eventId, { status: 'going', pet_id: petId ?? undefined }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+      setAttending(null)
+    },
     onSettled: () => setTogglingId(null),
   })
 
@@ -45,10 +52,18 @@ function EventsPage() {
     onSettled: () => setTogglingId(null),
   })
 
+  // Joining goes through a confirmation step rather than firing on the click.
+  // A species-restricted meetup is easy to RSVP to without registering the
+  // restriction, and this is also where you say which pet is coming — a
+  // question the card has no room to ask.
   const handleToggleGoing = (event: CommunityEvent) => {
-    setTogglingId(event.id)
-    if (event.your_rsvp_status === 'going') cancelMutation.mutate(event.id)
-    else rsvpMutation.mutate(event.id)
+    if (event.your_rsvp_status === 'going') {
+      setTogglingId(event.id)
+      cancelMutation.mutate(event.id)
+      return
+    }
+    rsvpMutation.reset()
+    setAttending(event)
   }
 
   if (!isHydrating && !isAuthenticated) {
@@ -134,6 +149,25 @@ function EventsPage() {
       )}
 
       {showCreate && <CreateEventModal onClose={() => setShowCreate(false)} />}
+
+      {attending && (
+        <AttendEventDialog
+          event={attending}
+          isSubmitting={rsvpMutation.isPending}
+          error={
+            rsvpMutation.error instanceof ApiError && typeof rsvpMutation.error.detail === 'string'
+              ? rsvpMutation.error.detail
+              : rsvpMutation.error
+                ? 'Could not confirm that just now. Try again.'
+                : null
+          }
+          onConfirm={(petId) => {
+            setTogglingId(attending.id)
+            rsvpMutation.mutate({ eventId: attending.id, petId })
+          }}
+          onClose={() => setAttending(null)}
+        />
+      )}
     </div>
   )
 }

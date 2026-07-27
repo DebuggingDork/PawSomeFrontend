@@ -584,6 +584,21 @@ export interface CommunityEvent {
   is_cancelled: boolean
   your_rsvp_status: 'going' | 'interested' | null
   created_at: string
+  /** You created this event, so you're attending by definition. */
+  is_host: boolean
+  /** False when hosting, not signed in, or you have no pet of the event's species. */
+  can_rsvp: boolean
+  /** Display-ready explanation when can_rsvp is false and you aren't the host. */
+  rsvp_blocked_reason: string | null
+  /** Your pets that are allowed at this event — drives the "who's coming" step. */
+  eligible_pets: EventPetOption[]
+}
+
+export interface EventPetOption {
+  id: string
+  name: string
+  species: string
+  primary_photo_url: string | null
 }
 
 export interface EventListResponse {
