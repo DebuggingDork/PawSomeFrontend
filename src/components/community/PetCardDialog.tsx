@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
   BadgeCheck,
+  Check,
   GraduationCap,
   Heart,
   LogIn,
+  MessageCircle,
   PawPrint,
   Scissors,
   ShieldCheck,
   X,
 } from 'lucide-react'
 import { getPet } from '@/lib/api/pets'
-import { swipe as swipeApi } from '@/lib/api/matches'
+import { getPetRelationship, swipe as swipeApi } from '@/lib/api/matches'
+import { ApiError } from '@/lib/api/client'
 import { useAuthStore } from '@/store/useAuthStore'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
@@ -31,16 +34,40 @@ interface PetCardDialogProps {
 /** Click-to-expand detail view for a Community card — same data as the full
  * pet page, shown inline so browsing the directory doesn't mean leaving it. */
 export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
-  const { isAuthenticated, user, activePet } = useAuthStore()
+  const { isAuthenticated, user, pets, activePet } = useAuthStore()
   const [activePhoto, setActivePhoto] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   const { data: pet, isLoading } = useQuery({
     queryKey: ['pet', petId],
     queryFn: () => getPet(petId),
   })
 
+  // Whether the caller has already liked, skipped or matched this pet. Without
+  // it the dialog offered "Interested" on pets it was already impossible to
+  // swipe on, and the resulting 400 looked like a dead button.
+  const { data: relationship } = useQuery({
+    queryKey: ['pet-relationship', petId],
+    queryFn: () => getPetRelationship(petId),
+    enabled: isAuthenticated,
+  })
+
+  // Pets can only match within their own species, so the pet doing the liking
+  // has to be chosen against the *target*, not just taken from the global
+  // "active pet". Picking pets[0] blindly is why showing interest in a cat
+  // silently failed for anyone whose first pet is a dog: the server rejected
+  // dog→cat with a 400 that nothing surfaced, so no like, no notification and
+  // no match were ever created.
+  const eligiblePets = pets.filter((p) => p.is_active && p.species === pet?.species)
+  const swipingPet =
+    eligiblePets.find((p) => p.id === activePet?.id) ?? eligiblePets[0] ?? null
+
   const likeMutation = useMutation({
-    mutationFn: () => swipeApi({ pet_id: activePet!.id, target_pet_id: pet!.id, action: 'like' }),
+    mutationFn: () => swipeApi({ pet_id: swipingPet!.id, target_pet_id: pet!.id, action: 'like' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pet-relationship', petId] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+    },
   })
 
   useEffect(() => {
@@ -53,7 +80,133 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
 
   const photos = pet?.photos ?? []
   const heroPhoto = activePhoto ?? pet?.primary_photo_url ?? null
-  const isOwnPet = pet && user && pet.user_id === user.id
+  // Three sources because each covers a gap in the others: `user_id` is only
+  // returned on the owner's view of a pet, `owner.id` only for signed-in
+  // requests, and the relationship call is authoritative but arrives a beat
+  // later. Getting this wrong offers you the Interested button on your own pet.
+  const isOwnPet = Boolean(
+    (pet && user && (pet.user_id === user.id || pet.owner?.id === user.id)) ||
+      relationship?.status === 'own',
+  )
+
+  const speciesWord = pet?.species === 'cat' ? 'cat' : 'dog'
+  const likeError =
+    likeMutation.error instanceof ApiError && typeof likeMutation.error.detail === 'string'
+      ? likeMutation.error.detail === 'EMAIL_VERIFICATION_REQUIRED'
+        ? 'Confirm your email address before showing interest.'
+        : likeMutation.error.detail
+      : likeMutation.error
+        ? 'Could not send that just now. Try again.'
+        : null
+
+  /** The one action this dialog offers, in whichever state it's actually in.
+   * Every branch either does something or says why it can't — the previous
+   * version rendered a single disabled button with a tooltip for all of them. */
+  const renderInterest = () => {
+    if (isOwnPet || !pet) return null
+
+    if (!isAuthenticated) {
+      return (
+        <Link
+          to="/auth"
+          onClick={onClose}
+          className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+        >
+          <LogIn className="h-4 w-4" />
+          Sign in to show interest
+        </Link>
+      )
+    }
+
+    if (relationship?.status === 'matched' && relationship.match_id) {
+      return (
+        <Link
+          to={`/chat?match=${relationship.match_id}`}
+          onClick={onClose}
+          className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-emerald-700 bg-emerald-950/50 px-4 py-2 text-sm font-semibold text-emerald-300 transition-colors hover:bg-emerald-900/50"
+        >
+          <MessageCircle className="h-4 w-4" />
+          Matched — open chat
+        </Link>
+      )
+    }
+
+    if (likeMutation.isSuccess || relationship?.status === 'liked') {
+      return (
+        <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#ff6b35]/50 bg-[#ff6b35]/10 px-4 py-2 text-sm font-semibold text-[#ff6b35]">
+          <Check className="h-4 w-4" />
+          Interest sent
+        </span>
+      )
+    }
+
+    if (relationship?.status === 'skipped') {
+      return (
+        <span
+          title={`You already passed on ${pet.name} in Discover.`}
+          className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-500"
+        >
+          Passed
+        </span>
+      )
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={() => likeMutation.mutate()}
+        disabled={!swipingPet || likeMutation.isPending}
+        className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+      >
+        <Heart className="h-4 w-4" />
+        {likeMutation.isPending ? 'Sending…' : 'Interested'}
+      </button>
+    )
+  }
+
+  /** Says out loud which pet the like comes from, or why none can be used —
+   * both of which the button alone can't communicate. */
+  const renderInterestNote = () => {
+    if (isOwnPet || !pet || !isAuthenticated) return null
+    if (relationship?.status === 'matched') return null
+
+    if (likeError) {
+      return <p className="mt-3 text-xs text-rose-400">{likeError}</p>
+    }
+
+    if (!swipingPet) {
+      const note =
+        pets.length === 0
+          ? `Add a ${speciesWord} profile to show interest in ${pet.name}.`
+          : pets.some((p) => p.species === pet.species)
+            ? `Your ${speciesWord} profile needs a photo before it can show interest.`
+            : `${pet.name} is a ${speciesWord} — you need a ${speciesWord} profile to show interest.`
+      return <p className="mt-3 text-xs text-neutral-500">{note}</p>
+    }
+
+    if (likeMutation.isSuccess) {
+      return (
+        <p className="mt-3 text-xs text-neutral-500">
+          {pet.name}&rsquo;s owner has been notified. You&rsquo;ll match once they accept.
+        </p>
+      )
+    }
+
+    if (relationship?.status === 'liked') {
+      return (
+        <p className="mt-3 text-xs text-neutral-500">
+          Waiting on {pet.name}&rsquo;s owner to accept.
+        </p>
+      )
+    }
+
+    return (
+      <p className="mt-3 text-xs text-neutral-500">
+        Sent as <span className="text-neutral-300">{swipingPet.name}</span>
+        {eligiblePets.length > 1 ? ' — switch pets from your profile.' : '.'}
+      </p>
+    )
+  }
 
   return (
     <div
@@ -139,22 +292,23 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
                   </p>
                 </div>
 
-                {!isOwnPet && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!isAuthenticated || !activePet) return
-                      likeMutation.mutate()
-                    }}
-                    disabled={!isAuthenticated || !activePet || likeMutation.isPending || likeMutation.isSuccess}
-                    title={!isAuthenticated ? 'Sign in to express interest' : !activePet ? 'Create a pet profile first' : undefined}
-                    className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <Heart className={`h-4 w-4 ${likeMutation.isSuccess ? 'fill-current' : ''}`} />
-                    {likeMutation.isSuccess ? 'Interested!' : 'Interested'}
-                  </button>
+                {isOwnPet ? (
+                  <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-4 py-2 text-sm font-semibold text-[#ff6b35]">
+                    <PawPrint className="h-4 w-4" />
+                    My pet
+                  </span>
+                ) : (
+                  renderInterest()
                 )}
               </div>
+
+              {isOwnPet ? (
+                <p className="mt-3 text-xs text-neutral-500">
+                  This is your own pet — other owners see the Interested button here.
+                </p>
+              ) : (
+                renderInterestNote()
+              )}
 
               {(pet.is_vaccinated || pet.is_neutered || pet.is_trained) && (
                 <div className="mt-3 flex flex-wrap gap-2">

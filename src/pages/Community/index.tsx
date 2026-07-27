@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { BadgeCheck, PawPrint, Sparkles, Users, Venus } from 'lucide-react'
 import { browsePets } from '@/lib/api/pets'
 import { getBreeds } from '@/lib/api/matches'
+import { useAuthStore } from '@/store/useAuthStore'
 import { activeHealthTags, genderMark, isNewHere } from '@/lib/petBadges'
 import { GenderBadge } from '@/components/ui/GenderBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -22,7 +23,17 @@ interface PetFilters {
   breed?: string
 }
 
-function PetCard({ pet, index, onOpen }: { pet: Pet; index: number; onOpen: (id: string) => void }) {
+function PetCard({
+  pet,
+  index,
+  isMine,
+  onOpen,
+}: {
+  pet: Pet
+  index: number
+  isMine: boolean
+  onOpen: (id: string) => void
+}) {
   const tags = activeHealthTags(pet)
 
   return (
@@ -49,11 +60,21 @@ function PetCard({ pet, index, onOpen }: { pet: Pet; index: number; onOpen: (id:
           </div>
         )}
 
-        {isNewHere(pet.created_at) && (
-          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-[#ff6b35] px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-[#ff6b35]/40">
-            <Sparkles className="h-3 w-3" />
-            New
+        {/* "My pet" wins the corner over "New": which pets are yours decides
+            whether the card offers anything to act on, so it has to be legible
+            from the grid rather than only after opening the card. */}
+        {isMine ? (
+          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-bold text-[#ff6b35] shadow-lg backdrop-blur ring-1 ring-[#ff6b35]/50">
+            <PawPrint className="h-3 w-3" />
+            My pet
           </div>
+        ) : (
+          isNewHere(pet.created_at) && (
+            <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-[#ff6b35] px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-[#ff6b35]/40">
+              <Sparkles className="h-3 w-3" />
+              New
+            </div>
+          )
         )}
 
         {/* Species & Gender Badge */}
@@ -109,6 +130,8 @@ function CommunityPage() {
   const [filters, setFilters] = useState<PetFilters>({})
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const myPets = useAuthStore((state) => state.pets)
+  const myPetIds = new Set(myPets.map((p) => p.id))
 
   const {
     data,
@@ -252,7 +275,13 @@ function CommunityPage() {
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pets.map((pet, index) => (
-              <PetCard key={pet.id} pet={pet} index={index} onOpen={setSelectedPetId} />
+              <PetCard
+                key={pet.id}
+                pet={pet}
+                index={index}
+                isMine={myPetIds.has(pet.id)}
+                onOpen={setSelectedPetId}
+              />
             ))}
           </div>
 
