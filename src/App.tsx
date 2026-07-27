@@ -286,9 +286,15 @@ function App() {
                   <NavbarButton variant="secondary" as={Link} href="/auth">
                     Sign In
                   </NavbarButton>
-                  <NavbarButton variant="gradient" as={Link} href="/discover">
+                  {/* This branch only ever renders signed OUT, and it used to
+                      point at /discover — whose browse call is authenticated,
+                      so a visitor clicking the brightest button in the header
+                      landed on "No pets available right now". Community is
+                      public and actually full, and the label now matches where
+                      it goes. */}
+                  <NavbarButton variant="gradient" as={Link} href="/community">
                     <Heart className="mr-2 inline h-4 w-4" />
-                    Find Matches
+                    Browse pets
                   </NavbarButton>
                 </>
               )}
@@ -376,10 +382,10 @@ function App() {
                         variant="gradient"
                         className="w-full"
                         as={Link}
-                        href="/discover"
+                        href="/community"
                       >
                         <Heart className="mr-2 inline h-4 w-4" />
-                        Find Matches
+                        Browse pets
                       </NavbarButton>
                     )}
                   </>

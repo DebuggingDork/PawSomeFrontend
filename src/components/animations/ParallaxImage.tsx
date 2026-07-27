@@ -5,6 +5,10 @@ interface ParallaxImageProps {
   src: string
   alt: string
   className?: string
+  /** Applied to the <img> itself, for grading the photo (brightness, saturate)
+   *  before any scrim goes over it. Kept separate from `className`, which sizes
+   *  and clips the frame. */
+  imgClassName?: string
   offset?: number
   /** Set on the hero photo. It is the largest thing on the page and the first
    *  thing painted, so it must not queue behind lazily-loaded imagery below. */
@@ -15,6 +19,7 @@ export const ParallaxImage: React.FC<ParallaxImageProps> = ({
   src,
   alt,
   className = '',
+  imgClassName = '',
   offset = 100,
   priority = false,
 }) => {
@@ -37,7 +42,7 @@ export const ParallaxImage: React.FC<ParallaxImageProps> = ({
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
         decoding="async"
-        className="absolute inset-0 w-full h-full object-cover scale-[1.15]"
+        className={`absolute inset-0 w-full h-full object-cover scale-[1.15] ${imgClassName}`}
         style={reduceMotion ? undefined : { y }}
       />
     </div>

@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import { ArrowRight, PawPrint } from 'lucide-react'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
+import { MaskReveal } from '@/components/animations/MaskReveal'
 import { formatAge } from '@/lib/formatAge'
 import { useLandingPets } from '../useLandingPets'
 import type { Pet } from '@/lib/api/types'
@@ -145,16 +146,20 @@ export const HowItWorksSection: React.FC = () => {
       className="scroll-mt-24 border-t border-neutral-900 bg-neutral-950 py-24 md:py-32"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <ScrollReveal className="max-w-2xl">
-          <h2 className="text-balance font-display text-4xl font-bold tracking-[-0.02em] text-white md:text-5xl">
-            Three steps, and one of them is just typing.
-          </h2>
-          <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-neutral-300">
-            The hard part of finding your pet a friend was never the meeting. It was
-            everything before it: the asking around, the WhatsApp group with four
-            hundred people in it, the awkward questions at the park.
-          </p>
-        </ScrollReveal>
+        <div className="max-w-2xl">
+          <MaskReveal>
+            <h2 className="text-balance font-display text-4xl font-bold tracking-[-0.02em] text-white md:text-5xl">
+              Three steps, and one of them is just typing.
+            </h2>
+          </MaskReveal>
+          <ScrollReveal delay={0.12}>
+            <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-neutral-300">
+              The hard part of finding your pet a friend was never the meeting. It was
+              everything before it: the asking around, the WhatsApp group with four
+              hundred people in it, the awkward questions at the park.
+            </p>
+          </ScrollReveal>
+        </div>
 
         <div className="mt-16 grid gap-x-8 gap-y-16 lg:grid-cols-3">
           {steps.map((step, index) => (

@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { PetCardDialog } from '@/components/community/PetCardDialog'
 import type { Pet } from '@/lib/api/types'
+import { formatAge } from '@/lib/formatAge'
 import { Combobox } from '@/components/ui/Combobox'
 
 const PAGE_SIZE = 6
@@ -74,7 +75,7 @@ function PetCard({ pet, index, onOpen }: { pet: Pet; index: number; onOpen: (id:
           {pet.owner?.is_verified && <BadgeCheck className="h-4 w-4 flex-shrink-0 text-sky-400" aria-label="Verified owner" />}
         </div>
         <p className="mb-2 text-sm text-neutral-400">
-          {pet.breed} • {Math.floor(pet.age_months / 12)} years old
+          {pet.breed} • {formatAge(pet.age_months)}
         </p>
         {pet.bio && <p className="mb-3 line-clamp-2 text-sm text-neutral-300">{pet.bio}</p>}
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import { MailCheck, ShieldOff, UserX } from 'lucide-react'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
+import { MaskReveal } from '@/components/animations/MaskReveal'
 import {
   StaggerRevealContainer,
   StaggerRevealItem,
@@ -47,9 +48,11 @@ export const TrustSection: React.FC = () => {
         <div className="gap-16 lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start">
           <ScrollReveal>
             <div className="lg:sticky lg:top-28">
-              <h2 className="text-balance font-display text-4xl font-bold tracking-[-0.02em] text-white md:text-5xl">
-                You are going to meet a stranger.
-              </h2>
+              <MaskReveal>
+                <h2 className="text-balance font-display text-4xl font-bold tracking-[-0.02em] text-white md:text-5xl">
+                  You are going to meet a stranger.
+                </h2>
+              </MaskReveal>
               <p className="mt-5 max-w-[46ch] text-pretty text-lg leading-relaxed text-neutral-300">
                 So here is precisely what PawSome checks, and precisely what it does
                 not. Padding this part would be the one thing that actually matters

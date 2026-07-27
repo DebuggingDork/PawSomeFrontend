@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
+import { MaskReveal } from '@/components/animations/MaskReveal'
 import { AnimatedToggle } from '@/components/animations/AnimatedToggle'
 import { PetSpotlightCard } from '@/components/landing/PetSpotlightCard'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -49,15 +50,47 @@ function PetGrid({ pets }: { pets: Pet[] }) {
   )
   const rest = pets.filter((pet) => pet.id !== lead.id).slice(0, 3)
 
+  // Animated on mount rather than on scroll, because this grid is also what
+  // changes when you press Dogs/Cats — a whileInView reveal would fire once and
+  // then every subsequent tab switch would swap the cards in dead silence. A
+  // keyed mount animation covers both: scrolling to the section and toggling it.
   return (
-    <div className="flex flex-col gap-5">
-      <PetSpotlightCard pet={lead} layout="wide" />
+    <motion.div
+      className="flex flex-col gap-5"
+      initial="hidden"
+      animate="visible"
+      variants={{ visible: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } } }}
+    >
+      <PetCardReveal>
+        <PetSpotlightCard pet={lead} layout="wide" />
+      </PetCardReveal>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {rest.map((pet) => (
-          <PetSpotlightCard key={pet.id} pet={pet} />
+          <PetCardReveal key={pet.id}>
+            <PetSpotlightCard pet={pet} />
+          </PetCardReveal>
         ))}
       </div>
-    </div>
+    </motion.div>
+  )
+}
+
+function PetCardReveal({ children }: { children: React.ReactNode }) {
+  const reduceMotion = useReducedMotion()
+
+  return (
+    <motion.div
+      variants={{
+        hidden: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 28, scale: 0.98 },
+        visible: {
+          opacity: 1,
+          ...(reduceMotion ? {} : { y: 0, scale: 1 }),
+          transition: { duration: reduceMotion ? 0.25 : 0.6, ease: [0.16, 1, 0.3, 1] },
+        },
+      }}
+    >
+      {children}
+    </motion.div>
   )
 }
 
@@ -105,9 +138,11 @@ export const PetToggleSection: React.FC = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <h2 className="text-balance font-display text-4xl font-bold tracking-[-0.02em] text-white md:text-5xl">
-              The ones already here.
-            </h2>
+            <MaskReveal>
+              <h2 className="text-balance font-display text-4xl font-bold tracking-[-0.02em] text-white md:text-5xl">
+                The ones already here.
+              </h2>
+            </MaskReveal>
             <p className="mt-5 max-w-[58ch] text-pretty text-lg leading-relaxed text-neutral-300">
               Real profiles, written by the people who own them. Open any of them to
               read the rest.

@@ -20,6 +20,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { speciesEmoji, speciesLabel } from '@/lib/species'
 import { genderMark } from '@/lib/petBadges'
+import { formatAge } from '@/lib/formatAge'
 import { GenderBadge } from '@/components/ui/GenderBadge'
 
 interface PetCardDialogProps {
@@ -134,7 +135,7 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
                     )}
                   </div>
                   <p className="mt-0.5 text-sm text-neutral-400">
-                    {pet.breed} • {Math.floor(pet.age_months / 12)} years old
+                    {pet.breed} • {formatAge(pet.age_months)}
                   </p>
                 </div>
 

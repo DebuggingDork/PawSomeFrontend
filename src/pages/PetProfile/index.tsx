@@ -9,6 +9,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { genderMark } from '@/lib/petBadges'
+import { formatAge } from '@/lib/formatAge'
 import { GenderBadge } from '@/components/ui/GenderBadge'
 
 function PetProfilePage() {
@@ -105,7 +106,7 @@ function PetProfilePage() {
         <div>
           <h1 className="font-display text-3xl font-bold text-white">{pet.name}</h1>
           <p className="mt-1 text-neutral-400">
-            {pet.breed} • {Math.floor(pet.age_months / 12)} years old
+            {pet.breed} • {formatAge(pet.age_months)}
           </p>
         </div>
 
