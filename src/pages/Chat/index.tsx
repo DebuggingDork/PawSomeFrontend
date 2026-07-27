@@ -125,6 +125,7 @@ function ChatPage() {
   }
 
   const lastMineId = [...messages].reverse().find((m) => m.sender_pet_id === selected?.yourPetId)?.id
+  const yourPetName = pets.find((p) => p.id === selected?.yourPetId)?.name
 
   return (
     <div className="px-3 pb-4 pt-24 md:px-6 md:pt-28">
@@ -148,6 +149,12 @@ function ChatPage() {
                   <p className="truncate font-semibold text-white">{selected.otherPet.name}</p>
                   <p className="truncate text-xs text-neutral-500">
                     {otherOnline ? 'Online now' : selected.otherPet.breed}
+                    {/* Whose conversation this is. Every message you send here
+                        is from this pet, and with several pets there was
+                        nothing on screen saying which. */}
+                    {pets.length > 1 && yourPetName && (
+                      <span className="text-neutral-600"> · as {yourPetName}</span>
+                    )}
                   </p>
                 </div>
                 {!connected && (

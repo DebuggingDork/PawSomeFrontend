@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Search, Heart } from 'lucide-react'
 import { PetAvatar } from './PetAvatar'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { useAuthStore } from '@/store/useAuthStore'
 import type { Conversation } from '@/lib/api/types'
 
 function timeAgo(iso: string) {
@@ -28,6 +29,11 @@ export function ConversationSidebar({
   onSelect,
 }: ConversationSidebarProps) {
   const [query, setQuery] = useState('')
+  // With one pet the answer is never in doubt, so the label would just be
+  // repeated noise on every row.
+  const pets = useAuthStore((s) => s.pets)
+  const yourPetName = (petId: string) =>
+    pets.length > 1 ? pets.find((p) => p.id === petId)?.name : undefined
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -106,6 +112,9 @@ export function ConversationSidebar({
                       <p className="truncate font-semibold text-white">{conversation.otherPet.name}</p>
                     </div>
                     <p className="truncate text-xs text-neutral-500">
+                      {yourPetName(conversation.yourPetId) && (
+                        <span className="text-[#ff8c5c]">{yourPetName(conversation.yourPetId)} · </span>
+                      )}
                       {conversation.otherPet.breed} · {timeAgo(conversation.createdAt)}
                     </p>
                   </div>

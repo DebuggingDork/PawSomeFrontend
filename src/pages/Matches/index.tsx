@@ -19,6 +19,9 @@ function timeAgo(iso: string) {
 
 function MatchesPage() {
   const { isAuthenticated, isHydrating, pets } = useAuthStore()
+  // Which of your pets each match belongs to. With more than one pet, a list
+  // of names you matched with says nothing about who matched with whom.
+  const petNameById = new Map(pets.map((p) => [p.id, p.name]))
 
   const conversationsQuery = useQuery({
     queryKey: ['matches', 'conversations', pets.map((p) => p.id)],
@@ -80,7 +83,14 @@ function MatchesPage() {
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                   <h3 className="truncate text-lg font-semibold text-white">{conversation.otherPet.name}</h3>
                   <p className="truncate text-sm text-neutral-400">{conversation.otherPet.breed}</p>
-                  <p className="mt-1 text-xs text-neutral-500">{timeAgo(conversation.createdAt)}</p>
+                  <p className="mt-1 text-xs text-neutral-500">
+                    {pets.length > 1 && petNameById.has(conversation.yourPetId) && (
+                      <span className="text-[#ff8c5c]">
+                        {petNameById.get(conversation.yourPetId)} &middot;{' '}
+                      </span>
+                    )}
+                    {timeAgo(conversation.createdAt)}
+                  </p>
                 </div>
                 {conversation.otherPet.owner?.id && (
                   <SafetyMenu
