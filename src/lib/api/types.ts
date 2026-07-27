@@ -422,11 +422,26 @@ export interface MatchSummary {
 
 export type PetRelationshipStatus = 'none' | 'own' | 'liked' | 'skipped' | 'matched' | 'no_pet'
 
+/** Where one of your pets stands with the pet being viewed. */
+export interface PetRelationshipEntry {
+  pet_id: string
+  name: string
+  primary_photo_url: string | null
+  is_active: boolean
+  status: 'none' | 'liked' | 'skipped' | 'matched'
+  match_id: string | null
+  is_favorite: boolean
+  favorite_id: string | null
+}
+
 export interface PetRelationship {
   pet_id: string
+  /** Account-level summary: match beats pending like beats pass. */
   status: PetRelationshipStatus
   match_id: string | null
   your_pet_id: string | null
+  /** One entry per pet of yours that could act on this one (same species). */
+  pets: PetRelationshipEntry[]
 }
 
 export interface ChatReaction {
