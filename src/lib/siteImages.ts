@@ -28,14 +28,8 @@ export const siteImages = {
   /** Landing hero: two dogs looking up at the camera on a paved path, 1535x1025.
    *
    *  Stored as the supplied PNG, byte for byte — not resized, not re-encoded,
-   *  not graded. The hero renders it with object-contain and lays its copy out
-   *  against the image's own aspect ratio, so the whole photograph is on screen
-   *  at every size: both faces, both sets of ears, both noses and the
-   *  background. Anything that would recompress or recrop it defeats the point
-   *  of storing the original.
-   *
-   *  Its own key rather than overwriting an earlier hero, since these objects
-   *  are served with a one-year immutable cache. */
+   *  not graded. The hero paints it full-bleed with object-cover across the
+   *  first viewport so the photograph is the entire stage. */
   heroPets: `${R2_BASE}/final-home-page-image.png`,
   /** Two dogs running at dusk. The Auth background and the landing's closing
    *  band — was `heroDog` until it stopped being a hero. */
