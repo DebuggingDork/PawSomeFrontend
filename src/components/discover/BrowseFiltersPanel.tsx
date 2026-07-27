@@ -43,11 +43,13 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
   const set = (patch: Partial<BrowseFilters>) => onChange({ ...filters, ...patch })
 
   return (
-    <div className="mb-4 rounded-xl border border-neutral-800/80 bg-neutral-900/40">
+    /* Overlays rather than expands. Pushing the deck down when filters opened
+       was part of why the swipe buttons ended up below the fold. */
+    <div className="relative rounded-xl border border-neutral-800/80 bg-neutral-900/40">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-2 px-4 py-3 text-sm text-neutral-300"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-sm text-neutral-300"
       >
         <span className="flex items-center gap-2">
           <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -64,13 +66,13 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18 }}
+            className="absolute left-0 right-0 top-full z-40 mt-2 max-h-[60vh] overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-950 shadow-2xl shadow-black/60"
           >
-            <div className="space-y-4 border-t border-neutral-800/80 px-4 py-4">
+            <div className="space-y-4 px-4 py-4">
               <div>
                 <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-neutral-500">
                   <span>Distance</span>

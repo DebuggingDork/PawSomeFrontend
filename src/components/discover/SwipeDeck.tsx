@@ -195,8 +195,12 @@ export function SwipeDeck({
   const canCycle = order.length > 1 && !exiting
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative h-[26rem] w-full max-w-sm sm:h-[30rem]">
+    /* Fills whatever height the page gives it and keeps the action row in
+       flow beneath, so the buttons are always on screen. The card area used to
+       be a fixed 26-30rem, which on a laptop pushed skip/Super Woof/like below
+       the fold — users had no way to know they existed without scrolling. */
+    <div className="flex h-full min-h-0 flex-col items-center">
+      <div className="relative w-full max-w-sm flex-1 min-h-[16rem]">
         <AnimatePresence onExitComplete={() => setExiting(false)}>
           {visible.map((candidate, i) => (
             <DraggableCard
@@ -231,7 +235,7 @@ export function SwipeDeck({
         </button>
       </div>
 
-      <div className="mt-10 flex items-end gap-5">
+      <div className="mt-4 flex flex-shrink-0 items-end gap-5 sm:mt-6">
         <button
           onClick={onUndo}
           disabled={!canUndo || undoing}

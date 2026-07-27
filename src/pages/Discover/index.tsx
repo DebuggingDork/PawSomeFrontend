@@ -60,8 +60,8 @@ function SwipingAsSelector({
   if (selectable.length < 2) return null
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2">
-      <span className="text-xs font-medium text-neutral-500">Swiping as</span>
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <span className="flex-shrink-0 text-xs font-medium text-neutral-500">Swiping as</span>
       {selectable.map((pet) => {
         const isActive = pet.id === activePet?.id
         return (
@@ -242,8 +242,12 @@ function DiscoverPage() {
       : null
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pb-16 pt-24 md:pt-28">
-      <div className="mb-6 flex items-center justify-between">
+    /* A viewport-height column rather than a growing page: the deck takes
+       whatever is left after the header and controls, so the swipe buttons are
+       always visible. Before this they sat below a fixed-height card and users
+       had to scroll to discover that skip, Super Woof and like even existed. */
+    <div className="mx-auto flex h-[calc(100dvh-4.5rem)] max-w-2xl flex-col px-6 pb-4 pt-20 md:pt-24">
+      <div className="mb-3 flex flex-shrink-0 items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-white">Discover</h1>
         <PillTabs
           layoutId="discover-tab-pill"
@@ -257,15 +261,20 @@ function DiscoverPage() {
       </div>
 
       {tab === 'discover' && (
-        <>
-          <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
-
-          <BrowseFiltersPanel filters={filters} onChange={setFilters} />
+        <div className="flex min-h-0 flex-1 flex-col">
+          {/* Both controls share one row — two stacked full-width bars cost
+              enough height on a laptop to push the deck's buttons off screen. */}
+          <div className="mb-3 flex flex-shrink-0 items-center gap-3">
+            <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
+            <div className="ml-auto w-40 flex-shrink-0">
+              <BrowseFiltersPanel filters={filters} onChange={setFilters} />
+            </div>
+          </div>
 
           {locationError && <LocationNeededPrompt />}
 
           {!locationError && browseQuery.isLoading && (
-            <Skeleton className="mx-auto h-96 w-full max-w-sm" />
+            <Skeleton className="mx-auto h-full w-full max-w-sm" />
           )}
 
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (
@@ -289,7 +298,7 @@ function DiscoverPage() {
           )}
 
           {!locationError && deck.length > 0 && (
-            <>
+            <div className="flex min-h-0 flex-1 flex-col">
               {/* Verification is checked first: an unverified user with a pet would
                   otherwise see no banner at all and have every swipe silently
                   rejected by the server. */}
@@ -315,21 +324,24 @@ function DiscoverPage() {
                   {swipeError}
                 </div>
               )}
-              <SwipeDeck
-                candidates={deck}
-                deckKey={browseKey}
-                onSwipe={handleSwipe}
-                onUndo={() => lastSwipe && activePet && undoMutation.mutate(lastSwipe.swipeId)}
-                canUndo={!!lastSwipe && !!activePet}
-                undoing={undoMutation.isPending}
-                superWoofRemaining={superWoofQuery.data?.remaining}
-              />
-            </>
+              <div className="min-h-0 flex-1">
+                <SwipeDeck
+                  candidates={deck}
+                  deckKey={browseKey}
+                  onSwipe={handleSwipe}
+                  onUndo={() => lastSwipe && activePet && undoMutation.mutate(lastSwipe.swipeId)}
+                  canUndo={!!lastSwipe && !!activePet}
+                  undoing={undoMutation.isPending}
+                  superWoofRemaining={superWoofQuery.data?.remaining}
+                />
+              </div>
+            </div>
           )}
-        </>
+        </div>
       )}
 
       {tab === 'likes' && (
+        <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto">
         <LikesReceivedList
           likes={likes}
           isLoading={notificationsQuery.isLoading}
@@ -343,6 +355,7 @@ function DiscoverPage() {
             rejectMutation.mutate(id)
           }}
         />
+        </div>
       )}
     </div>
   )
