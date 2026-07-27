@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Heart, LogIn, PawPrint, ShieldCheck, Scissors, GraduationCap } from 'lucide-react'
+import { Link, useParams } from 'react-router'
+import { useQuery } from '@tanstack/react-query'
+import { ArrowLeft, LogIn, PawPrint, ShieldCheck, Scissors, GraduationCap } from 'lucide-react'
 import { getPet } from '@/lib/api/pets'
-import { swipe as swipeApi } from '@/lib/api/matches'
+import { PetInterestActions } from '@/components/pets/PetInterestActions'
 import { useAuthStore } from '@/store/useAuthStore'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -14,8 +14,7 @@ import { GenderBadge } from '@/components/ui/GenderBadge'
 
 function PetProfilePage() {
   const { petId } = useParams<{ petId: string }>()
-  const navigate = useNavigate()
-  const { isAuthenticated, user, activePet } = useAuthStore()
+  const user = useAuthStore((s) => s.user)
   const [activePhoto, setActivePhoto] = useState<string | null>(null)
 
   const { data: pet, isLoading, isError } = useQuery({
@@ -23,22 +22,6 @@ function PetProfilePage() {
     queryFn: () => getPet(petId!),
     enabled: !!petId,
   })
-
-  const likeMutation = useMutation({
-    mutationFn: () => swipeApi({ pet_id: activePet!.id, target_pet_id: pet!.id, action: 'like' }),
-  })
-
-  const handleMatchClick = () => {
-    if (!isAuthenticated) {
-      navigate('/auth')
-      return
-    }
-    if (!activePet) {
-      navigate('/onboarding')
-      return
-    }
-    likeMutation.mutate()
-  }
 
   if (isLoading) {
     return (
@@ -110,17 +93,18 @@ function PetProfilePage() {
           </p>
         </div>
 
-        {pet.user_id !== user?.id && (
-          <button
-            type="button"
-            onClick={handleMatchClick}
-            disabled={likeMutation.isPending || likeMutation.isSuccess}
-            className="flex flex-shrink-0 items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <Heart className={`h-4 w-4 ${likeMutation.isSuccess ? 'fill-current' : ''}`} />
-            {likeMutation.isSuccess ? "You're interested!" : 'Interested'}
-          </button>
+        {pet.user_id === user?.id && (
+          <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-4 py-2 text-sm font-semibold text-[#ff6b35]">
+            <PawPrint className="h-4 w-4" />
+            My pet
+          </span>
         )}
+      </div>
+
+      {/* Same component the Community card uses, so the two surfaces can't
+          drift apart on who is acting or what state they are in. */}
+      <div className="mt-5 max-w-md">
+        <PetInterestActions pet={pet} />
       </div>
 
       {(pet.is_vaccinated || pet.is_neutered || pet.is_trained) && (
