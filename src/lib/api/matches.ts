@@ -1,6 +1,5 @@
 import { apiFetch, WS_BASE_URL } from './client'
 import { getAccessToken } from './tokens'
-import { getPet } from './pets'
 import type {
   BrowseFilters,
   BrowsePetsResponse,
@@ -9,6 +8,7 @@ import type {
   MatchSummary,
   NotificationPushEvent,
   NotificationWithDetails,
+  PetRelationship,
   Playdate,
   PlaydateCreateInput,
   PlaydateListResponse,
@@ -26,29 +26,35 @@ export function getMyMatches(): Promise<MatchSummary[]> {
 }
 
 /**
- * Loads the caller's matches and resolves each one into a Conversation —
- * pairing the match with whichever pet in it isn't one of `myPetIds`.
+ * Loads the caller's matches as ready-to-render conversations.
+ *
+ * The other pet now comes back embedded in the match itself. This used to fan
+ * out one GET /pets/{id} per match under a Promise.all, and that endpoint 404s
+ * on a deactivated pet — so a single pet going inactive rejected the whole
+ * batch and both Matches and Chat rendered as though the user had no matches at
+ * all, while the other side could still message them.
  */
-export async function getConversations(myPetIds: string[]): Promise<Conversation[]> {
+export async function getConversations(): Promise<Conversation[]> {
   const matches = await getMyMatches()
-  const ownIds = new Set(myPetIds)
 
-  const conversations = await Promise.all(
-    matches.map(async (match) => {
-      const yourPetId = ownIds.has(match.pet1_id) ? match.pet1_id : match.pet2_id
-      const otherPetId = yourPetId === match.pet1_id ? match.pet2_id : match.pet1_id
-      const otherPet = await getPet(otherPetId)
+  return matches
+    .map(
+      (match) =>
+        ({
+          matchId: match.id,
+          yourPetId: match.your_pet_id,
+          otherPet: match.other_pet,
+          createdAt: match.created_at,
+        }) satisfies Conversation,
+    )
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+}
 
-      return {
-        matchId: match.id,
-        yourPetId,
-        otherPet,
-        createdAt: match.created_at,
-      } satisfies Conversation
-    }),
-  )
-
-  return conversations.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+/** How the caller already stands with a pet, so browse surfaces don't offer
+ * "Interested" on someone they have already matched or swiped on. */
+export function getPetRelationship(targetPetId: string, petId?: string): Promise<PetRelationship> {
+  const query = petId ? `?${toQueryString({ pet_id: petId })}` : ''
+  return apiFetch<PetRelationship>(`/matches/relationship/${targetPetId}${query}`)
 }
 
 function toQueryString(params: Record<string, string | number | boolean | undefined>): string {

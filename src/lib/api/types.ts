@@ -413,6 +413,20 @@ export interface MatchSummary {
   pet1_id: string
   pet2_id: string
   created_at: string
+  /** Whichever pet in the match belongs to the caller. */
+  your_pet_id: string
+  /** The other side, resolved server-side — present even if that pet has since
+   * been deactivated, so one deactivated pet can't empty the whole list. */
+  other_pet: Pet
+}
+
+export type PetRelationshipStatus = 'none' | 'own' | 'liked' | 'skipped' | 'matched' | 'no_pet'
+
+export interface PetRelationship {
+  pet_id: string
+  status: PetRelationshipStatus
+  match_id: string | null
+  your_pet_id: string | null
 }
 
 export interface ChatReaction {

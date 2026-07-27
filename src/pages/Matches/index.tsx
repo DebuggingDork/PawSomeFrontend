@@ -22,7 +22,7 @@ function MatchesPage() {
 
   const conversationsQuery = useQuery({
     queryKey: ['matches', 'conversations', pets.map((p) => p.id)],
-    queryFn: () => getConversations(pets.map((p) => p.id)),
+    queryFn: getConversations,
     enabled: isAuthenticated && !isHydrating && pets.length > 0,
   })
 

@@ -62,12 +62,16 @@ function ChatPage() {
 
       setConversationsLoading(true)
       try {
-        const convos = await getConversations(pets.map((p) => p.id))
+        const convos = await getConversations()
         if (cancelled) return
         setConversations(convos)
         const requestedMatchId = searchParams.get('match')
         const requested = requestedMatchId ? convos.find((c) => c.matchId === requestedMatchId) : undefined
         setSelected((current) => current ?? requested ?? convos[0] ?? null)
+      } catch {
+        // A failed load leaves the sidebar empty rather than taking the page
+        // down with an unhandled rejection; the next mount retries.
+        if (!cancelled) setConversations([])
       } finally {
         if (!cancelled) setConversationsLoading(false)
       }
