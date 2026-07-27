@@ -55,8 +55,13 @@ function PawsomeFooter() {
           <div className="flex flex-col space-y-4">
             <div className="flex items-center space-x-2">
               <Heart className="text-[#ff6b35] fill-[#ff6b35]" size={32} />
+              {/* One solid brand colour. Gradient-clipped text renders thinner
+                  and washes out at the ends of the ramp, and it made the footer
+                  wordmark a different colour from the identical wordmark in the
+                  navbar and the splash — the splash had already been fixed this
+                  way for the same reason. */}
               <span
-                className="text-3xl font-bold bg-gradient-to-r from-[#ff6b35] via-[#ff8c5c] to-[#ff6b35] bg-clip-text text-transparent"
+                className="text-3xl font-bold text-[#ff6b35]"
                 style={{ fontFamily: "Pacifico, cursive" }}
               >
                 PawSome

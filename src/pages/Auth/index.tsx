@@ -135,7 +135,7 @@ function AuthPage() {
           surface floating on top of it, not a separately-designed block. */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <img
-          src={siteImages.heroDog}
+          src={siteImages.duskRun}
           alt=""
           className={`h-full w-full object-cover ${shouldReduceMotion ? '' : 'animate-slow-pan'}`}
         />
@@ -190,9 +190,15 @@ function AuthPage() {
           </div>
         </div>
 
-        {/* Trust line */}
+        {/* Trust line.
+            Was "Join 10,000+ pet parents already matching nearby." There are
+            currently about thirty pets on PawSome, the About page promises in
+            as many words not to pad the numbers, and the landing page one click
+            away now says so out loud — so this line was contradicting the rest
+            of the site as well as the database. Nothing is lost by not
+            quantifying it. */}
         <p className="text-sm font-medium text-neutral-300">
-          🐾 Join 10,000+ pet parents already matching nearby.
+          🐾 Set your pet up once, and start meeting the ones nearby.
         </p>
       </div>
 

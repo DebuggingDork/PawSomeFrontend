@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 @import 'tailwindcss';
 
+/* Hover states that only exist where there is a real pointer.
+ *
+ * A touch device fires :hover on tap and then keeps it stuck until you tap
+ * somewhere else, so a card that lifts on hover stays lifted after a tap — the
+ * phone ends up showing a state that was designed for a mouse hovering. Use
+ * `hoverable:hover:` for anything decorative; plain `hover:` is still right for
+ * colour changes that also need to work as a tap affordance. */
+@custom-variant hoverable (@media (hover: hover) and (pointer: fine));
+
 
 @theme {
   --font-display: 'Syne', sans-serif;
@@ -29,6 +38,14 @@
   --color-accent-700: #be123c;
   --color-accent-800: #9f1239;
   --color-accent-900: #881337;
+
+  /* The built-in CSS easings are too weak to read as intentional — `ease-out`
+     spends most of its curve nearly linear. These are the stronger variants:
+     quart for anything entering or leaving, expo where the settle should feel
+     like it lands rather than drifts. Named in the --ease-* namespace so
+     Tailwind emits `ease-out-quart` / `ease-out-expo` utilities. */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --animate-shimmer: shimmer 1.6s infinite;
   --animate-gradient-pan: gradient-pan 4s linear infinite;
@@ -216,6 +233,17 @@ h1, h2, h3 {
 /* Radial gradient utility */
 .bg-gradient-radial {
   background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Reduced motion means fewer and gentler animations, not none: fades and colour
+   changes still carry meaning, so only the purely decorative loops are stopped.
+   Everything driven by Framer Motion opts out separately through
+   useReducedMotion, and GSAP's pinned slider degrades to a plain scroll. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-decorative {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 /*

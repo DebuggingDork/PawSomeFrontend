@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 interface HeroEntranceProps {
   children: React.ReactNode
@@ -7,6 +7,8 @@ interface HeroEntranceProps {
 }
 
 export const HeroEntranceContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const reduceMotion = useReducedMotion()
+
   return (
     <motion.div
       initial="hidden"
@@ -15,7 +17,7 @@ export const HeroEntranceContainer: React.FC<{ children: React.ReactNode }> = ({
         hidden: {},
         visible: {
           transition: {
-            staggerChildren: 0.15,
+            staggerChildren: reduceMotion ? 0 : 0.15,
           },
         },
       }}
@@ -27,17 +29,19 @@ export const HeroEntranceContainer: React.FC<{ children: React.ReactNode }> = ({
 }
 
 export const HeroEntranceItem: React.FC<HeroEntranceProps> = ({ children, delay = 0 }) => {
+  const reduceMotion = useReducedMotion()
+
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 30 },
+        hidden: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 30 },
         visible: {
           opacity: 1,
-          y: 0,
+          ...(reduceMotion ? {} : { y: 0 }),
           transition: {
-            duration: 0.8,
+            duration: reduceMotion ? 0.3 : 0.8,
             ease: [0.16, 1, 0.3, 1],
-            delay,
+            delay: reduceMotion ? 0 : delay,
           },
         },
       }}

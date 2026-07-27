@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion, type Variant } from 'framer-motion'
+import { motion, useReducedMotion, type Variant } from 'framer-motion'
 
 type RevealDirection = 'up' | 'down' | 'left' | 'right'
 
@@ -39,15 +39,24 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   className = '',
   scale = false,
 }) => {
-  const initial = {
-    ...getInitial(direction, y),
-    ...(scale ? { scale: 0.95 } : {}),
-  }
+  // Someone who has asked their OS for less motion still gets the reveal — just
+  // as a fade, with nothing sliding across the screen. Dropping the animation
+  // entirely would be worse: the content would pop in with no transition at all.
+  const reduceMotion = useReducedMotion()
 
-  const visible = {
-    ...getVisible(direction),
-    ...(scale ? { scale: 1 } : {}),
-  }
+  const initial = reduceMotion
+    ? { opacity: 0 }
+    : {
+        ...getInitial(direction, y),
+        ...(scale ? { scale: 0.95 } : {}),
+      }
+
+  const visible = reduceMotion
+    ? { opacity: 1 }
+    : {
+        ...getVisible(direction),
+        ...(scale ? { scale: 1 } : {}),
+      }
 
   return (
     <motion.div
@@ -55,8 +64,8 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       whileInView={visible}
       viewport={{ once: true, amount: 0.15 }}
       transition={{
-        duration,
-        delay,
+        duration: reduceMotion ? 0.3 : duration,
+        delay: reduceMotion ? 0 : delay,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       className={className}

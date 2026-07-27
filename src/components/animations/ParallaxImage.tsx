@@ -1,11 +1,14 @@
 import React, { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 
 interface ParallaxImageProps {
   src: string
   alt: string
   className?: string
   offset?: number
+  /** Set on the hero photo. It is the largest thing on the page and the first
+   *  thing painted, so it must not queue behind lazily-loaded imagery below. */
+  priority?: boolean
 }
 
 export const ParallaxImage: React.FC<ParallaxImageProps> = ({
@@ -13,14 +16,17 @@ export const ParallaxImage: React.FC<ParallaxImageProps> = ({
   alt,
   className = '',
   offset = 100,
+  priority = false,
 }) => {
   const ref = useRef<HTMLDivElement>(null)
+  const reduceMotion = useReducedMotion()
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
   })
 
-  // Move the image vertically as we scroll past it
+  // Move the image vertically as we scroll past it. Parallax is pure decoration
+  // — under reduced motion the photo simply holds still.
   const y = useTransform(scrollYProgress, [0, 1], [-offset, offset])
 
   return (
@@ -28,8 +34,11 @@ export const ParallaxImage: React.FC<ParallaxImageProps> = ({
       <motion.img
         src={src}
         alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover scale-[1.15]"
-        style={{ y }}
+        style={reduceMotion ? undefined : { y }}
       />
     </div>
   )
