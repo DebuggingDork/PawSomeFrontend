@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Bookmark, BookmarkCheck, Check, Heart, LogIn, MessageCircle } from 'lucide-react'
-import { getPetRelationship, swipe as swipeApi } from '@/lib/api/matches'
+import { Bookmark, BookmarkCheck, Check, Heart, LogIn, MessageCircle, RotateCcw } from 'lucide-react'
+import { getPetRelationship, swipe as swipeApi, unskipPet } from '@/lib/api/matches'
 import { addFavorite, removeFavorite } from '@/lib/api/favorites'
 import { ApiError } from '@/lib/api/client'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -76,6 +76,17 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
     },
   })
 
+  // Undoing a pass from here is the only way back into the deck for a pet you
+  // scrolled past — the five-minute swipe undo is long gone by the time anyone
+  // goes looking for them.
+  const unskipMutation = useMutation({
+    mutationFn: () => unskipPet(pet.id, selected!.pet_id),
+    onSuccess: () => {
+      refresh()
+      queryClient.invalidateQueries({ queryKey: ['browse'] })
+    },
+  })
+
   const favoriteMutation = useMutation<void, unknown, void>({
     mutationFn: async () => {
       if (selected!.is_favorite && selected!.favorite_id) {
@@ -98,7 +109,8 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
     }
     return error ? 'Could not do that just now. Try again.' : null
   }
-  const actionError = errorFrom(likeMutation.error) ?? errorFrom(favoriteMutation.error)
+  const actionError =
+    errorFrom(likeMutation.error) ?? errorFrom(favoriteMutation.error) ?? errorFrom(unskipMutation.error)
 
   if (isOwnPet) {
     return (
@@ -207,12 +219,16 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
             Interest sent
           </span>
         ) : alreadySkipped ? (
-          <span
-            title={`${selected?.name} already passed on ${pet.name} in Discover.`}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-neutral-700 px-4 py-2.5 text-sm font-medium text-neutral-500"
+          <button
+            type="button"
+            onClick={() => unskipMutation.mutate()}
+            disabled={unskipMutation.isPending}
+            title={`Put ${pet.name} back in ${selected?.name}'s deck`}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-neutral-700 px-4 py-2.5 text-sm font-medium text-neutral-400 transition-colors hover:border-neutral-500 hover:text-white disabled:opacity-50"
           >
-            Passed
-          </span>
+            <RotateCcw className="h-4 w-4" />
+            {unskipMutation.isPending ? 'Undoing…' : 'Passed — undo'}
+          </button>
         ) : (
           <button
             type="button"
@@ -248,7 +264,9 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
         <p className="text-xs text-neutral-500">
           {justLiked
             ? `${pet.name}'s owner has been notified. You'll match once they accept.`
-            : alreadyLiked
+            : alreadySkipped
+              ? `${selected?.name} passed on ${pet.name}. Undo to put them back in the deck.`
+              : alreadyLiked
               ? `Waiting on ${pet.name}'s owner to accept ${selected?.name}'s interest.`
               : selected?.is_favorite
                 ? `Saved to ${selected.name}'s list — only you can see it.`

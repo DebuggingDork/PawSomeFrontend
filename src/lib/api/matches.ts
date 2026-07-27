@@ -50,6 +50,13 @@ export async function getConversations(): Promise<Conversation[]> {
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
 }
 
+/** Undoes a pass so the pet returns to the deck. Returns the refreshed
+ * relationship, so the caller can re-render without a second request. */
+export function unskipPet(targetPetId: string, petId?: string): Promise<PetRelationship> {
+  const query = petId ? `?${toQueryString({ pet_id: petId })}` : ''
+  return apiFetch<PetRelationship>(`/matches/unskip/${targetPetId}${query}`, { method: 'POST' })
+}
+
 /** How the caller already stands with a pet, so browse surfaces don't offer
  * "Interested" on someone they have already matched or swiped on. */
 export function getPetRelationship(targetPetId: string, petId?: string): Promise<PetRelationship> {

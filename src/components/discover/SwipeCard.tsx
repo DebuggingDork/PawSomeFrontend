@@ -66,7 +66,9 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
         <div className="mb-3 flex items-center gap-3 text-xs text-neutral-400">
           <span className="flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
-            {distance_km.toFixed(1)} km away
+            {/* Null when neither owner has set a location — those pets are kept
+                in the deck rather than dropped, so the card has to cope. */}
+            {distance_km == null ? 'Distance unknown' : `${distance_km.toFixed(1)} km away`}
           </span>
           {pet.owner?.full_name && <span>Owned by {pet.owner.full_name}</span>}
         </div>

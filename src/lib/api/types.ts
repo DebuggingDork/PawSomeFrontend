@@ -240,9 +240,11 @@ export interface AchievementSummary {
 
 export interface BrowseCandidate {
   pet: Pet
-  distance_km: number
+  distance_km: number | null
   calculated_at: string
   compatibility_score?: number | null
+  /** Shown again because you passed on it earlier and the unseen pets ran out. */
+  previously_passed?: boolean
 }
 
 export interface BrowsePetsResponse {
