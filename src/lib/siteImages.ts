@@ -25,10 +25,13 @@
 const R2_BASE = 'https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site'
 
 export const siteImages = {
-  /** Landing hero. Both animals and all the light sit in the right half, which
-   *  is what lets the headline column sit in real shadow instead of under an
-   *  opaque black wash. */
-  heroPets: `${R2_BASE}/heroPets.jpg`,
+  /** Landing hero: two dogs looking straight up at the camera, filling the
+   *  frame. The composition is symmetrical and the faces sit dead centre, so
+   *  the headline is centred over them rather than pushed into a shadowed
+   *  column — which is why this replaced the previous, wider shot. Stored under
+   *  its own key rather than overwriting heroPets.jpg, since that object is
+   *  served with a one-year immutable cache. */
+  heroPets: `${R2_BASE}/heroPets-closeup.jpg`,
   /** Two dogs running at dusk. The Auth background and the landing's closing
    *  band — was `heroDog` until it stopped being a hero. */
   duskRun: `${R2_BASE}/duskRun.jpg`,
