@@ -73,6 +73,12 @@ export function useChatConversation(selected: Conversation | null) {
     const socket = connectChatSocket(selected.matchId, {
       onOpen: () => !cancelled && setConnected(true),
       onClose: () => !cancelled && setConnected(false),
+      // Pub/sub has no backlog, so whatever arrived while the socket was down
+      // is only in the database. Re-reading history on reconnect is what stops
+      // a blip from leaving a permanent hole in the thread.
+      onReconnect: () => {
+        if (!cancelled) loadHistory()
+      },
       onEvent: (event) => {
         if (cancelled) return
 
@@ -84,7 +90,19 @@ export function useChatConversation(selected: Conversation | null) {
             is_read: event.data.is_read ?? false,
             reactions: event.data.reactions ?? [],
           }
-          setMessages((prev) => (prev.some((m) => m.id === incoming.id) ? prev : [...prev, incoming]))
+          setMessages((prev) => {
+            // Our own message coming back: swap the optimistic copy for the real
+            // row in place, so it keeps its position and doesn't flash.
+            if (incoming.client_id) {
+              const localIndex = prev.findIndex((m) => m.client_id === incoming.client_id)
+              if (localIndex !== -1) {
+                const next = [...prev]
+                next[localIndex] = incoming
+                return next
+              }
+            }
+            return prev.some((m) => m.id === incoming.id) ? prev : [...prev, incoming]
+          })
           if (incoming.sender_pet_id !== selected.yourPetId) {
             socket.sendRead(incoming.id)
           }
@@ -156,14 +174,44 @@ export function useChatConversation(selected: Conversation | null) {
       e.preventDefault()
       const content = draft.trim()
       const socket = socketRef.current
-      if (!content || !socket) return
+      if (!content || !socket || !selected) return
 
-      socket.sendMessage(content)
+      // Draw it immediately, the way every chat app does. Waiting for the
+      // round trip meant the composer emptied and nothing appeared, so the
+      // message looked lost until a reload proved otherwise. The server echoes
+      // client_id back and the real row replaces this one in place.
+      const clientId = `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: clientId,
+          client_id: clientId,
+          match_id: selected.matchId,
+          sender_pet_id: selected.yourPetId,
+          content,
+          msg_type: 'text',
+          created_at: new Date().toISOString(),
+          is_read: false,
+          reactions: [],
+          pending: true,
+        },
+      ])
+
+      socket.sendMessage(content, clientId)
       socket.sendTyping(false)
       setDraft('')
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+
+      // If the echo never arrives the message is still queued for the next
+      // connection, but saying nothing for ten seconds is worse than admitting
+      // it hasn't landed yet.
+      setTimeout(() => {
+        setMessages((prev) =>
+          prev.map((m) => (m.client_id === clientId && m.pending ? { ...m, failed: true } : m)),
+        )
+      }, 10_000)
     },
-    [draft],
+    [draft, selected],
   )
 
   const handleReact = useCallback(

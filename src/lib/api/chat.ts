@@ -52,40 +52,103 @@ export interface ChatSocketHandlers {
   onEvent: (event: ChatSocketEvent) => void
   onOpen?: () => void
   onClose?: () => void
+  /** Fired after a dropped connection is re-established, so the caller can
+   * reload anything that happened while it was down. */
+  onReconnect?: () => void
 }
 
 export interface ChatSocket {
-  sendMessage: (content: string) => void
+  sendMessage: (content: string, clientId: string) => void
   sendTyping: (isTyping: boolean) => void
   sendRead: (messageId: string) => void
   close: () => void
 }
 
-/** Opens the real-time chat WebSocket for a match. Caller owns the lifecycle (close on unmount). */
-export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers): ChatSocket {
-  const token = getAccessToken()
-  const socket = new WebSocket(`${WS_BASE_URL}/chat/ws/${matchId}?token=${encodeURIComponent(token ?? '')}`)
+const RECONNECT_BASE_MS = 500
+const RECONNECT_MAX_MS = 10_000
 
-  socket.onopen = () => handlers.onOpen?.()
-  socket.onclose = () => handlers.onClose?.()
-  socket.onmessage = (event) => {
-    try {
-      handlers.onEvent(JSON.parse(event.data) as ChatSocketEvent)
-    } catch {
-      // ignore malformed frames
+/**
+ * Opens the real-time chat WebSocket for a match and keeps it open.
+ *
+ * Two things this deliberately does that the previous version did not:
+ *
+ * - **Reconnects.** There was no reconnect at all. Once the socket dropped —
+ *   an idle proxy timeout, a sleeping laptop, a brief network blip — the chat
+ *   was dead until the page was reloaded, which is exactly what "I have to
+ *   refresh every time" describes.
+ * - **Queues.** Sends made while the socket wasn't OPEN were dropped on the
+ *   floor with no error, so a message typed during those windows simply never
+ *   existed. They are now held and flushed on connect.
+ *
+ * Caller still owns the lifecycle: close() stops reconnecting for good.
+ */
+export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers): ChatSocket {
+  let socket: WebSocket | null = null
+  let closedByCaller = false
+  let attempts = 0
+  let hasConnectedOnce = false
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+  // Only messages are worth holding. A stale typing flag or read receipt
+  // delivered seconds late is noise, so those are dropped when offline.
+  const pending: string[] = []
+
+  const flush = () => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return
+    while (pending.length > 0) {
+      socket.send(pending.shift()!)
     }
   }
 
-  const send = (payload: Record<string, unknown>) => {
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(payload))
+  const open = () => {
+    const token = getAccessToken()
+    socket = new WebSocket(`${WS_BASE_URL}/chat/ws/${matchId}?token=${encodeURIComponent(token ?? '')}`)
+
+    socket.onopen = () => {
+      attempts = 0
+      handlers.onOpen?.()
+      flush()
+      if (hasConnectedOnce) handlers.onReconnect?.()
+      hasConnectedOnce = true
+    }
+
+    socket.onclose = () => {
+      handlers.onClose?.()
+      if (closedByCaller) return
+      // Exponential backoff, capped, so a server that is down doesn't get
+      // hammered but a transient blip recovers within half a second.
+      const delay = Math.min(RECONNECT_BASE_MS * 2 ** attempts, RECONNECT_MAX_MS)
+      attempts += 1
+      reconnectTimer = setTimeout(open, delay)
+    }
+
+    socket.onmessage = (event) => {
+      try {
+        handlers.onEvent(JSON.parse(event.data) as ChatSocketEvent)
+      } catch {
+        // ignore malformed frames
+      }
+    }
+  }
+
+  open()
+
+  const send = (payload: Record<string, unknown>, queueIfClosed = false) => {
+    const text = JSON.stringify(payload)
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(text)
+    } else if (queueIfClosed) {
+      pending.push(text)
     }
   }
 
   return {
-    sendMessage: (content) => send({ type: 'message', content }),
+    sendMessage: (content, clientId) => send({ type: 'message', content, client_id: clientId }, true),
     sendTyping: (isTyping) => send({ type: 'typing', is_typing: isTyping }),
     sendRead: (messageId) => send({ type: 'read', message_id: messageId }),
-    close: () => socket.close(),
+    close: () => {
+      closedByCaller = true
+      if (reconnectTimer) clearTimeout(reconnectTimer)
+      socket?.close()
+    },
   }
 }

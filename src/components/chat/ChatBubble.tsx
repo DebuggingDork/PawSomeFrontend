@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Check, CheckCheck, SmilePlus, Trash2 } from 'lucide-react'
+import { AlertCircle, Check, CheckCheck, Clock, SmilePlus, Trash2 } from 'lucide-react'
 import type { ChatMessage } from '@/lib/api/types'
 
 const QUICK_REACTIONS = ['👍', '❤️', '😂', '😮', '😢']
@@ -129,7 +129,20 @@ export function ChatBubble({
 
         <div className="flex items-center gap-1 px-1 text-[11px] text-neutral-500">
           <span>{formatTime(message.created_at)}</span>
-          {isMine && showSeen && (
+          {/* Delivery state, in the order it actually happens: still in flight,
+              gave up waiting, delivered, then seen. Without the first two a
+              message drawn optimistically was indistinguishable from one the
+              server had confirmed. */}
+          {isMine && message.failed && (
+            <span className="flex items-center gap-1 text-rose-400" title="Not delivered yet — retrying">
+              <AlertCircle className="h-3.5 w-3.5" />
+              Not sent
+            </span>
+          )}
+          {isMine && message.pending && !message.failed && (
+            <Clock className="h-3.5 w-3.5 text-neutral-500" aria-label="Sending" />
+          )}
+          {isMine && showSeen && !message.pending && !message.failed && (
             <span className="text-[#ff8c5c]" title={message.is_read ? 'Seen' : 'Sent'}>
               {message.is_read ? <CheckCheck className="h-3.5 w-3.5" /> : <Check className="h-3.5 w-3.5" />}
             </span>

@@ -461,6 +461,13 @@ export interface ChatMessage {
   created_at: string
   is_read: boolean
   reactions: ChatReaction[]
+  /** Set on the copy drawn locally the instant you hit send; the server echoes
+   * it back so the real row can replace this one exactly. */
+  client_id?: string
+  /** True while a locally-drawn message is still waiting for the server. */
+  pending?: boolean
+  /** Set when the send did not land, so the bubble can say so. */
+  failed?: boolean
 }
 
 export interface ChatHistoryResponse {
