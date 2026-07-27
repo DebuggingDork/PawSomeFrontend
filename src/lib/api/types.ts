@@ -325,6 +325,8 @@ export interface NotificationPushEvent {
     created_at: string
     match_id: string | null
     other_pet: { id: string; name: string; primary_photo_url: string | null }
+    /** Which of the recipient's pets the notification is about. */
+    your_pet_id?: string
   }
 }
 

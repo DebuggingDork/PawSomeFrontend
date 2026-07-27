@@ -40,6 +40,7 @@ export function NotificationsRuntime() {
         useNotificationsStore.getState().showCelebration({
           matchId: event.data.match_id,
           otherPet: event.data.other_pet,
+          yourPetId: event.data.your_pet_id,
         })
         return
       }

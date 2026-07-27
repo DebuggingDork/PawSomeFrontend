@@ -39,7 +39,10 @@ interface MatchCelebrationOverlayProps {
  * NotificationsRuntime) so it fires regardless of which page either matched
  * user is currently on, as long as they're signed in and connected. */
 export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCelebrationOverlayProps) {
+  // The pet that actually matched, not whichever pet happens to be active.
+  const pets = useAuthStore((s) => s.pets)
   const activePet = useAuthStore((s) => s.activePet)
+  const yourPet = pets.find((p) => p.id === data?.yourPetId) ?? activePet
   const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
@@ -103,7 +106,7 @@ export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCe
                   transition={{ delay: 0.1, type: 'spring', duration: 0.45, bounce: 0.3 }}
                   className="relative z-10 -mr-3"
                 >
-                  <PetAvatar name={activePet?.name ?? 'You'} photoUrl={activePet?.primary_photo_url} size="xl" />
+                  <PetAvatar name={yourPet?.name ?? 'You'} photoUrl={yourPet?.primary_photo_url} size="xl" />
                 </motion.div>
 
                 <motion.div

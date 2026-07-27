@@ -40,6 +40,9 @@ function generateConfetti(): ConfettiPieceSpec[] {
 export interface MatchCelebrationData {
   matchId: string | null
   otherPet: { id: string; name: string; primary_photo_url: string | null }
+  /** Which of *your* pets matched. Without it the overlay fell back to the
+   * account's first pet, showing the wrong animal for anyone with several. */
+  yourPetId?: string
   confetti: ConfettiPieceSpec[]
 }
 
