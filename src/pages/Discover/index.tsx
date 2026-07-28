@@ -266,7 +266,7 @@ function DiscoverPage() {
               enough height on a laptop to push the deck's buttons off screen. */}
           <div className="mb-3 flex flex-shrink-0 items-center gap-3">
             <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
-            <div className="ml-auto w-40 flex-shrink-0">
+            <div className="ml-auto flex-shrink-0">
               <BrowseFiltersPanel filters={filters} onChange={setFilters} />
             </div>
           </div>

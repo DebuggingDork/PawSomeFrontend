@@ -49,7 +49,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-sm text-neutral-300"
+        className="flex items-center justify-between gap-2 whitespace-nowrap px-3 py-2 text-sm text-neutral-300"
       >
         <span className="flex items-center gap-2">
           <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -70,7 +70,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18 }}
-            className="absolute left-0 right-0 top-full z-40 mt-2 max-h-[60vh] overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-950 shadow-2xl shadow-black/60"
+            className="absolute right-0 top-full z-[60] mt-2 max-h-[60vh] w-80 max-w-[calc(100vw-3rem)] overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-950 shadow-2xl shadow-black/60"
           >
             <div className="space-y-4 px-4 py-4">
               <div>

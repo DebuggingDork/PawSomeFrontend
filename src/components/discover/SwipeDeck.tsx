@@ -180,18 +180,17 @@ export function SwipeDeck({
     onSwipe(top, action)
   }
 
-  // Cycle who's fanned out front-and-center without recording a swipe decision —
-  // rotates only the currently-visible window, leaving the rest of the deck order
-  // untouched so nothing is skipped or lost track of.
+  // Cycle who's fanned out front-and-center without recording a swipe decision.
+  // Only VISIBLE_CARDS are fanned on screen at once, but the ring is the *whole*
+  // loaded deck: "next" retires the front card to the very back, which pulls the
+  // next never-seen candidate into the fan from behind. Rotating just the
+  // fanned window (the old behavior) meant clicking through only ever
+  // re-ordered the same handful of cards already on screen — everyone else in
+  // the loaded deck was unreachable without swiping.
   const rotateWindow = (direction: 1 | -1) => {
-    if (exiting) return
-    const windowSize = Math.min(VISIBLE_CARDS, order.length)
-    if (windowSize < 2) return
-    const front = order.slice(0, windowSize)
-    const rest = order.slice(windowSize)
-    const rotated =
-      direction === 1 ? [...front.slice(1), front[0]] : [front[windowSize - 1], ...front.slice(0, windowSize - 1)]
-    setSavedOrder(deckKey, [...rotated, ...rest])
+    if (exiting || order.length < 2) return
+    const rotated = direction === 1 ? [...order.slice(1), order[0]] : [order[order.length - 1], ...order.slice(0, -1)]
+    setSavedOrder(deckKey, rotated)
   }
 
   const superWoofAvailable = superWoofRemaining == null || superWoofRemaining > 0
