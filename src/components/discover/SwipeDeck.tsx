@@ -79,8 +79,11 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
         <SwipeCardContent candidate={candidate} />
         {/* Cards behind the top one are cropped by the fan, so their badges and
             name sit half-cut at odd angles and read as clutter. Dim and blur
-            them so only the top card's text is legible. */}
-        {!isTop && <div className="pointer-events-none absolute inset-0 rounded-3xl bg-black/50 backdrop-blur-[1px]" />}
+            them so only the top card's text is legible. z-20 is required, not
+            decorative — the card's own corner badges are z-10, so without a
+            higher value here they punch straight through this overlay and
+            stay fully readable underneath, defeating the whole point. */}
+        {!isTop && <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl bg-black/60 backdrop-blur-[1px]" />}
         {isTop && (
           <>
             <motion.div
@@ -202,8 +205,12 @@ export function SwipeDeck({
        so pet photos aren't cropped into a wide, short strip. Action buttons stay
        in flow beneath so they remain on screen. */
     <div className="flex h-full min-h-0 flex-col items-center">
-      <div className="flex min-h-0 w-full flex-1 items-center justify-center">
-        <div className="relative aspect-[3/4] h-full max-h-full w-auto max-w-md min-h-[20rem]">
+      {/* py-2 guarantees a real gap above and below the card no matter how
+          tall it renders — without it, a card sized right up to this box's
+          edges visually touches the controls row above and the browse pill
+          below on any viewport short enough for min-h-[18rem] to bind. */}
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center py-2">
+        <div className="relative aspect-[3/4] h-full max-h-full w-auto max-w-md min-h-[18rem]">
           <AnimatePresence onExitComplete={() => setExiting(false)}>
             {visible.map((candidate, i) => (
               <DraggableCard
