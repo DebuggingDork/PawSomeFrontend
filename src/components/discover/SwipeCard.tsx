@@ -17,16 +17,8 @@ interface SwipeCardContentProps {
   onPreview?: () => void
 }
 
-/** Color cue for the compatibility dot — lets the eye triage a match at a
- * glance, before the number itself has even been read. */
-function scoreTone(score: number) {
-  if (score >= 70) return 'bg-emerald-400'
-  if (score >= 40) return 'bg-amber-400'
-  return 'bg-rose-400'
-}
-
 export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps) {
-  const { pet, distance_km, compatibility_score, previously_passed } = candidate
+  const { pet, distance_km, previously_passed } = candidate
   const photo = pet.primary_photo_url
   const activeTags = activeHealthTags(pet)
 
@@ -41,9 +33,11 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
       )}
 
       {/* Soft top vignette so corner badges stay legible over light photos. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
 
-      {/* Top-left: status ribbon + match score as stacked glass pills */}
+      {/* Top-left: a single status ribbon, at most. Every pill added here eats
+          into the photo, which is the one thing someone is actually deciding
+          on. */}
       <div className={`absolute left-3 top-3 ${LAYER.BADGE} flex flex-col items-start gap-2`}>
         {/* Says why a familiar face is back, so a recycled card doesn't read as
             the deck repeating itself by mistake. */}
@@ -57,12 +51,6 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           <div className="flex items-center gap-1.5 rounded-full bg-[#ff6b35] px-3 py-1.5 text-xs font-bold text-white shadow-lg shadow-[#ff6b35]/40">
             <Sparkles className="h-3 w-3" />
             New here!
-          </div>
-        )}
-        {compatibility_score != null && (
-          <div className="flex items-center gap-1.5 rounded-full bg-black/60 py-1.5 pl-2.5 pr-3 text-xs font-semibold text-white ring-1 ring-white/10 backdrop-blur-md">
-            <span className={`h-1.5 w-1.5 rounded-full ${scoreTone(compatibility_score)}`} aria-hidden="true" />
-            {compatibility_score}% match
           </div>
         )}
       </div>
@@ -108,22 +96,36 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
         )}
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-28 sm:p-6 sm:pt-28">
+      {/* The scrim and the text box are deliberately separate elements.
+          As one box with a big `pt-28`, the padding that gave the gradient a
+          smooth ramp also set the box's height — so the darkened region was
+          forced to be ~250px tall and swallowed most of the photo, which is
+          the one thing someone is actually deciding on. Splitting them lets
+          the fade stay gradual while the opaque text sits in a box only as
+          tall as its own content. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/70 to-transparent" />
+
+      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
         {/* `min-w-0` + `truncate` on the name: a long name with an age beside it
             would otherwise push the age off the card's right edge rather than
             shortening itself. */}
-        <div className="mb-1.5 flex items-baseline gap-2">
-          <h3 className="min-w-0 truncate font-display text-[1.75rem] font-bold leading-none tracking-tight text-white">
+        <div className="mb-1 flex items-baseline gap-2">
+          <h3 className="min-w-0 truncate font-display text-2xl font-bold leading-none tracking-tight text-white sm:text-[1.75rem]">
             {pet.name}
           </h3>
           {pet.owner?.is_verified && (
             <BadgeCheck className="h-5 w-5 flex-shrink-0 self-center text-sky-400" aria-label="Verified owner" />
           )}
-          <span className="flex-shrink-0 text-lg font-medium text-neutral-300">{formatAge(pet.age_months)}</span>
+          <span className="flex-shrink-0 text-base font-medium text-neutral-300 sm:text-lg">
+            {formatAge(pet.age_months)}
+          </span>
         </div>
-        <p className="mb-2 truncate text-sm font-medium text-neutral-300">{pet.breed}</p>
-        <div className="mb-3.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-400">
-          <span className="flex items-center gap-1">
+        <p className="mb-1.5 truncate text-sm font-medium text-neutral-300">{pet.breed}</p>
+        {/* One line, never two: `truncate` on the owner plus `flex-nowrap`
+            keeps this row from wrapping and pushing the tags down into the
+            photo. */}
+        <div className="mb-2.5 flex flex-nowrap items-center gap-x-2 overflow-hidden text-xs text-neutral-400">
+          <span className="flex flex-shrink-0 items-center gap-1">
             <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
             {/* Null when neither owner has set a location — those pets are kept
                 in the deck rather than dropped, so the card has to cope. */}
@@ -131,20 +133,24 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           </span>
           {pet.owner?.full_name && (
             <>
-              <span aria-hidden="true" className="text-neutral-600">
+              <span aria-hidden="true" className="flex-shrink-0 text-neutral-600">
                 &middot;
               </span>
-              <span className="truncate">Owned by {pet.owner.full_name}</span>
+              <span className="truncate">{pet.owner.full_name}</span>
             </>
           )}
         </div>
 
+        {/* Allowed to wrap rather than clip: a clipped third tag would silently
+            drop real information about the pet. The text box growing by one
+            row is fine now that it no longer carries the gradient's height —
+            the chevrons are positioned to clear two rows of tags. */}
         {activeTags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {activeTags.map(({ key, label, icon: Icon, className }) => (
               <span
                 key={key}
-                className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm ${className}`}
+                className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium backdrop-blur-sm ${className}`}
               >
                 <Icon className="h-3 w-3 flex-shrink-0" />
                 {label}

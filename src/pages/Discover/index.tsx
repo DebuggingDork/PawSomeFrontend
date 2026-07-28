@@ -246,8 +246,8 @@ function DiscoverPage() {
        whatever is left after the header and controls, so the swipe buttons are
        always visible. Before this they sat below a fixed-height card and users
        had to scroll to discover that skip, Super Woof and like even existed. */
-    <div className="mx-auto flex h-[calc(100dvh-4.5rem)] max-w-2xl flex-col px-6 pb-4 pt-20 md:pt-24">
-      <div className="mb-3 flex flex-shrink-0 items-center justify-between">
+    <div className="mx-auto flex h-[calc(100dvh-4.5rem)] max-w-2xl flex-col px-6 pb-3 pt-16 md:pt-20">
+      <div className="mb-2 flex flex-shrink-0 items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-white">Discover</h1>
         <PillTabs
           layoutId="discover-tab-pill"
@@ -264,7 +264,7 @@ function DiscoverPage() {
         <div className="flex min-h-0 flex-1 flex-col">
           {/* Both controls share one row — two stacked full-width bars cost
               enough height on a laptop to push the deck's buttons off screen. */}
-          <div className="mb-5 flex flex-shrink-0 items-center gap-3">
+          <div className="mb-3 flex flex-shrink-0 items-center gap-3">
             <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
             <div className="ml-auto flex-shrink-0">
               <BrowseFiltersPanel filters={filters} onChange={setFilters} />
@@ -273,12 +273,14 @@ function DiscoverPage() {
 
           {locationError && <LocationNeededPrompt />}
 
+          {/* Skeleton mirrors the real card's geometry so the deck doesn't
+              visibly jump size when the first card replaces it. */}
           {!locationError && browseQuery.isLoading && (
             <div
               className="mx-auto max-h-full"
-              style={{ aspectRatio: '3 / 4', width: 'min(100%, 28rem)' }}
+              style={{ aspectRatio: '4 / 5', width: 'min(100%, 32rem)' }}
             >
-              <Skeleton className="h-full w-full rounded-3xl" />
+              <Skeleton className="h-full w-full rounded-[1.75rem]" />
             </div>
           )}
 

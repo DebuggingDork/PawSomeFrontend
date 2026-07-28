@@ -255,15 +255,20 @@ export function SwipeDeck({
     /* Tall 3:4 portrait deck with on-card browse chevrons and a glowing
        action row — matched to the Discover reference aesthetic. */
     <div className="flex h-full min-h-0 flex-col items-center">
+      {/* The card is sized from the container's *height* (100cqh), because
+          height is what's actually scarce here — the page is a viewport-height
+          column and the action row below has to stay on screen. 4/5 rather
+          than 3/4 buys ~7% more width for the same height, which is width the
+          photo gets to keep. */}
       <div
-        className="flex min-h-0 w-full flex-1 items-center justify-center py-2"
+        className="flex min-h-0 w-full flex-1 items-center justify-center"
         style={{ containerType: 'size' }}
       >
         <div
           className="relative max-h-full"
           style={{
-            aspectRatio: '3 / 4',
-            width: 'min(100%, 28rem, calc(100cqh * 3 / 4))',
+            aspectRatio: '4 / 5',
+            width: 'min(100%, 32rem, calc(100cqh * 4 / 5))',
             height: 'auto',
           }}
         >
@@ -283,18 +288,17 @@ export function SwipeDeck({
           </AnimatePresence>
 
           {/* Edge chevrons for browsing the deck without committing a swipe.
-              Anchored at 42% rather than the usual top-1/2: the bottom ~30-45%
-              of a card is the name/breed/tags gradient, so a true vertical
-              centre lands the left chevron directly on the pet's name on
-              anything but the tallest cards. 42% clears the text block at every
-              height this deck renders at while still reading as "middle of the
+              Anchored at 38% rather than the usual top-1/2: the text box sits
+              along the bottom edge, so a true vertical centre lands the left
+              chevron directly on the pet's name. 38% clears the text at every
+              height this deck renders at while still reading as "on the
               photo". */}
           <button
             type="button"
             onClick={() => rotateWindow(-1)}
             disabled={!canCycle}
             aria-label="Show previous pet"
-            className={`absolute left-2 top-[42%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
+            className={`absolute left-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -303,7 +307,7 @@ export function SwipeDeck({
             onClick={() => rotateWindow(1)}
             disabled={!canCycle}
             aria-label="Show next pet"
-            className={`absolute right-2 top-[42%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
+            className={`absolute right-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -315,7 +319,7 @@ export function SwipeDeck({
           `mb-5` to fake that alignment, which left it sitting at an arbitrary
           height next to three labelled buttons and reading as a stray control
           rather than part of the row. */}
-      <div className="mt-6 flex flex-shrink-0 items-end justify-center gap-4 sm:gap-5">
+      <div className="mt-4 flex flex-shrink-0 items-end justify-center gap-4 sm:gap-5">
         <div className="flex flex-col items-center gap-1.5">
           <button
             onClick={onUndo}
@@ -393,7 +397,7 @@ export function SwipeDeck({
       </div>
 
       {/* Fixed height so the row above never shifts when this text swaps. */}
-      <p className="mt-3 h-4 text-center text-xs text-neutral-400">
+      <p className="mt-2 h-4 text-center text-xs text-neutral-400">
         {superWoofRemaining === 0 ? 'Super Woof back tomorrow ⭐' : superWoofAvailable ? 'Tap the star to Super Woof' : ''}
       </p>
 
