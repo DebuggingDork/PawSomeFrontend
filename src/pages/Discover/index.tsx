@@ -246,7 +246,12 @@ function DiscoverPage() {
        whatever is left after the header and controls, so the swipe buttons are
        always visible. Before this they sat below a fixed-height card and users
        had to scroll to discover that skip, Super Woof and like even existed. */
-    <div className="mx-auto flex h-[calc(100dvh-4.5rem)] max-w-2xl flex-col px-6 pb-3 pt-16 md:pt-20">
+    /* Full viewport height, not `100dvh - 4.5rem`. The navbar is `fixed`, so it
+       sits outside the flow and the `pt-*` below is already what clears it —
+       subtracting its height here too left ~72px of dead space pinned below
+       the fold, height the card could not use on a page where height is the
+       scarce axis. */
+    <div className="mx-auto flex h-[100dvh] max-w-2xl flex-col px-6 pb-3 pt-20 md:pt-24">
       <div className="mb-2 flex flex-shrink-0 items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-white">Discover</h1>
         <PillTabs

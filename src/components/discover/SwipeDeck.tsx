@@ -268,7 +268,7 @@ export function SwipeDeck({
           className="relative max-h-full"
           style={{
             aspectRatio: '4 / 5',
-            width: 'min(100%, 32rem, calc(100cqh * 4 / 5))',
+            width: 'min(100%, 34rem, calc(100cqh * 4 / 5))',
             height: 'auto',
           }}
         >
@@ -319,7 +319,7 @@ export function SwipeDeck({
           `mb-5` to fake that alignment, which left it sitting at an arbitrary
           height next to three labelled buttons and reading as a stray control
           rather than part of the row. */}
-      <div className="mt-4 flex flex-shrink-0 items-end justify-center gap-4 sm:gap-5">
+      <div className="mt-8 flex flex-shrink-0 items-end justify-center gap-4 sm:gap-5">
         <div className="flex flex-col items-center gap-1.5">
           <button
             onClick={onUndo}

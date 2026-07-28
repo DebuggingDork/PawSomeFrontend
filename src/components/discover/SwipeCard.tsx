@@ -1,4 +1,4 @@
-import { PawPrint, MapPin, RotateCcw, Sparkles, BadgeCheck, Expand } from 'lucide-react'
+import { PawPrint, MapPin, RotateCcw, Sparkles, BadgeCheck, Eye } from 'lucide-react'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
 import { activeHealthTags, isNewHere } from '@/lib/petBadges'
 import { GenderBadge } from '@/components/ui/GenderBadge'
@@ -78,7 +78,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           title="See more photos"
           className={`absolute right-3 top-16 ${LAYER.BADGE} flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/10 backdrop-blur-md transition-colors hover:bg-black/75`}
         >
-          <Expand className="h-4 w-4" />
+          <Eye className="h-[1.125rem] w-[1.125rem]" />
         </button>
       )}
 
