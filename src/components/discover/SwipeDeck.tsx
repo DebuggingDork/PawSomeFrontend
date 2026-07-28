@@ -77,6 +77,10 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
         }}
       >
         <SwipeCardContent candidate={candidate} />
+        {/* Cards behind the top one are cropped by the fan, so their badges and
+            name sit half-cut at odd angles and read as clutter. Dim and blur
+            them so only the top card's text is legible. */}
+        {!isTop && <div className="pointer-events-none absolute inset-0 rounded-3xl bg-black/45 backdrop-blur-[1px]" />}
         {isTop && (
           <>
             <motion.div
@@ -220,7 +224,7 @@ export function SwipeDeck({
           onClick={() => rotateWindow(-1)}
           disabled={!canCycle}
           aria-label="Show previous"
-          className="absolute left-1 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
+          className="absolute left-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-lg shadow-black/40 backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/80 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -229,7 +233,7 @@ export function SwipeDeck({
           onClick={() => rotateWindow(1)}
           disabled={!canCycle}
           aria-label="Show next"
-          className="absolute right-1 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/50 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
+          className="absolute right-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-lg shadow-black/40 backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/80 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
         >
           <ChevronRight className="h-5 w-5" />
         </button>

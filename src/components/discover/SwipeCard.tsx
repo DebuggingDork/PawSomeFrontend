@@ -27,7 +27,7 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
       )}
 
       {/* Top-left: "new here" ribbon + compatibility score, stacked */}
-      <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+      <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
         {/* Says why a familiar face is back, so a recycled card doesn't read as
             the deck repeating itself by mistake. */}
         {previously_passed && (
@@ -50,7 +50,7 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
       </div>
 
       {/* Top-right: gender + safety menu */}
-      <div className="absolute right-3 top-3 flex items-center gap-2">
+      <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
         <GenderBadge gender={pet.gender} size="xl" className="shadow-lg" />
         {pet.owner?.id && (
           <SafetyMenu
