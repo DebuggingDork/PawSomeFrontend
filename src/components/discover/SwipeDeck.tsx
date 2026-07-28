@@ -83,7 +83,7 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
             decorative — the card's own corner badges are z-10, so without a
             higher value here they punch straight through this overlay and
             stay fully readable underneath, defeating the whole point. */}
-        {!isTop && <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl bg-black/60 backdrop-blur-[1px]" />}
+        {!isTop && <div className="pointer-events-none absolute inset-0 z-20 rounded-[1.75rem] bg-black/60 backdrop-blur-[1px]" />}
         {isTop && (
           <>
             <motion.div
@@ -201,9 +201,8 @@ export function SwipeDeck({
   const canCycle = order.length > 1 && !exiting
 
   return (
-    /* True 3:4 portrait sized to the tallest fit inside the deck area:
-       width = min(max-w-md, parent, height×¾) so the card grows in height with
-       the viewport instead of stretching into a short wide strip. */
+    /* Tall 3:4 portrait deck with on-card browse chevrons and a glowing
+       action row — matched to the Discover reference aesthetic. */
     <div className="flex h-full min-h-0 flex-col items-center">
       <div
         className="flex min-h-0 w-full flex-1 items-center justify-center py-2"
@@ -230,43 +229,36 @@ export function SwipeDeck({
               />
             ))}
           </AnimatePresence>
-        </div>
-      </div>
 
-      {/* Browse-without-swiping, pulled off the photo into its own compact
-          control below the card. Floating chevrons on top of a face read as
-          decoration with no clear job; grouped like this they read as one
-          "browse the deck" affordance instead of two stray buttons. */}
-      {order.length > 1 && (
-        <div className="mt-3 flex flex-shrink-0 items-center gap-0.5 rounded-full border border-neutral-800 bg-neutral-900/80 p-1">
+          {/* Edge chevrons sit on the photo like the reference — browsing the
+              deck without committing a swipe. Hidden when there's nothing else. */}
           <button
             type="button"
             onClick={() => rotateWindow(-1)}
             disabled={!canCycle}
             aria-label="Show previous"
-            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="absolute left-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition-all hover:scale-110 hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
-          <span className="px-1.5 text-[11px] font-medium text-neutral-500">Browse</span>
           <button
             type="button"
             onClick={() => rotateWindow(1)}
             disabled={!canCycle}
             aria-label="Show next"
-            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="absolute right-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition-all hover:scale-110 hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
-      )}
+      </div>
 
-      <div className="mt-4 flex flex-shrink-0 items-end gap-5">
+      <div className="mt-6 flex flex-shrink-0 items-end gap-5">
         <button
           onClick={onUndo}
           disabled={!canUndo || undoing}
           aria-label="Undo last swipe"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all hover:border-amber-500/40 hover:text-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+          className="mb-5 flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all hover:border-amber-500/40 hover:text-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
         >
           <Undo2 className="h-5 w-5" />
         </button>
@@ -276,9 +268,9 @@ export function SwipeDeck({
             onClick={() => handleSwiped('skip')}
             disabled={!top}
             aria-label="Pass"
-            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-rose-400 shadow-lg shadow-black/30 transition-all hover:border-rose-500/40 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition-all hover:border-red-500/40 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
           >
-            <X className="h-7 w-7" />
+            <X className="h-7 w-7" strokeWidth={2.5} />
           </button>
           <span className="text-xs font-medium text-neutral-500">Pass</span>
         </div>
@@ -289,9 +281,9 @@ export function SwipeDeck({
             {superWoofAvailable && (
               <motion.span
                 aria-hidden
-                className="pointer-events-none absolute -inset-1 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
-                animate={{ scale: [1, 1.2, 1], opacity: [0.25, 0.5, 0.25] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                className="pointer-events-none absolute -inset-1.5 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
+                animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               />
             )}
             <button
@@ -299,7 +291,7 @@ export function SwipeDeck({
               disabled={superWoofDisabled}
               aria-label="Super Woof"
               title={superWoofAvailable ? 'Super Woof — jump to the top of their likes' : "You've used today's Super Woof"}
-              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-lg shadow-sky-400/40 ring-2 ring-sky-300/50 transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-500 disabled:opacity-60 disabled:shadow-none disabled:ring-0"
+              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-[0_0_28px_rgba(56,189,248,0.55)] ring-2 ring-sky-300/50 transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-500 disabled:opacity-60 disabled:shadow-none disabled:ring-0"
             >
               <Star className="h-6 w-6" fill="currentColor" />
             </button>
@@ -317,7 +309,7 @@ export function SwipeDeck({
             onClick={() => handleSwiped('like')}
             disabled={!top}
             aria-label="Like"
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
           >
             <Heart className="h-7 w-7" fill="currentColor" />
           </button>
