@@ -1,4 +1,4 @@
-import { PawPrint, MapPin, RotateCcw, Sparkles, BadgeCheck } from 'lucide-react'
+import { PawPrint, MapPin, RotateCcw, Sparkles, BadgeCheck, Expand } from 'lucide-react'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
 import { activeHealthTags, isNewHere } from '@/lib/petBadges'
 import { GenderBadge } from '@/components/ui/GenderBadge'
@@ -9,9 +9,22 @@ import type { BrowseCandidate } from '@/lib/api/types'
 
 interface SwipeCardContentProps {
   candidate: BrowseCandidate
+  /** Opens the full photo gallery + profile dialog. One swipe photo is a poor
+   * sample of any pet — this is how someone confirms a bad angle isn't the
+   * whole story before deciding. Optional so nothing else that renders this
+   * card (e.g. the onboarding preview) has to grow a fake handler. */
+  onPreview?: () => void
 }
 
-export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
+/** Color cue for the compatibility dot — lets the eye triage a match at a
+ * glance, before the number itself has even been read. */
+function scoreTone(score: number) {
+  if (score >= 70) return 'bg-emerald-400'
+  if (score >= 40) return 'bg-amber-400'
+  return 'bg-rose-400'
+}
+
+export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps) {
   const { pet, distance_km, compatibility_score, previously_passed } = candidate
   const photo = pet.primary_photo_url
   const activeTags = activeHealthTags(pet)
@@ -46,11 +59,39 @@ export function SwipeCardContent({ candidate }: SwipeCardContentProps) {
           </div>
         )}
         {compatibility_score != null && (
-          <div className="rounded-full bg-black/60 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/10 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 rounded-full bg-black/60 py-1.5 pl-2.5 pr-3 text-xs font-semibold text-white ring-1 ring-white/10 backdrop-blur-md">
+            <span className={`h-1.5 w-1.5 rounded-full ${scoreTone(compatibility_score)}`} aria-hidden="true" />
             {compatibility_score}% match
           </div>
         )}
       </div>
+
+      {/* Tap-to-expand hint, stacked under gender/safety rather than floated
+          near the bottom text panel — that panel's height shifts with how
+          many health tags wrap to a second line, which would put a
+          bottom-anchored button on top of the text on a longer card. The
+          whole card also opens the gallery on a plain tap (wired by the
+          caller); this just makes that discoverable instead of a hidden
+          gesture nobody would guess to try. */}
+      {onPreview && (
+        <button
+          type="button"
+          // Same guard SafetyMenu's trigger uses on this card: without it, the
+          // parent card's drag gesture sees this pointerdown too and starts
+          // tracking a potential swipe underneath what the user meant as a
+          // plain tap on the icon.
+          onPointerDownCapture={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation()
+            onPreview()
+          }}
+          aria-label={`See more photos of ${pet.name}`}
+          title="See more photos"
+          className="absolute right-3 top-16 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/10 backdrop-blur-md transition-colors hover:bg-black/75"
+        >
+          <Expand className="h-4 w-4" />
+        </button>
+      )}
 
       {/* Top-right: gender and safety as separate floating circles — matches the
           reference deck where each control has its own target. */}

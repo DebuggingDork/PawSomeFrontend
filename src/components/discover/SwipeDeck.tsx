@@ -1,12 +1,21 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { Heart, X, Undo2, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { SwipeCardContent } from './SwipeCard'
+import { PetCardDialog } from '@/components/community/PetCardDialog'
 import { useDiscoverStore } from '@/store/useDiscoverStore'
 import type { BrowseCandidate } from '@/lib/api/types'
 
 const SWIPE_THRESHOLD = 120
-const VISIBLE_CARDS = 5
+// A subtler peek than before — enough to read as a deck with more behind it
+// without the outermost, barely-visible card adding clutter for no benefit.
+const VISIBLE_CARDS = 4
+// Below this, a released drag counts as a tap that opens the preview rather
+// than an aborted swipe. Framer Motion's own drag gesture already has a
+// similar internal tolerance, but relying on that implicitly meant "does tap
+// still work" depended on a library internal rather than something this file
+// controls and can reason about.
+const TAP_DRAG_TOLERANCE = 6
 
 type SwipeAction = 'like' | 'skip' | 'super_like'
 
@@ -41,9 +50,10 @@ interface DraggableCardProps {
   exitAction: SwipeAction
   isExiting: boolean
   onSwiped: (action: SwipeAction) => void
+  onPreview: () => void
 }
 
-function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, onSwiped }: DraggableCardProps) {
+function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, onSwiped, onPreview }: DraggableCardProps) {
   // Split in two layers so the fan position (outer, always driven by `animate`)
   // and the drag gesture (inner, only live for the top card) never fight over
   // the same x/rotate — mixing a raw drag-bound motion value with an `animate`
@@ -54,6 +64,11 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
   const likeOpacity = useTransform(dragX, [20, 120], [0, 1])
   const skipOpacity = useTransform(dragX, [-120, -20], [1, 0])
   const fan = isTop ? { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 } : fanTransform(stackIndex)
+  // Tracks whether the current pointer-down turned into a real drag, so the
+  // release can tell a tap (open the preview) from a swipe or an aborted,
+  // snapped-back drag (do nothing) — a plain onClick can't tell those apart
+  // on its own since both end with a pointerup on the same element.
+  const didDragRef = useRef(false)
 
   return (
     <motion.div
@@ -71,12 +86,21 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
         drag={isTop ? 'x' : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.9}
+        onDragStart={() => {
+          didDragRef.current = false
+        }}
+        onDrag={(_, info) => {
+          if (Math.abs(info.offset.x) > TAP_DRAG_TOLERANCE) didDragRef.current = true
+        }}
         onDragEnd={(_, info) => {
           if (info.offset.x > SWIPE_THRESHOLD) onSwiped('like')
           else if (info.offset.x < -SWIPE_THRESHOLD) onSwiped('skip')
         }}
+        onClick={() => {
+          if (isTop && !didDragRef.current) onPreview()
+        }}
       >
-        <SwipeCardContent candidate={candidate} />
+        <SwipeCardContent candidate={candidate} onPreview={isTop ? onPreview : undefined} />
         {/* Cards behind the top one are cropped by the fan, so their badges and
             name sit half-cut at odd angles and read as clutter. Dim and blur
             them so only the top card's text is legible. z-20 is required, not
@@ -149,6 +173,7 @@ export function SwipeDeck({
 }: SwipeDeckProps) {
   const [exiting, setExiting] = useState(false)
   const [exitAction, setExitAction] = useState<SwipeAction>('like')
+  const [previewCandidate, setPreviewCandidate] = useState<BrowseCandidate | null>(null)
 
   // The fan order lives in the Discover store, not here, so it outlives this
   // component being unmounted by a navigation. Only reused when it describes the
@@ -226,6 +251,7 @@ export function SwipeDeck({
                 exitAction={exitAction}
                 isExiting={exiting && i === 0}
                 onSwiped={handleSwiped}
+                onPreview={() => setPreviewCandidate(candidate)}
               />
             ))}
           </AnimatePresence>
@@ -320,6 +346,18 @@ export function SwipeDeck({
       <p className="mt-3 h-4 text-center text-xs text-neutral-500">
         {superWoofRemaining === 0 ? 'Super Woof back tomorrow ⭐' : superWoofAvailable ? 'Tap the star to Super Woof' : ''}
       </p>
+
+      {/* hideActions: Discover already has its own Pass/Super Woof/Like row
+          driving this exact deck. PetInterestActions' own Interested/Save
+          buttons would be a second, disconnected way to like the same pet
+          that doesn't remove the card from the stack underneath. */}
+      {previewCandidate && (
+        <PetCardDialog
+          petId={previewCandidate.pet.id}
+          onClose={() => setPreviewCandidate(null)}
+          hideActions
+        />
+      )}
     </div>
   )
 }

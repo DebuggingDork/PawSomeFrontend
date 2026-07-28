@@ -25,11 +25,19 @@ import { GenderBadge } from '@/components/ui/GenderBadge'
 interface PetCardDialogProps {
   petId: string
   onClose: () => void
+  /** Discover already has its own Pass/Super Woof/Like buttons driving the
+   * swipe deck — showing PetInterestActions' own Interested/Save buttons here
+   * too would be a second, disconnected way to like the same pet that doesn't
+   * update the card stack underneath. Community has no such buttons, so it
+   * keeps the full actions block. */
+  hideActions?: boolean
 }
 
-/** Click-to-expand detail view for a Community card — same data as the full
- * pet page, shown inline so browsing the directory doesn't mean leaving it. */
-export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
+/** Click-to-expand detail view for a pet card — same data as the full pet
+ * page, shown inline so browsing the directory or the swipe deck doesn't mean
+ * leaving it. Shared by Community and Discover (a card's single swipe photo
+ * is never the whole story — this is where the rest of the gallery lives). */
+export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDialogProps) {
   const user = useAuthStore((s) => s.user)
   const [activePhoto, setActivePhoto] = useState<string | null>(null)
 
@@ -142,9 +150,11 @@ export function PetCardDialog({ petId, onClose }: PetCardDialogProps) {
                 )}
               </div>
 
-              <div className="mt-4">
-                <PetInterestActions pet={pet} onNavigate={onClose} />
-              </div>
+              {!hideActions && (
+                <div className="mt-4">
+                  <PetInterestActions pet={pet} onNavigate={onClose} />
+                </div>
+              )}
 
               {(pet.is_vaccinated || pet.is_neutered || pet.is_trained) && (
                 <div className="mt-3 flex flex-wrap gap-2">
