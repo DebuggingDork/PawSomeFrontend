@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, PawPrint, Search, Calendar } from 'lucide-react'
+import { Send, PawPrint, Search, CalendarHeart } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations, getPlaydates } from '@/lib/api/matches'
@@ -169,15 +169,21 @@ function ChatPage() {
                     setSearchOpen(false)
                     setPlaydatesViewed(true)
                   }}
-                  aria-label="Schedule playdate"
-                  title="Playdates"
-                  className={`relative rounded-full p-2 transition-colors ${
-                    playdatesOpen ? 'bg-neutral-800 text-white' : 'text-neutral-400 hover:text-white'
+                  aria-label="Propose a playdate"
+                  title="Propose a playdate"
+                  className={`group relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
+                    playdatesOpen
+                      ? 'bg-[#ff6b35] text-white shadow-[0_0_0_1px_rgba(255,107,53,0.4)]'
+                      : 'bg-[#ff6b35]/10 text-[#ff9466] shadow-[0_0_14px_-2px_rgba(255,107,53,0.55)] hover:bg-[#ff6b35]/20 hover:text-white hover:shadow-[0_0_18px_0px_rgba(255,107,53,0.75)]'
                   }`}
                 >
-                  <Calendar className="h-4 w-4" />
+                  {!playdatesOpen && !hasUnviewedPendingPlaydates && (
+                    <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-[#ff6b35]/25" />
+                  )}
+                  <CalendarHeart className="h-4 w-4" />
+                  <span className="hidden sm:inline">Plan a playdate</span>
                   {hasUnviewedPendingPlaydates && (
-                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#ff6b35] ring-2 ring-neutral-900" />
+                    <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-white ring-2 ring-neutral-900" />
                   )}
                 </button>
                 <button
