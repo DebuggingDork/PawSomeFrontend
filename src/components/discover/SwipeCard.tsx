@@ -8,6 +8,23 @@ import { formatAge } from '@/lib/formatAge'
 import { LAYER } from './layers'
 import type { BrowseCandidate } from '@/lib/api/types'
 
+/**
+ * Frosted-glass treatment for controls floating over a pet photo.
+ *
+ * A white tint rather than the black one these used to carry: at the opacity
+ * needed to keep an icon legible, black reads as a solid disc punched out of
+ * the photo, which is the thing the card exists to show. White plus a blur
+ * lets the image through and still separates the control from it. The icon
+ * carries its own drop-shadow so it stays readable over a bright photo, where
+ * a white chip alone would leave a white glyph on near-white.
+ *
+ * Written out as literal class strings, never composed at runtime — Tailwind
+ * scans source text, so a dynamically built class name is simply never
+ * generated.
+ */
+const GLASS = 'bg-white/15 ring-1 ring-white/25 backdrop-blur-md'
+const GLASS_ICON = 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]'
+
 interface SwipeCardContentProps {
   candidate: BrowseCandidate
   /** Opens the full photo gallery + profile dialog. One swipe photo is a poor
@@ -62,6 +79,33 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           whole card also opens the gallery on a plain tap (wired by the
           caller); this just makes that discoverable instead of a hidden
           gesture nobody would guess to try. */}
+      {/* Top-right: gender and safety as separate floating circles — matches the
+          reference deck where each control has its own target. */}
+      <div className={`absolute right-3 top-3 ${LAYER.BADGE} flex items-center gap-2`}>
+        <GenderBadge gender={pet.gender} size="xl" className="shadow-lg shadow-black/40" />
+        {pet.owner?.id && (
+          <SafetyMenu
+            userId={pet.owner.id}
+            petId={pet.id}
+            otherName={pet.name}
+            className="[&>button]:bg-white/15 [&>button]:text-white [&>button]:ring-1 [&>button]:ring-white/25 [&>button]:backdrop-blur-md [&>button]:hover:bg-white/25"
+          />
+        )}
+      </div>
+
+      {/* The scrim and the text box are deliberately separate elements.
+          As one box with a big `pt-28`, the padding that gave the gradient a
+          smooth ramp also set the box's height — so the darkened region was
+          forced to be ~250px tall and swallowed most of the photo, which is
+          the one thing someone is actually deciding on. Splitting them lets
+          the fade stay gradual while the opaque text sits in a box only as
+          tall as its own content. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/70 to-transparent" />
+
+      {/* Sits in the bottom-right corner, level with the card's own text rather
+          than floating over the photo. The text box below reserves matching
+          right padding so a long name or a third health tag can never run
+          underneath it. */}
       {onPreview && (
         <button
           type="button"
@@ -76,36 +120,13 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           }}
           aria-label={`See more photos of ${pet.name}`}
           title="See more photos"
-          className={`absolute right-3 top-16 ${LAYER.BADGE} flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/10 backdrop-blur-md transition-colors hover:bg-black/75`}
+          className={`absolute bottom-4 right-4 ${LAYER.BADGE} flex h-10 w-10 items-center justify-center rounded-full ${GLASS} transition-colors hover:bg-white/25 active:scale-95 sm:bottom-5 sm:right-5`}
         >
-          <Eye className="h-[1.125rem] w-[1.125rem]" />
+          <Eye className={`h-[1.125rem] w-[1.125rem] ${GLASS_ICON}`} />
         </button>
       )}
 
-      {/* Top-right: gender and safety as separate floating circles — matches the
-          reference deck where each control has its own target. */}
-      <div className={`absolute right-3 top-3 ${LAYER.BADGE} flex items-center gap-2`}>
-        <GenderBadge gender={pet.gender} size="xl" className="shadow-lg shadow-black/40" />
-        {pet.owner?.id && (
-          <SafetyMenu
-            userId={pet.owner.id}
-            petId={pet.id}
-            otherName={pet.name}
-            className="[&>button]:bg-black/60 [&>button]:text-white [&>button]:ring-1 [&>button]:ring-white/10 [&>button]:backdrop-blur-md [&>button]:hover:bg-black/75"
-          />
-        )}
-      </div>
-
-      {/* The scrim and the text box are deliberately separate elements.
-          As one box with a big `pt-28`, the padding that gave the gradient a
-          smooth ramp also set the box's height — so the darkened region was
-          forced to be ~250px tall and swallowed most of the photo, which is
-          the one thing someone is actually deciding on. Splitting them lets
-          the fade stay gradual while the opaque text sits in a box only as
-          tall as its own content. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/70 to-transparent" />
-
-      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+      <div className="absolute inset-x-0 bottom-0 p-4 pr-16 sm:p-5 sm:pr-[4.5rem]">
         {/* `min-w-0` + `truncate` on the name: a long name with an age beside it
             would otherwise push the age off the card's right edge rather than
             shortening itself. */}

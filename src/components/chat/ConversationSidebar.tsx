@@ -20,6 +20,9 @@ interface ConversationSidebarProps {
   isLoading: boolean
   selectedMatchId: string | null
   onSelect: (conversation: Conversation) => void
+  /** Lets the page hide this on mobile once a thread is open, where the list
+   * and the thread cannot share the width. */
+  className?: string
 }
 
 export function ConversationSidebar({
@@ -27,6 +30,7 @@ export function ConversationSidebar({
   isLoading,
   selectedMatchId,
   onSelect,
+  className = '',
 }: ConversationSidebarProps) {
   const [query, setQuery] = useState('')
   // With one pet the answer is never in doubt, so the label would just be
@@ -44,7 +48,9 @@ export function ConversationSidebar({
   }, [conversations, query])
 
   return (
-    <div className="flex h-full w-full flex-col border-r border-neutral-800/80 md:w-80 lg:w-96">
+    <div
+      className={`h-full w-full flex-shrink-0 flex-col border-r border-neutral-800/80 md:w-80 lg:w-96 ${className}`}
+    >
       <div className="flex-shrink-0 border-b border-neutral-800/80 p-4">
         <h1 className="mb-3 font-display text-xl font-bold text-white">Messages</h1>
         <div className="relative">

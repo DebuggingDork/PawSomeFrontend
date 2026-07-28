@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, PawPrint, Search, CalendarHeart } from 'lucide-react'
+import { Send, MessagesSquare, Search, CalendarHeart, ArrowLeft } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations, getPlaydates } from '@/lib/api/matches'
@@ -19,8 +19,18 @@ import { useChatConversation } from './useChatConversation'
 
 const DELETE_WINDOW_MS = 15 * 60 * 1000
 
+/** The default right-hand pane, not a rare edge case: /chat opens here every
+ * time until a conversation is explicitly picked, so it is worth saying what
+ * to do rather than just looking empty. */
 function NoConversationSelected() {
-  return <EmptyState icon={PawPrint} title="Pick a match to start chatting" className="h-full" />
+  return (
+    <EmptyState
+      icon={MessagesSquare}
+      title="Choose a conversation"
+      description="Pick a match from the list to open your messages. Nothing is shown here until you do."
+      className="h-full"
+    />
+  )
 }
 
 function ChatPage() {
@@ -67,7 +77,13 @@ function ChatPage() {
         setConversations(convos)
         const requestedMatchId = searchParams.get('match')
         const requested = requestedMatchId ? convos.find((c) => c.matchId === requestedMatchId) : undefined
-        setSelected((current) => current ?? requested ?? convos[0] ?? null)
+        // Deliberately no `?? convos[0]`: landing on /chat must not put a real
+        // conversation on screen by itself. Opening the page in a cafe or next
+        // to a colleague would otherwise expose whichever thread happened to be
+        // most recent, with no action taken to ask for it. A `?match=` link is
+        // different — that is an explicit request for one specific thread, so
+        // it still opens directly.
+        setSelected((current) => current ?? requested ?? null)
       } catch {
         // A failed load leaves the sidebar empty rather than taking the page
         // down with an unhandled rejection; the next mount retries.
@@ -130,20 +146,35 @@ function ChatPage() {
   return (
     <div className="px-3 pb-4 pt-24 md:px-6 md:pt-28">
       <div className="mx-auto flex h-[calc(100vh-7.5rem)] max-w-6xl overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/40 shadow-2xl shadow-black/30">
+        {/* One pane at a time on mobile, both side by side from md up. The
+            sidebar is `w-full` below md, so leaving both mounted there left
+            the thread squeezed to almost no width — a conversation opened on a
+            phone was effectively invisible. */}
         <ConversationSidebar
           conversations={conversations}
           isLoading={isHydrating || conversationsLoading}
           selectedMatchId={selected?.matchId ?? null}
           onSelect={setSelected}
+          className={selected ? 'hidden md:flex' : 'flex'}
         />
 
-        <div className="flex flex-1 flex-col">
+        <div className={`min-w-0 flex-1 flex-col ${selected ? 'flex' : 'hidden md:flex'}`}>
           {!selected && <NoConversationSelected />}
 
           {selected && (
             <>
               {/* Conversation header */}
-              <div className="flex flex-shrink-0 items-center gap-3 border-b border-neutral-800/80 px-5 py-3.5">
+              <div className="flex flex-shrink-0 items-center gap-3 border-b border-neutral-800/80 px-4 py-3.5 md:px-5">
+                {/* Mobile only: the list is hidden while a thread is open, so
+                    without this there is no way back to it. */}
+                <button
+                  type="button"
+                  onClick={() => setSelected(null)}
+                  aria-label="Back to conversations"
+                  className="-ml-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white md:hidden"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
                 <Link
                   to={`/pets/${selected.otherPet.id}`}
                   title={`View ${selected.otherPet.name}'s profile`}

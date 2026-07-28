@@ -298,18 +298,18 @@ export function SwipeDeck({
             onClick={() => rotateWindow(-1)}
             disabled={!canCycle}
             aria-label="Show previous pet"
-            className={`absolute left-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
+            className={`absolute left-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md transition duration-150 ease-out hover:bg-white/25 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
           </button>
           <button
             type="button"
             onClick={() => rotateWindow(1)}
             disabled={!canCycle}
             aria-label="Show next pet"
-            className={`absolute right-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
+            className={`absolute right-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md transition duration-150 ease-out hover:bg-white/25 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
           </button>
         </div>
       </div>
