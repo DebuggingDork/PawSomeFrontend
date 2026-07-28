@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, PawPrint, Search, CalendarHeart } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
@@ -144,9 +144,17 @@ function ChatPage() {
             <>
               {/* Conversation header */}
               <div className="flex flex-shrink-0 items-center gap-3 border-b border-neutral-800/80 px-5 py-3.5">
-                <PetAvatar name={selected.otherPet.name} photoUrl={selected.otherPet.primary_photo_url} online={otherOnline} />
+                <Link
+                  to={`/pets/${selected.otherPet.id}`}
+                  title={`View ${selected.otherPet.name}'s profile`}
+                  className="flex-shrink-0 rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/60"
+                >
+                  <PetAvatar name={selected.otherPet.name} photoUrl={selected.otherPet.primary_photo_url} online={otherOnline} />
+                </Link>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-white">{selected.otherPet.name}</p>
+                  <Link to={`/pets/${selected.otherPet.id}`} className="block w-fit max-w-full truncate font-semibold text-white hover:text-[#ff8c5c]">
+                    {selected.otherPet.name}
+                  </Link>
                   <p className="truncate text-xs text-neutral-500">
                     {otherOnline ? 'Online now' : selected.otherPet.breed}
                     {/* Whose conversation this is. Every message you send here

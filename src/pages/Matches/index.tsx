@@ -79,9 +79,19 @@ function MatchesPage() {
               className="group relative flex min-h-[180px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:border-[#ff6b35]/60 hover:shadow-xl"
             >
               <div className="mb-4 flex items-start gap-4">
-                <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="xl" />
+                <Link
+                  to={`/pets/${conversation.otherPet.id}`}
+                  title={`View ${conversation.otherPet.name}'s profile`}
+                  className="flex-shrink-0 rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/60"
+                >
+                  <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="xl" />
+                </Link>
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-                  <h3 className="truncate text-lg font-semibold text-white">{conversation.otherPet.name}</h3>
+                  <h3 className="truncate text-lg font-semibold">
+                    <Link to={`/pets/${conversation.otherPet.id}`} className="text-white hover:text-[#ff8c5c]">
+                      {conversation.otherPet.name}
+                    </Link>
+                  </h3>
                   <p className="truncate text-sm text-neutral-400">{conversation.otherPet.breed}</p>
                   <p className="mt-1 text-xs text-neutral-500">
                     {pets.length > 1 && petNameById.has(conversation.yourPetId) && (
