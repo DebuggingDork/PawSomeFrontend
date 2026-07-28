@@ -5,6 +5,7 @@ import { GenderBadge } from '@/components/ui/GenderBadge'
 // Shared with the onboarding preview, which mirrors this card so what a new owner
 // builds during setup is literally what everyone else will swipe on.
 import { formatAge } from '@/lib/formatAge'
+import { LAYER } from './layers'
 import type { BrowseCandidate } from '@/lib/api/types'
 
 interface SwipeCardContentProps {
@@ -43,7 +44,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
       <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/55 to-transparent" />
 
       {/* Top-left: status ribbon + match score as stacked glass pills */}
-      <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
+      <div className={`absolute left-3 top-3 ${LAYER.BADGE} flex flex-col items-start gap-2`}>
         {/* Says why a familiar face is back, so a recycled card doesn't read as
             the deck repeating itself by mistake. */}
         {previously_passed && (
@@ -87,7 +88,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           }}
           aria-label={`See more photos of ${pet.name}`}
           title="See more photos"
-          className="absolute right-3 top-16 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/10 backdrop-blur-md transition-colors hover:bg-black/75"
+          className={`absolute right-3 top-16 ${LAYER.BADGE} flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/10 backdrop-blur-md transition-colors hover:bg-black/75`}
         >
           <Expand className="h-4 w-4" />
         </button>
@@ -95,7 +96,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
 
       {/* Top-right: gender and safety as separate floating circles — matches the
           reference deck where each control has its own target. */}
-      <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
+      <div className={`absolute right-3 top-3 ${LAYER.BADGE} flex items-center gap-2`}>
         <GenderBadge gender={pet.gender} size="xl" className="shadow-lg shadow-black/40" />
         {pet.owner?.id && (
           <SafetyMenu
@@ -107,25 +108,35 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
         )}
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/75 to-transparent p-6 pt-28">
-        <div className="mb-1 flex items-baseline gap-1.5">
-          <h3 className="font-display text-[1.75rem] font-bold leading-none tracking-tight text-white">
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-28 sm:p-6 sm:pt-28">
+        {/* `min-w-0` + `truncate` on the name: a long name with an age beside it
+            would otherwise push the age off the card's right edge rather than
+            shortening itself. */}
+        <div className="mb-1.5 flex items-baseline gap-2">
+          <h3 className="min-w-0 truncate font-display text-[1.75rem] font-bold leading-none tracking-tight text-white">
             {pet.name}
           </h3>
           {pet.owner?.is_verified && (
-            <BadgeCheck className="h-5 w-5 flex-shrink-0 text-sky-400" aria-label="Verified owner" />
+            <BadgeCheck className="h-5 w-5 flex-shrink-0 self-center text-sky-400" aria-label="Verified owner" />
           )}
-          <span className="text-lg font-medium text-neutral-300">{formatAge(pet.age_months)}</span>
+          <span className="flex-shrink-0 text-lg font-medium text-neutral-300">{formatAge(pet.age_months)}</span>
         </div>
-        <p className="mb-2 text-sm font-medium text-neutral-300">{pet.breed}</p>
-        <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-400">
+        <p className="mb-2 truncate text-sm font-medium text-neutral-300">{pet.breed}</p>
+        <div className="mb-3.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-400">
           <span className="flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5" />
+            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
             {/* Null when neither owner has set a location — those pets are kept
                 in the deck rather than dropped, so the card has to cope. */}
             {distance_km == null ? 'Distance unknown' : `${distance_km.toFixed(1)} km away`}
           </span>
-          {pet.owner?.full_name && <span>Owned by {pet.owner.full_name}</span>}
+          {pet.owner?.full_name && (
+            <>
+              <span aria-hidden="true" className="text-neutral-600">
+                &middot;
+              </span>
+              <span className="truncate">Owned by {pet.owner.full_name}</span>
+            </>
+          )}
         </div>
 
         {activeTags.length > 0 && (
@@ -135,7 +146,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
                 key={key}
                 className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm ${className}`}
               >
-                <Icon className="h-3 w-3" />
+                <Icon className="h-3 w-3 flex-shrink-0" />
                 {label}
               </span>
             ))}

@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react'
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useTransform, useReducedMotion } from 'framer-motion'
 import { Heart, X, Undo2, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { SwipeCardContent } from './SwipeCard'
+import { LAYER } from './layers'
 import { PetCardDialog } from '@/components/community/PetCardDialog'
 import { useDiscoverStore } from '@/store/useDiscoverStore'
 import type { BrowseCandidate } from '@/lib/api/types'
@@ -16,6 +17,13 @@ const VISIBLE_CARDS = 4
 // still work" depended on a library internal rather than something this file
 // controls and can reason about.
 const TAP_DRAG_TOLERANCE = 6
+
+/**
+ * Standard ease-out for card motion. Explicitly typed as a 4-tuple rather than
+ * left to inference: as a bare `number[]` it does not satisfy Framer Motion's
+ * `Easing` union, and the resulting error only surfaces under `tsc -b`.
+ */
+const EASE_OUT: [number, number, number, number] = [0.4, 0, 0.2, 1]
 
 type SwipeAction = 'like' | 'skip' | 'super_like'
 
@@ -69,15 +77,30 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
   // snapped-back drag (do nothing) — a plain onClick can't tell those apart
   // on its own since both end with a pointerup on the same element.
   const didDragRef = useRef(false)
+  const reduceMotion = useReducedMotion()
+
+  // Reduced motion drops the travel, not the feedback: a card flung 520px
+  // across the viewport is exactly the kind of large positional movement that
+  // triggers motion sickness, but silently removing the transition entirely
+  // would leave someone unsure whether their swipe registered. Fading in place
+  // still answers that.
+  const exitAnimation = reduceMotion
+    ? { opacity: 0, transition: { duration: 0.2 } }
+    : {
+        ...EXIT_VARIANTS[exitAction],
+        transition: { duration: exitAction === 'super_like' ? 0.45 : 0.32, ease: EASE_OUT },
+      }
 
   return (
     <motion.div
       className="absolute inset-0"
       style={{ zIndex: VISIBLE_CARDS - stackIndex }}
       animate={{ x: fan.x, y: fan.y, rotate: fan.rotate, scale: fan.scale, opacity: fan.opacity }}
-      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+      transition={
+        reduceMotion ? { duration: 0.2, ease: EASE_OUT } : { type: 'spring', stiffness: 260, damping: 26 }
+      }
       initial={false}
-      exit={{ ...EXIT_VARIANTS[exitAction], transition: { duration: exitAction === 'super_like' ? 0.45 : 0.32, ease: [0.4, 0, 0.2, 1] } }}
+      exit={exitAnimation}
     >
       <motion.div
         className="absolute inset-0"
@@ -103,11 +126,13 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
         <SwipeCardContent candidate={candidate} onPreview={isTop ? onPreview : undefined} />
         {/* Cards behind the top one are cropped by the fan, so their badges and
             name sit half-cut at odd angles and read as clutter. Dim and blur
-            them so only the top card's text is legible. z-20 is required, not
-            decorative — the card's own corner badges are z-10, so without a
-            higher value here they punch straight through this overlay and
-            stay fully readable underneath, defeating the whole point. */}
-        {!isTop && <div className="pointer-events-none absolute inset-0 z-20 rounded-[1.75rem] bg-black/60 backdrop-blur-[1px]" />}
+            them so only the top card's text is legible. See LAYER for why this
+            has to sit above the badges rather than below them. */}
+        {!isTop && (
+          <div
+            className={`pointer-events-none absolute inset-0 ${LAYER.DIM} rounded-[1.75rem] bg-black/60 backdrop-blur-[1px]`}
+          />
+        )}
         {isTop && (
           <>
             <motion.div
@@ -174,6 +199,7 @@ export function SwipeDeck({
   const [exiting, setExiting] = useState(false)
   const [exitAction, setExitAction] = useState<SwipeAction>('like')
   const [previewCandidate, setPreviewCandidate] = useState<BrowseCandidate | null>(null)
+  const reduceMotion = useReducedMotion()
 
   // The fan order lives in the Discover store, not here, so it outlives this
   // component being unmounted by a navigation. Only reused when it describes the
@@ -256,14 +282,19 @@ export function SwipeDeck({
             ))}
           </AnimatePresence>
 
-          {/* Edge chevrons sit on the photo like the reference — browsing the
-              deck without committing a swipe. Hidden when there's nothing else. */}
+          {/* Edge chevrons for browsing the deck without committing a swipe.
+              Anchored at 42% rather than the usual top-1/2: the bottom ~30-45%
+              of a card is the name/breed/tags gradient, so a true vertical
+              centre lands the left chevron directly on the pet's name on
+              anything but the tallest cards. 42% clears the text block at every
+              height this deck renders at while still reading as "middle of the
+              photo". */}
           <button
             type="button"
             onClick={() => rotateWindow(-1)}
             disabled={!canCycle}
-            aria-label="Show previous"
-            className="absolute left-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition-all hover:scale-110 hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
+            aria-label="Show previous pet"
+            className={`absolute left-2 top-[42%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -271,45 +302,63 @@ export function SwipeDeck({
             type="button"
             onClick={() => rotateWindow(1)}
             disabled={!canCycle}
-            aria-label="Show next"
-            className="absolute right-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition-all hover:scale-110 hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
+            aria-label="Show next pet"
+            className={`absolute right-2 top-[42%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg shadow-black/40 backdrop-blur-md transition duration-150 ease-out hover:bg-black/75 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
           >
             <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>
 
-      <div className="mt-6 flex flex-shrink-0 items-end gap-5">
-        <button
-          onClick={onUndo}
-          disabled={!canUndo || undoing}
-          aria-label="Undo last swipe"
-          className="mb-5 flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all hover:border-amber-500/40 hover:text-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
-        >
-          <Undo2 className="h-5 w-5" />
-        </button>
+      {/* Every action is a labelled column so `items-end` lines all four up on
+          one baseline. Undo used to be a bare icon nudged down by a hardcoded
+          `mb-5` to fake that alignment, which left it sitting at an arbitrary
+          height next to three labelled buttons and reading as a stray control
+          rather than part of the row. */}
+      <div className="mt-6 flex flex-shrink-0 items-end justify-center gap-4 sm:gap-5">
+        <div className="flex flex-col items-center gap-1.5">
+          <button
+            onClick={onUndo}
+            disabled={!canUndo || undoing}
+            aria-label="Undo last swipe"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition duration-150 ease-out hover:border-amber-500/40 hover:text-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <Undo2 className="h-5 w-5" />
+          </button>
+          <span className="text-xs font-medium text-neutral-400">Undo</span>
+        </div>
 
         <div className="flex flex-col items-center gap-1.5">
           <button
             onClick={() => handleSwiped('skip')}
             disabled={!top}
             aria-label="Pass"
-            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition-all hover:border-red-500/40 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition duration-150 ease-out hover:border-red-500/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hover:scale-105"
           >
             <X className="h-7 w-7" strokeWidth={2.5} />
           </button>
-          <span className="text-xs font-medium text-neutral-500">Pass</span>
+          <span className="text-xs font-medium text-neutral-400">Pass</span>
         </div>
 
         {/* Super Woof — glowing, limited-use priority like. */}
         <div className="flex flex-col items-center gap-1.5">
           <div className="relative">
             {superWoofAvailable && (
+              /* The glow is the affordance that marks this as the special
+                 action, so reduced motion keeps it and drops only the pulse —
+                 removing it outright would flatten Super Woof into an ordinary
+                 third button. */
               <motion.span
                 aria-hidden
                 className="pointer-events-none absolute -inset-1.5 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
-                animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                animate={
+                  reduceMotion
+                    ? { scale: 1, opacity: 0.45 }
+                    : { scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }
+                }
+                transition={
+                  reduceMotion ? { duration: 0 } : { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+                }
               />
             )}
             <button
@@ -317,7 +366,7 @@ export function SwipeDeck({
               disabled={superWoofDisabled}
               aria-label="Super Woof"
               title={superWoofAvailable ? 'Super Woof — jump to the top of their likes' : "You've used today's Super Woof"}
-              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-[0_0_28px_rgba(56,189,248,0.55)] ring-2 ring-sky-300/50 transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-500 disabled:opacity-60 disabled:shadow-none disabled:ring-0"
+              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-[0_0_28px_rgba(56,189,248,0.55)] ring-2 ring-sky-300/50 transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-400 disabled:opacity-60 disabled:shadow-none disabled:ring-0 motion-safe:hover:scale-110"
             >
               <Star className="h-6 w-6" fill="currentColor" />
             </button>
@@ -327,7 +376,7 @@ export function SwipeDeck({
               </span>
             )}
           </div>
-          <span className="text-xs font-medium text-neutral-500">Super Woof</span>
+          <span className="text-xs font-medium text-neutral-400">Super Woof</span>
         </div>
 
         <div className="flex flex-col items-center gap-1.5">
@@ -335,15 +384,16 @@ export function SwipeDeck({
             onClick={() => handleSwiped('like')}
             disabled={!top}
             aria-label="Like"
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hover:scale-105"
           >
             <Heart className="h-7 w-7" fill="currentColor" />
           </button>
-          <span className="text-xs font-medium text-neutral-500">Like</span>
+          <span className="text-xs font-medium text-neutral-400">Like</span>
         </div>
       </div>
 
-      <p className="mt-3 h-4 text-center text-xs text-neutral-500">
+      {/* Fixed height so the row above never shifts when this text swaps. */}
+      <p className="mt-3 h-4 text-center text-xs text-neutral-400">
         {superWoofRemaining === 0 ? 'Super Woof back tomorrow ⭐' : superWoofAvailable ? 'Tap the star to Super Woof' : ''}
       </p>
 
