@@ -80,7 +80,7 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
         {/* Cards behind the top one are cropped by the fan, so their badges and
             name sit half-cut at odd angles and read as clutter. Dim and blur
             them so only the top card's text is legible. */}
-        {!isTop && <div className="pointer-events-none absolute inset-0 rounded-3xl bg-black/45 backdrop-blur-[1px]" />}
+        {!isTop && <div className="pointer-events-none absolute inset-0 rounded-3xl bg-black/50 backdrop-blur-[1px]" />}
         {isTop && (
           <>
             <motion.div
@@ -198,52 +198,62 @@ export function SwipeDeck({
   const canCycle = order.length > 1 && !exiting
 
   return (
-    /* Fills whatever height the page gives it and keeps the action row in
-       flow beneath, so the buttons are always on screen. The card area used to
-       be a fixed 26-30rem, which on a laptop pushed skip/Super Woof/like below
-       the fold — users had no way to know they existed without scrolling. */
-    <div className="flex h-full min-h-0 flex-col items-center py-2.5">
-      <div className="relative w-full max-w-md flex-1 min-h-[16rem]">
-        <AnimatePresence onExitComplete={() => setExiting(false)}>
-          {visible.map((candidate, i) => (
-            <DraggableCard
-              key={candidate.pet.id}
-              candidate={candidate}
-              isTop={i === 0}
-              stackIndex={i}
-              exitAction={exitAction}
-              isExiting={exiting && i === 0}
-              onSwiped={handleSwiped}
-            />
-          ))}
-        </AnimatePresence>
-
-        <button
-          type="button"
-          onClick={() => rotateWindow(-1)}
-          disabled={!canCycle}
-          aria-label="Show previous"
-          className="absolute left-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-lg shadow-black/40 backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/80 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={() => rotateWindow(1)}
-          disabled={!canCycle}
-          aria-label="Show next"
-          className="absolute right-2 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-lg shadow-black/40 backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/80 active:scale-95 disabled:pointer-events-none disabled:opacity-0"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
+    /* Portrait card sized to available height: width follows 3:4 up to max-w-md
+       so pet photos aren't cropped into a wide, short strip. Action buttons stay
+       in flow beneath so they remain on screen. */
+    <div className="flex h-full min-h-0 flex-col items-center">
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+        <div className="relative aspect-[3/4] h-full max-h-full w-auto max-w-md min-h-[20rem]">
+          <AnimatePresence onExitComplete={() => setExiting(false)}>
+            {visible.map((candidate, i) => (
+              <DraggableCard
+                key={candidate.pet.id}
+                candidate={candidate}
+                isTop={i === 0}
+                stackIndex={i}
+                exitAction={exitAction}
+                isExiting={exiting && i === 0}
+                onSwiped={handleSwiped}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
-      <div className="mt-10 flex flex-shrink-0 items-end gap-5 sm:mt-12">
+      {/* Browse-without-swiping, pulled off the photo into its own compact
+          control below the card. Floating chevrons on top of a face read as
+          decoration with no clear job; grouped like this they read as one
+          "browse the deck" affordance instead of two stray buttons. */}
+      {order.length > 1 && (
+        <div className="mt-3 flex flex-shrink-0 items-center gap-0.5 rounded-full border border-neutral-800 bg-neutral-900/80 p-1">
+          <button
+            type="button"
+            onClick={() => rotateWindow(-1)}
+            disabled={!canCycle}
+            aria-label="Show previous"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="px-1.5 text-[11px] font-medium text-neutral-500">Browse</span>
+          <button
+            type="button"
+            onClick={() => rotateWindow(1)}
+            disabled={!canCycle}
+            aria-label="Show next"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-shrink-0 items-end gap-5">
         <button
           onClick={onUndo}
           disabled={!canUndo || undoing}
           aria-label="Undo last swipe"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-colors hover:text-amber-400 disabled:cursor-not-allowed disabled:opacity-30"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all hover:border-amber-500/40 hover:text-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
         >
           <Undo2 className="h-5 w-5" />
         </button>
@@ -253,7 +263,7 @@ export function SwipeDeck({
             onClick={() => handleSwiped('skip')}
             disabled={!top}
             aria-label="Pass"
-            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-lg transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-rose-400 shadow-lg shadow-black/30 transition-all hover:border-rose-500/40 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
           >
             <X className="h-7 w-7" />
           </button>
@@ -266,9 +276,9 @@ export function SwipeDeck({
             {superWoofAvailable && (
               <motion.span
                 aria-hidden
-                className="pointer-events-none absolute -inset-1.5 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
-                animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                className="pointer-events-none absolute -inset-1 rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 blur-md"
+                animate={{ scale: [1, 1.2, 1], opacity: [0.25, 0.5, 0.25] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
               />
             )}
             <button
@@ -302,8 +312,8 @@ export function SwipeDeck({
         </div>
       </div>
 
-      <p className="mt-4 h-4 text-center text-xs text-neutral-500">
-        {superWoofRemaining === 0 ? "Super Woof back tomorrow ⭐" : superWoofAvailable ? 'Tap the star to Super Woof' : ''}
+      <p className="mt-3 h-4 text-center text-xs text-neutral-500">
+        {superWoofRemaining === 0 ? 'Super Woof back tomorrow ⭐' : superWoofAvailable ? 'Tap the star to Super Woof' : ''}
       </p>
     </div>
   )

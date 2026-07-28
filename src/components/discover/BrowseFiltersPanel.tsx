@@ -45,22 +45,24 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
   return (
     /* Overlays rather than expands. Pushing the deck down when filters opened
        was part of why the swipe buttons ended up below the fold. */
-    <div className="relative rounded-xl border border-neutral-800/80 bg-neutral-900/40">
+    <div className="relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center justify-between gap-2 whitespace-nowrap px-3 py-2 text-sm text-neutral-300"
+        className={`flex items-center gap-2 whitespace-nowrap rounded-full border py-1.5 pl-3 pr-2.5 text-sm font-medium transition-colors ${
+          open || activeCount > 0
+            ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-white'
+            : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
+        }`}
       >
-        <span className="flex items-center gap-2">
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-          Filters
-          {activeCount > 0 && (
-            <span className="rounded-full bg-[#ff6b35]/20 px-2 py-0.5 text-xs font-medium text-[#ff8c5c]">
-              {activeCount}
-            </span>
-          )}
-        </span>
-        <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <SlidersHorizontal className="h-3.5 w-3.5" />
+        Filters
+        {activeCount > 0 && (
+          <span className="rounded-full bg-[#ff6b35]/20 px-1.5 py-0.5 text-xs font-medium text-[#ff8c5c]">
+            {activeCount}
+          </span>
+        )}
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence initial={false}>

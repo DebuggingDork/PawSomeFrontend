@@ -261,10 +261,10 @@ function DiscoverPage() {
       </div>
 
       {tab === 'discover' && (
-        <div className="flex min-h-0 flex-1 flex-col py-5">
+        <div className="flex min-h-0 flex-1 flex-col">
           {/* Both controls share one row — two stacked full-width bars cost
               enough height on a laptop to push the deck's buttons off screen. */}
-          <div className="mb-[50px] flex flex-shrink-0 items-center gap-3 py-3">
+          <div className="mb-3 flex flex-shrink-0 items-center gap-3">
             <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
             <div className="ml-auto flex-shrink-0">
               <BrowseFiltersPanel filters={filters} onChange={setFilters} />
@@ -274,7 +274,7 @@ function DiscoverPage() {
           {locationError && <LocationNeededPrompt />}
 
           {!locationError && browseQuery.isLoading && (
-            <Skeleton className="mx-auto h-full w-full max-w-md" />
+            <Skeleton className="mx-auto aspect-[3/4] h-full max-h-full w-auto max-w-md" />
           )}
 
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (
