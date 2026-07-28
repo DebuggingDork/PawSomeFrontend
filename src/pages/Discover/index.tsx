@@ -274,7 +274,7 @@ function DiscoverPage() {
           {locationError && <LocationNeededPrompt />}
 
           {!locationError && browseQuery.isLoading && (
-            <Skeleton className="mx-auto h-full w-full max-w-sm" />
+            <Skeleton className="mx-auto h-full w-full max-w-md" />
           )}
 
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (

@@ -203,7 +203,7 @@ export function SwipeDeck({
        be a fixed 26-30rem, which on a laptop pushed skip/Super Woof/like below
        the fold — users had no way to know they existed without scrolling. */
     <div className="flex h-full min-h-0 flex-col items-center py-2.5">
-      <div className="relative w-full max-w-sm flex-1 min-h-[16rem]">
+      <div className="relative w-full max-w-md flex-1 min-h-[16rem]">
         <AnimatePresence onExitComplete={() => setExiting(false)}>
           {visible.map((candidate, i) => (
             <DraggableCard
