@@ -201,16 +201,22 @@ export function SwipeDeck({
   const canCycle = order.length > 1 && !exiting
 
   return (
-    /* Portrait card sized to available height: width follows 3:4 up to max-w-md
-       so pet photos aren't cropped into a wide, short strip. Action buttons stay
-       in flow beneath so they remain on screen. */
+    /* True 3:4 portrait sized to the tallest fit inside the deck area:
+       width = min(max-w-md, parent, height×¾) so the card grows in height with
+       the viewport instead of stretching into a short wide strip. */
     <div className="flex h-full min-h-0 flex-col items-center">
-      {/* py-2 guarantees a real gap above and below the card no matter how
-          tall it renders — without it, a card sized right up to this box's
-          edges visually touches the controls row above and the browse pill
-          below on any viewport short enough for min-h-[18rem] to bind. */}
-      <div className="flex min-h-0 w-full flex-1 items-center justify-center py-2">
-        <div className="relative aspect-[3/4] h-full max-h-full w-auto max-w-md min-h-[18rem]">
+      <div
+        className="flex min-h-0 w-full flex-1 items-center justify-center py-2"
+        style={{ containerType: 'size' }}
+      >
+        <div
+          className="relative max-h-full"
+          style={{
+            aspectRatio: '3 / 4',
+            width: 'min(100%, 28rem, calc(100cqh * 3 / 4))',
+            height: 'auto',
+          }}
+        >
           <AnimatePresence onExitComplete={() => setExiting(false)}>
             {visible.map((candidate, i) => (
               <DraggableCard

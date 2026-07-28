@@ -274,7 +274,12 @@ function DiscoverPage() {
           {locationError && <LocationNeededPrompt />}
 
           {!locationError && browseQuery.isLoading && (
-            <Skeleton className="mx-auto aspect-[3/4] h-full max-h-full w-auto max-w-md" />
+            <div
+              className="mx-auto max-h-full"
+              style={{ aspectRatio: '3 / 4', width: 'min(100%, 28rem)' }}
+            >
+              <Skeleton className="h-full w-full rounded-3xl" />
+            </div>
           )}
 
           {!locationError && !browseQuery.isLoading && deck.length === 0 && (
