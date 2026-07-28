@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, MessagesSquare, Search, CalendarHeart, ArrowLeft } from 'lucide-react'
+import { Send, Search, CalendarHeart, ArrowLeft } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getConversations, getPlaydates } from '@/lib/api/matches'
@@ -14,24 +14,11 @@ import { ChatSearchPanel } from '@/components/chat/ChatSearchPanel'
 import { PlaydatePanel } from '@/components/chat/PlaydatePanel'
 import { SignInPrompt } from '@/components/ui/SignInPrompt'
 import { SafetyMenu } from '@/components/safety/SafetyMenu'
-import { EmptyState } from '@/components/ui/EmptyState'
+import { ChatIdlePanel } from '@/components/chat/ChatIdlePanel'
 import { useChatConversation } from './useChatConversation'
 
 const DELETE_WINDOW_MS = 15 * 60 * 1000
 
-/** The default right-hand pane, not a rare edge case: /chat opens here every
- * time until a conversation is explicitly picked, so it is worth saying what
- * to do rather than just looking empty. */
-function NoConversationSelected() {
-  return (
-    <EmptyState
-      icon={MessagesSquare}
-      title="Choose a conversation"
-      description="Pick a match from the list to open your messages. Nothing is shown here until you do."
-      className="h-full"
-    />
-  )
-}
 
 function ChatPage() {
   const { isAuthenticated, isHydrating, pets, user } = useAuthStore()
@@ -159,7 +146,7 @@ function ChatPage() {
         />
 
         <div className={`min-w-0 flex-1 flex-col ${selected ? 'flex' : 'hidden md:flex'}`}>
-          {!selected && <NoConversationSelected />}
+          {!selected && <ChatIdlePanel />}
 
           {selected && (
             <>
