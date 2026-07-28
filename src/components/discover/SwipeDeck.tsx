@@ -238,7 +238,7 @@ export function SwipeDeck({
         </button>
       </div>
 
-      <div className="mt-4 flex flex-shrink-0 items-end gap-5 sm:mt-6">
+      <div className="mt-10 flex flex-shrink-0 items-end gap-5 sm:mt-12">
         <button
           onClick={onUndo}
           disabled={!canUndo || undoing}
