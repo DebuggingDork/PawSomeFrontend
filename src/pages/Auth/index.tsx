@@ -9,9 +9,9 @@ import {
   AlertCircle,
   ArrowRight,
   CheckCircle2,
-  MapPin,
+  Footprints,
   ShieldCheck,
-  CalendarHeart,
+  Trees,
 } from 'lucide-react'
 import { useLoaderStore } from '@/store/useLoaderStore'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -27,10 +27,25 @@ import { siteImages } from '@/lib/siteImages'
 type Mode = 'signin' | 'signup' | 'forgot'
 
 const PANEL_FEATURES = [
-  { icon: MapPin, title: 'Matches near you', copy: 'Discover pets and parents in your neighborhood.' },
-  { icon: ShieldCheck, title: 'Verified & safe', copy: 'Every profile is checked so you can relax.' },
-  { icon: CalendarHeart, title: 'Real playdates', copy: 'Turn a match into a walk in the park — literally.' },
+  {
+    icon: Footprints,
+    title: 'Close enough to walk',
+    copy: 'Profiles come ordered by distance, so the first dogs you see are ones you could reach on foot.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Someone checks first',
+    copy: 'Every profile is read before it goes live, so the dog in the photo is the dog you meet.',
+  },
+  {
+    icon: Trees,
+    title: 'Ends at the park',
+    copy: 'Settle on a spot and an hour, then swap the phone for a lead.',
+  },
 ]
+
+/** Lets white copy sit on the brighter parts of the photograph without a heavier scrim. */
+const ON_PHOTO = { textShadow: '0 2px 20px rgba(0,0,0,0.6)' }
 
 function AuthPage() {
   const navigate = useNavigate()
@@ -141,20 +156,21 @@ function AuthPage() {
         />
         {/* Deepens left-to-right so the glass card on the right has real
             contrast to sit on, while the brand copy on the left keeps more
-            of the photo visible. */}
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/50 via-neutral-950/75 to-neutral-950/95" />
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-neutral-950/40" />
+            of the photo visible. The left end is deliberately light now: the
+            photograph is the only warmth on the page and burying it under half
+            a layer of black wasted it. White copy over the bright end is held
+            up by ON_PHOTO's shadow rather than by more scrim. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/28 via-neutral-950/62 to-neutral-950/93" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/55 via-transparent to-neutral-950/28" />
       </div>
 
       {/* ── Left: brand copy over the photo (large screens only) ────────────── */}
       <div className="relative z-10 hidden w-1/2 flex-col justify-between p-12 pt-28 lg:flex">
-        {/* Logo + wordmark */}
-        <div className="flex items-center gap-3">
-          <img src={logoIcon} alt="PawSome" className="h-11 w-11 drop-shadow-lg" />
-          <span className="text-2xl font-bold text-white" style={{ fontFamily: 'Pacifico, cursive' }}>
-            PawSome
-          </span>
-        </div>
+        {/* The mark used to sit here, directly under the identical one in the
+            fixed navbar. Holding the top slot empty keeps the three-part
+            vertical rhythm the panel was composed around, so dropping the
+            duplicate doesn't drag the tagline up under the nav. */}
+        <div aria-hidden />
 
         {/* Tagline + features */}
         <div>
@@ -163,9 +179,10 @@ function AuthPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
             className="mb-8 max-w-md text-4xl font-medium leading-[1.15] text-white"
-            style={{ fontFamily: 'Playfair Display, serif' }}
+            style={{ fontFamily: 'Playfair Display, serif', ...ON_PHOTO }}
           >
-            Where good dogs find <span className="italic text-[#ff6b35]">great friends</span>
+            Your dog already wants to meet{' '}
+            <span className="italic text-[#ff8555]">the neighbors</span>
           </motion.h1>
 
           <div className="space-y-4">
@@ -177,12 +194,19 @@ function AuthPage() {
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.15 + i * 0.1, ease: [0.23, 1, 0.32, 1] }}
-                  className="flex items-center gap-3"
+                  className="flex items-start gap-3"
                 >
-                  <Icon className="h-5 w-5 flex-shrink-0 text-[#ff6b35]" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">{f.title}</p>
-                    <p className="text-xs text-neutral-300">{f.copy}</p>
+                  <Icon
+                    className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#ff8555] drop-shadow-[0_2px_6px_rgba(0,0,0,0.65)]"
+                    aria-hidden="true"
+                  />
+                  <div className="max-w-sm">
+                    <p className="text-sm font-semibold text-white" style={ON_PHOTO}>
+                      {f.title}
+                    </p>
+                    <p className="text-xs leading-relaxed text-neutral-200" style={ON_PHOTO}>
+                      {f.copy}
+                    </p>
                   </div>
                 </motion.div>
               )
@@ -197,7 +221,7 @@ function AuthPage() {
             away now says so out loud — so this line was contradicting the rest
             of the site as well as the database. Nothing is lost by not
             quantifying it. */}
-        <p className="text-sm font-medium text-neutral-300">
+        <p className="text-sm font-medium text-neutral-200" style={ON_PHOTO}>
           🐾 Set your pet up once, and start meeting the ones nearby.
         </p>
       </div>
