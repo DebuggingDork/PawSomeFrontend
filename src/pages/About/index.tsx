@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { PawPrint, MapPin, ShieldCheck, MessageCircle, Heart } from 'lucide-react'
+import { MapPin, ShieldCheck, MessageCircle, Heart } from 'lucide-react'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { StaggerRevealContainer, StaggerRevealItem } from '@/components/animations/StaggerReveal'
 import PawsomeFooter from '@/components/ui/PawsomeFooter'
@@ -46,11 +46,7 @@ function AboutPage() {
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-6 pb-16 pt-28 text-center md:pt-36">
         <ScrollReveal>
-          <span className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/60 px-4 py-1.5 text-sm font-medium text-neutral-300">
-            <PawPrint className="h-3.5 w-3.5 text-[#ff6b35]" />
-            Built by one person, for one very bored dog
-          </span>
-          <h1 className="mt-6 text-balance font-display text-4xl font-bold leading-[1.1] tracking-[-0.02em] text-white md:text-6xl">
+          <h1 className="text-balance font-display text-4xl font-bold leading-[1.1] tracking-[-0.02em] text-white md:text-6xl">
             It started with a dog named Bruno.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-neutral-300">
@@ -112,28 +108,15 @@ function AboutPage() {
               </div>
             </div>
 
-            {/* Founder card.
-                TO ADD THE PHOTO: drop the file in src/assets (say founder.jpg),
-                import it at the top, and replace the placeholder div below with
-                  <img src={founder} alt="Mani Mamidala" className="h-full w-full object-cover" />
-                The frame, ratio and caption stay as they are. */}
+            {/* A byline, not a portrait frame. The empty photo well that used to
+                sit here was a promise the page had no intention of keeping. */}
             <ScrollReveal direction="left" delay={0.1} className="mt-14 lg:mt-2">
-              <figure className="lg:sticky lg:top-28">
-                <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900">
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(circle_at_50%_35%,rgba(255,107,53,0.10),transparent_70%)]">
-                    <PawPrint className="h-8 w-8 text-neutral-700" aria-hidden="true" />
-                    <span className="px-6 text-center text-xs leading-relaxed text-neutral-500">
-                      Photo going here shortly
-                    </span>
-                  </div>
-                </div>
-                <figcaption className="mt-4">
-                  <p className="font-display font-semibold text-white">Mani Mamidala</p>
-                  <p className="mt-1 text-sm leading-relaxed text-neutral-400">
-                    Built PawSome. Designs it, writes it, answers the support email.
-                  </p>
-                </figcaption>
-              </figure>
+              <aside className="border-t border-neutral-800 pt-5 lg:sticky lg:top-28">
+                <p className="font-display font-semibold text-white">Mani Mamidala</p>
+                <p className="mt-1 text-sm leading-relaxed text-neutral-400">
+                  Built PawSome. Designs it, writes it, answers the support email.
+                </p>
+              </aside>
             </ScrollReveal>
           </div>
         </div>
