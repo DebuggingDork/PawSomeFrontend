@@ -43,10 +43,17 @@ function PetCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: (index % PAGE_SIZE) * 0.05, ease: 'easeOut' }}
-      className="group overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 text-left backdrop-blur transition-all hoverable:hover:-translate-y-1 hover:border-[#ff6b35]/70 hover:shadow-xl hover:shadow-[#ff6b35]/10"
+      // `flex flex-col` is load-bearing, not cosmetic. Grid rows stretch every
+      // card to the height of the tallest one in the row, and a <button> that is
+      // taller than its content centres that content vertically — so a pet with
+      // a short bio (or none) rendered with a band of empty card above the photo
+      // and the badges floating off the top edge, while its neighbours sat flush.
+      // A flex column stacks from the top instead, and the slack lands at the
+      // bottom where mt-auto below can use it.
+      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 text-left backdrop-blur transition-all hoverable:hover:-translate-y-1 hover:border-[#ff6b35]/70 hover:shadow-xl hover:shadow-[#ff6b35]/10"
     >
       {/* Pet Photo */}
-      <div className="relative aspect-square overflow-hidden bg-neutral-800">
+      <div className="relative aspect-square shrink-0 overflow-hidden bg-neutral-800">
         {pet.primary_photo_url ? (
           <img
             src={pet.primary_photo_url}
@@ -92,7 +99,7 @@ function PetCard({
       </div>
 
       {/* Pet Info */}
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         <div className="mb-1 flex items-center gap-1.5">
           <h3 className="text-xl font-bold text-white">{pet.name}</h3>
           {pet.owner?.is_verified && <BadgeCheck className="h-4 w-4 flex-shrink-0 text-sky-400" aria-label="Verified owner" />}
@@ -113,9 +120,10 @@ function PetCard({
           </div>
         )}
 
-        {/* Owner Info */}
+        {/* Owner Info. mt-auto so the owner strips line up across a row
+            whatever the bios above them did. */}
         {pet.owner && (
-          <div className="flex items-center gap-2 border-t border-neutral-800 pt-3">
+          <div className="mt-auto flex items-center gap-2 border-t border-neutral-800 pt-3">
             <PetAvatar name={pet.owner.full_name ?? 'Unknown'} photoUrl={pet.owner.profile_photo_url} size="sm" />
             <div className="flex-1 overflow-hidden">
               <div className="truncate text-sm font-medium text-white">{pet.owner.full_name ?? 'Anonymous'}</div>
