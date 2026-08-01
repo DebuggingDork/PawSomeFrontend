@@ -8,13 +8,14 @@
  * broken. They are now fetched once at build/seed time, downscaled to the size
  * each one is actually displayed at, and stored under site/ in the bucket.
  *
- * The list is down from eight entries to two. The other six were stock photos
- * standing in for content the landing page did not have: header images for
- * articles nobody wrote, backdrops for "featured pets" who did not exist, and
- * one dog tile plus one cat tile repeated three times each behind invented
+ * The list is down from eight entries to three. Six of the originals were stock
+ * photos standing in for content the landing page did not have: header images
+ * for articles nobody wrote, backdrops for "featured pets" who did not exist,
+ * and one dog tile plus one cat tile repeated three times each behind invented
  * captions. Those sections now render the real pets from /pets with the photos
- * their owners uploaded, so the only stock imagery left is the two backgrounds
- * that are genuinely doing a background's job.
+ * their owners uploaded, so every entry left is a background genuinely doing a
+ * background's job — and two of the three are now the owner's own photographs
+ * rather than stock.
  *
  * Regenerate with:
  *   cd backend && uv run --with pillow python scripts/upload_site_images.py
@@ -31,7 +32,13 @@ export const siteImages = {
    *  not graded. The hero paints it full-bleed with object-cover across the
    *  first viewport so the photograph is the entire stage. */
   heroPets: `${R2_BASE}/final-home-page-image.png`,
-  /** Two dogs running at dusk. The Auth background and the landing's closing
-   *  band — was `heroDog` until it stopped being a hero. */
+  /** Two dogs running at dusk. The landing's closing band — was `heroDog`
+   *  until it stopped being a hero, and the Auth background until nappingCats
+   *  took that slot. Still referenced, so leave the object in place. */
   duskRun: `${R2_BASE}/duskRun.jpg`,
+  /** Auth background: two tabbies asleep against a sunlit wall, supplied by the
+   *  project owner. Uploaded with a gamma lift (see the seeder) because Auth's
+   *  two scrims are tuned for duskRun's low-key dusk light and were left
+   *  untouched — the extra brightness had to come out of the file instead. */
+  nappingCats: `${R2_BASE}/nappingCats.jpg`,
 } as const

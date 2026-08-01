@@ -150,7 +150,7 @@ function AuthPage() {
           surface floating on top of it, not a separately-designed block. */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <img
-          src={siteImages.duskRun}
+          src={siteImages.nappingCats}
           alt=""
           className={`h-full w-full object-cover ${shouldReduceMotion ? '' : 'animate-slow-pan'}`}
         />
