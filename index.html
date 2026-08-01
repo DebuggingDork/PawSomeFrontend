@@ -62,12 +62,17 @@
       property="og:description"
       content="Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate. Join local pet meetups on PawSome."
     />
-    <!-- Absolute, and 1200x630 exactly. A relative path resolves against the
-         crawler, not the site, and an off-ratio image gets cropped somewhere
-         other than where you would have chosen. -->
-    <meta property="og:image" content="https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site/og-card.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <!-- Absolute: a relative path resolves against the crawler, not the site.
+         1535x803 — 1.91:1, which is the ratio every one of these services draws
+         a card at, so anything else gets cropped somewhere other than where you
+         would have chosen. The first version of this was 1200x630 and read
+         visibly soft: 1200 is the floor those services accept, not a target,
+         and the card is then drawn on 2x displays and re-encoded by whoever
+         renders it, which leaves nothing for either. 1535 is the full width of
+         the source, so it is more pixels without a single one of upscaling. -->
+    <meta property="og:image" content="https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site/og-card-v2.jpg" />
+    <meta property="og:image:width" content="1535" />
+    <meta property="og:image:height" content="803" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:alt" content="Two dogs looking up at the camera on a paved path" />
 
@@ -77,7 +82,7 @@
       name="twitter:description"
       content="Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate."
     />
-    <meta name="twitter:image" content="https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site/og-card.jpg" />
+    <meta name="twitter:image" content="https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site/og-card-v2.jpg" />
     <meta name="twitter:image:alt" content="Two dogs looking up at the camera on a paved path" />
 
     <!-- Claims only what is demonstrably true on the site. Deliberately no
