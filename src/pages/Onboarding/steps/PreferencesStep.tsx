@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { updateMyProfile } from '@/lib/api/users'
-import { Field, TextArea, TextInput, PrimaryAction, SkipAction, StepError } from '../fields'
+import { Field, TextArea, TextInput, PrimaryAction, StepActions, StepError } from '../fields'
 
 interface Props {
   initialBio: string
   initialAddress: string
   petName: string
   onSaved: () => void
-  onSkip: () => void
 }
 
 /** Openers, not canned answers. Tapping one drops the first few words into the box
@@ -23,7 +22,7 @@ const BIO_OPENERS = [
 
 const MAX_BIO = 300
 
-export function PreferencesStep({ initialBio, initialAddress, petName, onSaved, onSkip }: Props) {
+export function PreferencesStep({ initialBio, initialAddress, petName, onSaved }: Props) {
   const [bio, setBio] = useState(initialBio)
   const [address, setAddress] = useState(initialAddress)
 
@@ -48,7 +47,7 @@ export function PreferencesStep({ initialBio, initialAddress, petName, onSaved, 
                 key={opener}
                 type="button"
                 onClick={() => setBio((current) => (current.trim() ? current : opener))}
-                className="rounded-full border border-neutral-800 bg-neutral-900/60 px-3.5 py-1.5 text-left text-sm text-neutral-300 transition-colors hover:border-neutral-700 hover:text-white"
+                className="touch-manipulation rounded-full border border-neutral-800 bg-neutral-900/60 px-4 py-2.5 text-left text-sm text-neutral-300 transition-colors hoverable:hover:border-neutral-700 hoverable:hover:text-white sm:px-3.5 sm:py-1.5"
               >
                 {opener.trim()}…
               </button>
@@ -77,12 +76,11 @@ export function PreferencesStep({ initialBio, initialAddress, petName, onSaved, 
 
       {mutation.isError && <StepError>Couldn't save that. Try again.</StepError>}
 
-      <div className="space-y-1">
+      <StepActions>
         <PrimaryAction type="submit" disabled={!bio.trim()} pending={mutation.isPending}>
           Finish setup
         </PrimaryAction>
-        <SkipAction onClick={onSkip}>Skip, I'll write this later</SkipAction>
-      </div>
+      </StepActions>
     </form>
   )
 }

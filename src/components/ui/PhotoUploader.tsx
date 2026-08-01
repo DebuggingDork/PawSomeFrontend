@@ -11,8 +11,6 @@ interface PhotoUploaderProps {
   presign: (contentType: 'image/jpeg' | 'image/png' | 'image/webp') => Promise<PresignResponse>
   /** Tells the backend the upload finished, so it can validate + record it. */
   confirm: (objectKey: string) => Promise<void>
-  /** Lets the user move on without uploading now. Omit to hide the option. */
-  onSkip?: () => void
   label?: string
   className?: string
   /**
@@ -75,7 +73,6 @@ type Status = 'idle' | 'uploading' | 'unavailable' | 'error'
 export function PhotoUploader({
   presign,
   confirm,
-  onSkip,
   label = 'Add photo',
   className = '',
   variant = 'compact',
@@ -366,16 +363,6 @@ export function PhotoUploader({
         </p>
       )}
 
-      {onSkip && (
-        <button
-          type="button"
-          onClick={onSkip}
-          disabled={status === 'uploading'}
-          className="mt-3 w-full text-center text-xs font-medium text-neutral-500 underline-offset-2 transition-colors hover:text-neutral-300 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          I'll do this later
-        </button>
-      )}
     </div>
   )
 }

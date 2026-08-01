@@ -5,6 +5,11 @@ import { ArrowRight, Loader2 } from 'lucide-react'
  * The shared vocabulary every onboarding step is built from. Kept here rather
  * than repeated per step so the six screens read as one continuous surface: same
  * field height, same focus treatment, same rhythm between label and control.
+ *
+ * Sizing is decided by the phone, not the desktop. Every control here clears
+ * 44px on touch and only tightens up from `sm:` — the reverse of how the file
+ * started, which was a desktop layout with mobile treated as a narrow version
+ * of it.
  */
 
 /** Label + optional hint above a control. `hint` carries the "why we ask", which is
@@ -43,12 +48,12 @@ export function TextInput({
   className = '',
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & { emphasis?: 'lead' | 'base' }) {
-  const scale = emphasis === 'lead' ? 'px-4 py-3.5 text-lg' : 'px-4 py-2.5 text-sm'
+  const scale = emphasis === 'lead' ? 'px-4 py-3.5 text-lg' : 'px-4 py-3 text-base sm:py-2.5 sm:text-sm'
   return <input {...props} className={`${INPUT_BASE} ${scale} ${className}`} />
 }
 
 export function TextArea({ className = '', ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea {...props} className={`${INPUT_BASE} resize-none px-4 py-3 text-sm ${className}`} />
+  return <textarea {...props} className={`${INPUT_BASE} resize-none px-4 py-3 text-base sm:text-sm ${className}`} />
 }
 
 /** Tappable suggestions. Faster than typing, and they double as examples of the
@@ -74,10 +79,10 @@ export function ChipGroup({
             type="button"
             onClick={() => onSelect(option)}
             aria-pressed={selected}
-            className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+            className={`touch-manipulation rounded-full border px-4 py-2.5 text-sm transition-colors sm:px-3.5 sm:py-1.5 ${
               selected
                 ? 'border-[#ff6b35] bg-[#ff6b35]/15 font-medium text-white'
-                : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:border-neutral-700 hover:text-white'
+                : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hoverable:hover:border-neutral-700 hoverable:hover:text-white'
             }`}
           >
             {option}
@@ -110,10 +115,10 @@ export function SegmentedChoice<T extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             aria-pressed={selected}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex flex-1 touch-manipulation items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-colors sm:py-2.5 ${
               selected
                 ? 'border-[#ff6b35] bg-[#ff6b35]/12 text-white'
-                : 'border-neutral-800 bg-neutral-900/60 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                : 'border-neutral-800 bg-neutral-900/60 text-neutral-400 hoverable:hover:border-neutral-700 hoverable:hover:text-neutral-200'
             }`}
           >
             {option.glyph && <span aria-hidden className="text-base">{option.glyph}</span>}
@@ -121,6 +126,28 @@ export function SegmentedChoice<T extends string>({
           </button>
         )
       })}
+    </div>
+  )
+}
+
+/**
+ * Docks a step's actions to the bottom of the screen on a phone.
+ *
+ * These forms are two to three screens tall on a 390px-wide device, so the
+ * button that finishes the step spent most of its life below the fold — the
+ * user filled in the last field and then had to go looking for the way out.
+ * Sticky keeps it in reach the whole way down and costs nothing when the form
+ * is short: it simply sits where it would have anyway.
+ *
+ * Full-bleed on purpose. A translucent bar that stops short of the screen edges
+ * leaves two slivers of scrolling content beside it, which reads as a rendering
+ * fault rather than a design. From `lg` up there is no fold to fall below and
+ * the whole treatment switches off.
+ */
+export function StepActions({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky bottom-0 z-30 -mx-4 mt-2 space-y-2 border-t border-white/[0.06] bg-neutral-950/90 px-4 pb-[max(0.875rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      {children}
     </div>
   )
 }
@@ -140,7 +167,7 @@ export function PrimaryAction({
       whileHover={disabled || shouldReduceMotion ? undefined : { scale: 1.01 }}
       whileTap={disabled || shouldReduceMotion ? undefined : { scale: 0.985 }}
       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+      className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-4 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-[#ff6b35]/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:py-3.5"
     >
       {pending ? (
         <>
@@ -154,19 +181,6 @@ export function PrimaryAction({
         </>
       )}
     </motion.button>
-  )
-}
-
-/** Deliberately quiet: skipping is allowed, but it shouldn't compete with finishing. */
-export function SkipAction({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      type="button"
-      className="w-full py-2 text-sm font-medium text-neutral-400 underline-offset-4 transition-colors hover:text-white hover:underline"
-    >
-      {children}
-    </button>
   )
 }
 

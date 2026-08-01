@@ -162,7 +162,9 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder="Search for an address"
           autoComplete="off"
-          className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-9 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+          // 16px until `sm` — anything smaller makes iOS zoom the page in on
+          // focus and never zoom back out. See index.css.
+          className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-3 pl-10 pr-9 text-base text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none sm:py-2.5 sm:text-sm"
         />
         {searching && (
           <Loader2 className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-neutral-500" />
@@ -175,7 +177,10 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
                 <button
                   type="button"
                   onClick={() => pickSuggestion(s)}
-                  className="flex w-full items-start gap-2 px-3 py-2 text-left text-sm text-neutral-200 hover:bg-neutral-800"
+                  // Two-line addresses at py-2 gave ~34px rows, well under a
+                  // fingertip, and picking the wrong suburb from a dropdown is
+                  // not a mistake you notice until the matches are wrong.
+                  className="flex w-full touch-manipulation items-start gap-2 px-3 py-3 text-left text-sm text-neutral-200 hover:bg-neutral-800 sm:py-2"
                 >
                   <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-neutral-500" />
                   <span className="line-clamp-2">{s.address}</span>
@@ -190,7 +195,10 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
         type="button"
         onClick={useMyLocation}
         disabled={locating}
-        className="mt-3 flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm font-medium text-neutral-200 transition-colors hover:border-[#ff6b35] hover:text-white disabled:cursor-wait disabled:opacity-70"
+        // Full width on a phone: on touch this is the path almost everyone
+        // takes, and a shrink-to-fit button is the smallest thing on the screen
+        // at the moment it should be the most obvious.
+        className="mt-3 flex w-full touch-manipulation items-center justify-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm font-medium text-neutral-200 transition-colors hover:border-[#ff6b35] hover:text-white disabled:cursor-wait disabled:opacity-70 sm:w-auto sm:justify-start sm:py-2.5"
       >
         <LocateFixed className={`h-4 w-4 ${locating ? 'animate-pulse text-[#ff6b35]' : ''}`} />
         {locating ? 'Locating…' : 'Use my current location'}

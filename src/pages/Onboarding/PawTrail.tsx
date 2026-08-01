@@ -33,8 +33,9 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
 
   return (
     <div className="relative">
-      {/* Track */}
-      <div aria-hidden className="absolute inset-x-4 top-1/2 h-px -translate-y-1/2 bg-neutral-800">
+      {/* Track. Inset by half a paw so it runs between their centres rather than
+          out past the first and last one. */}
+      <div aria-hidden className="absolute inset-x-5 top-1/2 h-px -translate-y-1/2 bg-neutral-800">
         <motion.div
           className="h-full origin-left bg-[#ff6b35]/70"
           initial={false}
@@ -44,7 +45,7 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
         />
       </div>
 
-      <ol className="relative flex items-center justify-between">
+      <ol className="relative flex items-center justify-between select-none">
         {items.map((item, i) => {
           const isActive = i === activeIndex
           const isDone = item.completed
@@ -60,13 +61,16 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
                 aria-current={isActive ? 'step' : undefined}
                 aria-label={`${i + 1}. ${item.label}${isDone ? ' (done)' : ''}`}
                 title={item.label}
-                className={`group relative flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
+                // 40px square: a finger's worth. Six of them plus gaps still fit
+                // inside a 320px screen's content width, which is the narrowest
+                // phone anyone is likely to arrive on.
+                className={`group relative flex h-10 w-10 touch-manipulation items-center justify-center rounded-full border transition-colors ${
                   isDone
                     ? 'border-[#ff6b35] bg-[#ff6b35] text-white'
                     : isActive
                       ? 'border-[#ff6b35] bg-neutral-950 text-[#ff6b35]'
                       : 'border-neutral-800 bg-neutral-950 text-neutral-600'
-                } ${canVisit ? 'cursor-pointer hover:brightness-110' : 'cursor-default'}`}
+                } ${canVisit ? 'cursor-pointer hoverable:hover:brightness-110' : 'cursor-default'}`}
               >
                 {/* A single soft ring on the current step. Not a pulse loop:
                     a permanently animating element in the corner of the eye is

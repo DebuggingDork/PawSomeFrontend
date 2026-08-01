@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { updateMyProfile } from '@/lib/api/users'
 import { LocationPicker } from '@/components/ui/LocationPicker'
-import { Field, TextInput, ChipGroup, PrimaryAction, StepError } from '../fields'
+import { useIsTouchDevice } from '@/hooks/useMediaQuery'
+import { Field, TextInput, ChipGroup, PrimaryAction, StepActions, StepError } from '../fields'
 
 interface Props {
   initialFullName: string
@@ -37,6 +38,10 @@ export function ProfileBasicsStep({
   onDraft,
   onSaved,
 }: Props) {
+  // Autofocus is a desktop courtesy and a mobile ambush: it throws the on-screen
+  // keyboard up over half the screen and scrolls the page before the user has
+  // read the question they are being asked.
+  const isTouch = useIsTouchDevice()
   const [fullName, setFullName] = useState(initialFullName)
   const [occupation, setOccupation] = useState(initialOccupation)
   const [lat, setLat] = useState<number | null>(initialLat)
@@ -75,7 +80,7 @@ export function ProfileBasicsStep({
           }}
           placeholder="Aarav Sharma"
           required
-          autoFocus
+          autoFocus={!isTouch}
           autoComplete="name"
         />
       </Field>
@@ -118,13 +123,15 @@ export function ProfileBasicsStep({
 
       {mutation.isError && <StepError>Couldn't save that. Check the fields and try again.</StepError>}
 
-      <PrimaryAction
-        type="submit"
-        disabled={!fullName.trim() || !occupation.trim()}
-        pending={mutation.isPending}
-      >
-        Continue
-      </PrimaryAction>
+      <StepActions>
+        <PrimaryAction
+          type="submit"
+          disabled={!fullName.trim() || !occupation.trim()}
+          pending={mutation.isPending}
+        >
+          Continue
+        </PrimaryAction>
+      </StepActions>
     </form>
   )
 }

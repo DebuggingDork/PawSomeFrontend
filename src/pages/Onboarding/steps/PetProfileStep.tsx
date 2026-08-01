@@ -3,8 +3,18 @@ import { useMutation } from '@tanstack/react-query'
 import { createPet } from '@/lib/api/pets'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { formatAgeLong } from '@/lib/formatAge'
+import { useIsTouchDevice } from '@/hooks/useMediaQuery'
 import type { Pet } from '@/lib/api/types'
-import { Field, TextInput, TextArea, ChipGroup, SegmentedChoice, PrimaryAction, StepError } from '../fields'
+import {
+  Field,
+  TextInput,
+  TextArea,
+  ChipGroup,
+  SegmentedChoice,
+  PrimaryAction,
+  StepActions,
+  StepError,
+} from '../fields'
 
 interface Props {
   initialLat: number | null
@@ -44,6 +54,8 @@ const AGE_MAX_MONTHS = 240
 const AGE_DEFAULT_MONTHS = 24
 
 export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft, onSaved }: Props) {
+  // See ProfileBasicsStep: focusing on mount is hostile on a phone.
+  const isTouch = useIsTouchDevice()
   const [name, setName] = useState('')
   const [species, setSpecies] = useState<Species>('dog')
   const [breed, setBreed] = useState('')
@@ -74,7 +86,17 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
     onSuccess: onSaved,
   })
 
-  const canSubmit = !!name.trim() && !!breed.trim() && ageMonths !== null && lat !== null && lng !== null
+  // Named so the disabled button can say what it is waiting for. On a phone the
+  // form is three screens tall, so "Create" being greyed out is a dead end
+  // unless something points back up at the field that isn't filled in — the
+  // location one in particular is easy to scroll straight past.
+  const missing = [
+    !name.trim() && 'a name',
+    !breed.trim() && 'a breed',
+    ageMonths === null && 'an age',
+    (lat === null || lng === null) && 'a location',
+  ].filter((x): x is string => typeof x === 'string')
+  const canSubmit = missing.length === 0
 
   return (
     <form
@@ -95,7 +117,7 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
           }}
           placeholder="Mowgli"
           required
-          autoFocus
+          autoFocus={!isTouch}
         />
       </Field>
 
@@ -113,10 +135,13 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
                   onDraft({ species: option.value, breed: '' })
                 }}
                 aria-pressed={selected}
-                className={`flex min-w-[5.5rem] flex-1 flex-col items-center gap-1.5 rounded-2xl border px-3 py-3.5 transition-colors ${
+                // `basis` rather than a min-width: five tiles then settle into a
+                // clean 3 + 2 on a phone instead of a 3 + 2 where the last row's
+                // tiles are half again as wide as the first row's.
+                className={`flex flex-1 basis-[5rem] touch-manipulation flex-col items-center gap-1.5 rounded-2xl border px-3 py-3.5 transition-colors ${
                   selected
                     ? 'border-[#ff6b35] bg-[#ff6b35]/12'
-                    : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
+                    : 'border-neutral-800 bg-neutral-900/60 hoverable:hover:border-neutral-700'
                 }`}
               >
                 <span aria-hidden className="text-2xl leading-none">
@@ -179,7 +204,10 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
             }}
             aria-label="Age in months"
             aria-valuetext={ageMonths === null ? 'not set' : formatAgeLong(ageMonths)}
-            className="w-full accent-[#ff6b35]"
+            // `range-touch` grows the thumb to a fingertip (see index.css).
+            // `lenis-prevent-scroll` stops the smooth-scroll layer from claiming
+            // the touch and scrolling the page instead of moving the handle.
+            className="range-touch lenis-prevent-scroll accent-[#ff6b35]"
           />
           <div className="mt-1.5 flex justify-between text-xs text-neutral-500">
             <span>1 month</span>
@@ -229,9 +257,18 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
 
       {mutation.isError && <StepError>Couldn't create that profile. Check the details and try again.</StepError>}
 
-      <PrimaryAction type="submit" disabled={!canSubmit} pending={mutation.isPending} pendingLabel="Creating">
-        Create {name.trim() || 'their'}{name.trim() ? "'s profile" : ' profile'}
-      </PrimaryAction>
+      <StepActions>
+        <PrimaryAction type="submit" disabled={!canSubmit} pending={mutation.isPending} pendingLabel="Creating">
+          Create {name.trim() || 'their'}{name.trim() ? "'s profile" : ' profile'}
+        </PrimaryAction>
+        {!canSubmit && (
+          <p className="text-center text-xs text-neutral-500">
+            Still needs {missing.slice(0, -1).join(', ')}
+            {missing.length > 1 ? ' and ' : ''}
+            {missing[missing.length - 1]}.
+          </p>
+        )}
+      </StepActions>
     </form>
   )
 }

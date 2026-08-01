@@ -1,7 +1,6 @@
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { PET_CARD_ASPECT } from '@/components/ui/ImageCropper'
 import { confirmPetPhoto, presignPetPhoto } from '@/lib/api/petPhotos'
-import { SkipAction } from '../fields'
 
 interface Props {
   petId: string
@@ -9,10 +8,9 @@ interface Props {
   currentPhotoUrl: string | null
   onDraft: (patch: { petPhotoUrl?: string }) => void
   onSaved: () => void
-  onSkip: () => void
 }
 
-export function PetPhotosStep({ petId, petName, currentPhotoUrl, onDraft, onSaved, onSkip }: Props) {
+export function PetPhotosStep({ petId, petName, currentPhotoUrl, onDraft, onSaved }: Props) {
   return (
     <div className="space-y-5">
       <PhotoUploader
@@ -23,7 +21,7 @@ export function PetPhotosStep({ petId, petName, currentPhotoUrl, onDraft, onSave
         onLocalPreview={(url) => onDraft({ petPhotoUrl: url })}
         photoAlt={petName}
         variant="card"
-        className="mx-auto max-w-[260px]"
+        className="mx-auto w-full max-w-[280px]"
         cropAspect={PET_CARD_ASPECT}
         cropTitle={`Frame ${petName}'s photo`}
         cropHint="This is exactly what other owners will see on the card."
@@ -31,7 +29,6 @@ export function PetPhotosStep({ petId, petName, currentPhotoUrl, onDraft, onSave
       <p className="mx-auto max-w-[38ch] text-center text-sm leading-relaxed text-neutral-400">
         This one photo is the whole first impression. Pick the one where {petName} looks completely ridiculous.
       </p>
-      <SkipAction onClick={onSkip}>Skip for now</SkipAction>
     </div>
   )
 }

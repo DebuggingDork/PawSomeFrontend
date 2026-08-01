@@ -195,12 +195,19 @@ html::-webkit-scrollbar {
   display: none;
 }
 
-/* Lenis owns window scroll; body must not create a second scroll context */
+/* Lenis owns window scroll; body must not create a second scroll context.
+ *
+ * `overflow-x: clip` is what does that job — a clipped box is not a scroll
+ * container, so the viewport keeps owning the vertical scroll. This used to
+ * also carry `overflow-y: hidden`, which is a scroll container, and that is
+ * precisely what `position: sticky` looks for: every sticky element in the app
+ * was resolving against a box that never scrolls, so none of them ever stuck.
+ * Nothing overflows body vertically anyway (its height is its content), so the
+ * rule was only ever breaking sticky. */
 body {
   background-color: #0a0a0a;
   color: #e5e5e5;
   overflow-x: clip;
-  overflow-y: hidden;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -292,4 +299,94 @@ h1, h2, h3 {
 
 .thin-scrollbar::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/*
+ * ── Touch-device corrections ────────────────────────────────────────────────
+ *
+ * Scoped to real touch screens (`pointer: coarse`) rather than to width alone,
+ * so resizing a desktop window narrow doesn't quietly change the design.
+ */
+
+/*
+ * iOS Safari zooms the whole page in when a focused field's text is under 16px,
+ * and it does not zoom back out afterwards. A `text-sm` input is 14px, so
+ * tapping one leaves the user stranded on a page wider than their screen,
+ * panning sideways to find the next field. It is the single biggest source of
+ * "the mobile site feels broken", and it is caused entirely by the font size.
+ *
+ * There is no blanket fix to write here: an unlayered rule outranks every
+ * Tailwind utility regardless of specificity, so it would also shrink the
+ * fields that are deliberately larger (the verification code boxes, the lead
+ * inputs). So the rule is a convention instead, applied at each field:
+ *
+ *     text-base sm:text-sm
+ *
+ * 16px on a phone, back to 14px from `sm` up where nothing zooms.
+ */
+
+/*
+ * A range input sized for a fingertip.
+ *
+ * The native thumb is around 12px on Android and sits on a 4px track, which is
+ * a quarter of the ~44px a touch target needs. Dragging the pet's age meant
+ * repeatedly grabbing nothing and scrolling the page instead. The track keeps
+ * its hairline look; only the thumb and the hit area grow.
+ */
+.range-touch {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2.5rem;
+  background: transparent;
+  /* The slider owns horizontal drags; the page keeps vertical ones. Without
+     this the browser can decide a diagonal drag was a scroll and cancel the
+     pointer mid-drag, so the value jumps and then freezes. */
+  touch-action: pan-y;
+}
+
+.range-touch:focus {
+  outline: none;
+}
+
+.range-touch::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.range-touch::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 26px;
+  width: 26px;
+  /* Centres the thumb on the 6px track. */
+  margin-top: -10px;
+  border-radius: 9999px;
+  background: #ff6b35;
+  border: 3px solid #0a0a0a;
+  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.45);
+}
+
+.range-touch::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.range-touch::-moz-range-thumb {
+  height: 26px;
+  width: 26px;
+  border-radius: 9999px;
+  background: #ff6b35;
+  border: 3px solid #0a0a0a;
+  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.45);
+}
+
+.range-touch:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.3);
+}
+
+.range-touch:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.3);
 }

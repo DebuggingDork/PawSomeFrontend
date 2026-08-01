@@ -5,14 +5,12 @@ import { Mail, Check, RefreshCw, AlertTriangle, Inbox } from 'lucide-react'
 import { sendVerificationCode, verifyCode } from '@/lib/api/auth'
 import { getMyProfile } from '@/lib/api/users'
 import { ApiError } from '@/lib/api/client'
-import { PrimaryAction, SkipAction, StepError } from '../fields'
+import { PrimaryAction, StepError } from '../fields'
 
 interface Props {
   email: string
   /** Called once, the moment the address is confirmed verified. */
   onVerified: () => void
-  /** Omitted when verification is mandatory, which hides the escape hatch. */
-  onSkip?: () => void
 }
 
 const CODE_LENGTH = 6
@@ -86,7 +84,7 @@ function CodeInput({
   }
 
   return (
-    <div className="flex justify-between gap-2 sm:gap-2.5" role="group" aria-label="Verification code">
+    <div className="flex justify-between gap-1.5 sm:gap-2.5" role="group" aria-label="Verification code">
       {Array.from({ length: CODE_LENGTH }).map((_, i) => {
         const filled = !!value[i]
         return (
@@ -97,6 +95,9 @@ function CodeInput({
             }}
             type="text"
             inputMode="numeric"
+            // iOS reads the code out of the SMS/mail and offers it above the
+            // keyboard; `pattern` is what makes Android's autofill do the same.
+            pattern="[0-9]*"
             autoComplete={i === 0 ? 'one-time-code' : 'off'}
             maxLength={CODE_LENGTH}
             value={value[i] ?? ''}
@@ -106,7 +107,10 @@ function CodeInput({
             disabled={disabled}
             aria-label={`Digit ${i + 1}`}
             aria-invalid={invalid}
-            className={`h-16 w-full min-w-0 rounded-2xl border text-center font-display text-2xl font-bold text-white caret-[#ff6b35] transition-all duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 ${
+            // Six boxes have to share the width of a 320px screen, so they get
+            // shorter and the digits smaller before the row is allowed to
+            // overflow. The box is still 48px+ tall — a comfortable tap.
+            className={`h-14 w-full min-w-0 rounded-xl border text-center font-display text-xl font-bold text-white caret-[#ff6b35] transition-all duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 sm:h-16 sm:rounded-2xl sm:text-2xl ${
               invalid
                 ? 'border-red-500/60 bg-red-500/5 focus:border-red-500 focus:ring-red-500/25'
                 : filled
@@ -122,7 +126,7 @@ function CodeInput({
   )
 }
 
-export function EmailVerificationStep({ email, onVerified, onSkip }: Props) {
+export function EmailVerificationStep({ email, onVerified }: Props) {
   const shouldReduceMotion = useReducedMotion()
   const queryClient = useQueryClient()
   const shake = useAnimationControls()
@@ -251,6 +255,9 @@ export function EmailVerificationStep({ email, onVerified, onSkip }: Props) {
 
       {sendMutation.isError && <StepError>Couldn't send a new code. Try again in a moment.</StepError>}
 
+      {/* No docked action bar on this step: it is the one screen short enough to
+          fit a phone without scrolling, and a bar pinned to the bottom of a page
+          that does not scroll is just a bar floating in the middle of it. */}
       <div className="space-y-2">
         <PrimaryAction
           type="button"
@@ -266,7 +273,7 @@ export function EmailVerificationStep({ email, onVerified, onSkip }: Props) {
           type="button"
           onClick={() => sendMutation.mutate()}
           disabled={sendMutation.isPending || cooldown > 0}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/60 py-3 text-sm font-medium text-neutral-200 transition-colors hover:border-neutral-700 hover:text-white disabled:cursor-not-allowed disabled:text-neutral-500"
+          className="flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/60 py-3.5 text-sm font-medium text-neutral-200 transition-colors hover:border-neutral-700 hover:text-white disabled:cursor-not-allowed disabled:text-neutral-500 sm:py-3"
         >
           <RefreshCw className={`h-4 w-4 ${sendMutation.isPending ? 'animate-spin' : ''}`} />
           {cooldown > 0
@@ -275,8 +282,6 @@ export function EmailVerificationStep({ email, onVerified, onSkip }: Props) {
               ? 'Sending'
               : 'Send a new code'}
         </button>
-
-        {onSkip && <SkipAction onClick={onSkip}>Skip for now, I'll verify later</SkipAction>}
       </div>
 
       {/* Quiet footnotes, separated from the controls by a hairline so they read as

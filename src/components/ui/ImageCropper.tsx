@@ -78,6 +78,10 @@ export function ImageCropper({
   const dragRef = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(
     null,
   )
+  /** Every finger currently on the frame, so two of them can mean "pinch". */
+  const pointersRef = useRef(new Map<number, Point>())
+  /** Set while two fingers are down: the span and zoom level they started at. */
+  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null)
 
   const [url, setUrl] = useState<string | null>(null)
   const [natural, setNatural] = useState<Size | null>(null)
@@ -124,11 +128,20 @@ export function ImageCropper({
     window.addEventListener('keydown', onKey)
     // The page behind must not scroll while this is open; Lenis owns the wheel
     // otherwise and would drag the page under the modal.
-    const previousOverflow = document.body.style.overflow
+    //
+    // The lock goes on <html>, not <body>: the document scroller is the root
+    // element (see index.css), so locking body left the page free to scroll
+    // behind the sheet on touch — you would drag to reposition the photo, miss
+    // the frame by a few pixels, and send the form scrolling instead.
+    const root = document.documentElement
+    const previousRootOverflow = root.style.overflow
+    const previousBodyOverflow = document.body.style.overflow
+    root.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = previousOverflow
+      root.style.overflow = previousRootOverflow
+      document.body.style.overflow = previousBodyOverflow
     }
   }, [onCancel])
 
@@ -148,19 +161,45 @@ export function ImageCropper({
   // snapping back.
   const view = clampOffset(offset, bounds)
 
+  // Anchors a pan to wherever the image is sitting right now. `view` is this
+  // render's value, which is the committed one by the time any pointer event
+  // runs — so lifting one finger of a pinch resumes panning from the position
+  // the pinch left the image in, not the one it started from.
+  const beginDrag = (pointerId: number, x: number, y: number) => {
+    dragRef.current = { pointerId, startX: x, startY: y, originX: view.x, originY: view.y }
+  }
+
   const onPointerDown = (e: React.PointerEvent) => {
     if (exporting) return
     e.currentTarget.setPointerCapture(e.pointerId)
-    dragRef.current = {
-      pointerId: e.pointerId,
-      startX: e.clientX,
-      startY: e.clientY,
-      originX: view.x,
-      originY: view.y,
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+    if (pointersRef.current.size >= 2) {
+      // A second finger means this is a pinch, not a drag. Zooming with the
+      // slider is fine on a desktop; on a phone pinch is simply what a hand
+      // does to an image, and its absence read as the cropper being stuck.
+      dragRef.current = null
+      const [a, b] = [...pointersRef.current.values()]
+      pinchRef.current = { distance: Math.hypot(a.x - b.x, a.y - b.y) || 1, zoom }
+      return
     }
+
+    beginDrag(e.pointerId, e.clientX, e.clientY)
   }
 
   const onPointerMove = (e: React.PointerEvent) => {
+    const pointers = pointersRef.current
+    if (!pointers.has(e.pointerId)) return
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+    const pinch = pinchRef.current
+    if (pinch && pointers.size >= 2) {
+      const [a, b] = [...pointers.values()]
+      const distance = Math.hypot(a.x - b.x, a.y - b.y)
+      setZoom(Math.min(MAX_ZOOM, Math.max(1, pinch.zoom * (distance / pinch.distance))))
+      return
+    }
+
     const drag = dragRef.current
     if (!drag || drag.pointerId !== e.pointerId) return
     setOffset(
@@ -172,7 +211,18 @@ export function ImageCropper({
   }
 
   const endDrag = (e: React.PointerEvent) => {
+    const pointers = pointersRef.current
+    pointers.delete(e.pointerId)
     if (dragRef.current?.pointerId === e.pointerId) dragRef.current = null
+    if (pointers.size < 2) pinchRef.current = null
+
+    // One finger left after a pinch: hand panning back to it rather than
+    // waiting for a fresh touch, which is what makes zoom-then-reposition feel
+    // like one gesture instead of three.
+    if (pointers.size === 1) {
+      const [[id, point]] = [...pointers.entries()]
+      beginDrag(id, point.x, point.y)
+    }
   }
 
   const onWheel = (e: React.WheelEvent) => {
@@ -244,7 +294,10 @@ export function ImageCropper({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="lenis-prevent-scroll fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/80 p-4 backdrop-blur-sm"
+        // Bottom sheet on a phone, centred dialog from `sm` up. A sheet anchors
+        // the controls beside the thumb that has to press them, and it is the
+        // shape a phone user already reads as "this is a step, not a page".
+        className="lenis-prevent-scroll fixed inset-0 z-50 flex items-end justify-center overscroll-contain bg-black/80 backdrop-blur-sm sm:items-center sm:p-4"
         onPointerDown={(e) => {
           if (e.target === e.currentTarget) onCancel()
         }}
@@ -253,33 +306,46 @@ export function ImageCropper({
           initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-neutral-950 shadow-2xl shadow-black/60"
+          // `max-h-[100dvh]` with a scrollable middle is the safety net: the
+          // frame is already sized from the viewport height below, but a very
+          // short screen (a landscape phone) would otherwise push the Cancel
+          // and Use photo buttons off the bottom with no way to reach them.
+          className="flex max-h-[100dvh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-neutral-950 shadow-2xl shadow-black/60 sm:rounded-3xl"
         >
-          <div className="flex items-center justify-between border-b border-neutral-900 px-5 py-3.5">
+          <div className="flex flex-shrink-0 items-center justify-between border-b border-neutral-900 px-5 py-3.5">
             <h2 className="font-display text-base font-bold text-white">{title}</h2>
             <button
               type="button"
               onClick={onCancel}
               aria-label="Cancel"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-white/10 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-white/10 hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="px-5 pt-5">
+          <div className="thin-scrollbar lenis-prevent-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-5">
             {/* Checkerboard-free dark bed; the area outside the frame is dimmed
                 rather than hidden, so you can see what you are cutting off. */}
-            <div className="relative mx-auto w-full max-w-[320px]">
+            <div className="flex justify-center">
               <div
                 ref={frameRef}
-                style={{ aspectRatio: String(aspect) }}
+                // Width, not height, is the definite dimension — `aspect-ratio`
+                // then derives the height, which keeps the frame's shape exact
+                // at every size. The three candidates are: the space actually
+                // available, whatever fits in 46% of the viewport height, and
+                // the desktop maximum. Sizing off the viewport is what stops a
+                // 4:5 frame on a short phone pushing the buttons off-screen.
+                style={{
+                  aspectRatio: String(aspect),
+                  width: `min(100%, calc(46dvh * ${aspect}), ${Math.round(380 * aspect)}px)`,
+                }}
                 onPointerDown={onPointerDown}
                 onPointerMove={onPointerMove}
                 onPointerUp={endDrag}
                 onPointerCancel={endDrag}
                 onWheel={onWheel}
-                className={`relative w-full touch-none select-none overflow-hidden bg-neutral-900 ${
+                className={`relative touch-none select-none overflow-hidden bg-neutral-900 ${
                   shape === 'circle' ? 'rounded-full' : 'rounded-2xl'
                 } ${exporting ? 'cursor-wait' : 'cursor-grab active:cursor-grabbing'}`}
               >
@@ -336,18 +402,18 @@ export function ImageCropper({
             </div>
 
             <p className="mt-3 text-center text-xs text-neutral-400">
-              {hint ?? 'Drag to reposition. Scroll or use the slider to zoom.'}
+              {hint ?? 'Drag to reposition. Pinch, scroll or use the slider to zoom.'}
             </p>
           </div>
 
           {/* Zoom */}
-          <div className="flex items-center gap-3 px-5 py-4">
+          <div className="flex flex-shrink-0 items-center gap-3 px-5 py-4">
             <button
               type="button"
               onClick={() => setZoom((z) => Math.max(1, z - ZOOM_STEP))}
               disabled={zoom <= 1}
               aria-label="Zoom out"
-              className="text-neutral-400 transition-colors hover:text-white disabled:opacity-40"
+              className="flex h-10 w-8 flex-shrink-0 items-center justify-center text-neutral-400 transition-colors hover:text-white disabled:opacity-40"
             >
               <ZoomOut className="h-4 w-4" />
             </button>
@@ -359,14 +425,14 @@ export function ImageCropper({
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
               aria-label="Zoom"
-              className="h-1 flex-1 accent-[#ff6b35]"
+              className="range-touch lenis-prevent-scroll min-w-0 flex-1 accent-[#ff6b35]"
             />
             <button
               type="button"
               onClick={() => setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))}
               disabled={zoom >= MAX_ZOOM}
               aria-label="Zoom in"
-              className="text-neutral-400 transition-colors hover:text-white disabled:opacity-40"
+              className="flex h-10 w-8 flex-shrink-0 items-center justify-center text-neutral-400 transition-colors hover:text-white disabled:opacity-40"
             >
               <ZoomIn className="h-4 w-4" />
             </button>
@@ -376,23 +442,23 @@ export function ImageCropper({
               disabled={zoom === 1 && offset.x === 0 && offset.y === 0}
               aria-label="Reset framing"
               title="Reset framing"
-              className="text-neutral-400 transition-colors hover:text-white disabled:opacity-40"
+              className="flex h-10 w-8 flex-shrink-0 items-center justify-center text-neutral-400 transition-colors hover:text-white disabled:opacity-40"
             >
               <RotateCcw className="h-4 w-4" />
             </button>
           </div>
 
           {failed && (
-            <p role="alert" className="px-5 pb-2 text-sm text-red-400">
+            <p role="alert" className="flex-shrink-0 px-5 pb-2 text-sm text-red-400">
               Couldn't process that image. Try a different one.
             </p>
           )}
 
-          <div className="flex gap-3 border-t border-neutral-900 px-5 py-4">
+          <div className="flex flex-shrink-0 gap-3 border-t border-neutral-900 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 rounded-xl border border-neutral-800 py-2.5 text-sm font-medium text-neutral-300 transition-colors hover:border-neutral-700 hover:text-white"
+              className="flex-1 touch-manipulation rounded-xl border border-neutral-800 py-3.5 text-sm font-medium text-neutral-300 transition-colors hover:border-neutral-700 hover:text-white sm:py-2.5"
             >
               Cancel
             </button>
@@ -400,7 +466,7 @@ export function ImageCropper({
               type="button"
               onClick={apply}
               disabled={!ready || exporting}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex flex-1 touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5"
             >
               {exporting ? (
                 <>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
@@ -8,6 +8,7 @@ import { getMyProfile } from '@/lib/api/users'
 import { listMyPets } from '@/lib/api/pets'
 import { ONBOARDING_PROMPTED_KEY } from '@/lib/queryClient'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useIsNarrowViewport } from '@/hooks/useMediaQuery'
 import { Skeleton } from '@/components/ui/Skeleton'
 import type { OnboardingStep } from '@/lib/api/types'
 import { LiveCardPreview, type CardDraft } from './LiveCardPreview'
@@ -61,13 +62,31 @@ function localityOf(address: string | null | undefined): string {
   return address?.split(',')[0]?.trim() ?? ''
 }
 
+/**
+ * Returns the reader to the top of the wizard whenever the step changes.
+ *
+ * Mounted inside the step's own animated container, which is keyed by step, so
+ * mounting *is* the signal. On a phone the pet form runs three screens deep;
+ * saving it from the bottom used to drop the user into the middle of the next
+ * step, below its heading, with no indication that anything had advanced beyond
+ * the fields having gone blank.
+ */
+function ScrollToStepTop() {
+  useEffect(() => {
+    if (window.scrollY === 0) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' })
+  }, [])
+  return null
+}
+
 function OnboardingPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const shouldReduceMotion = useReducedMotion()
+  const isNarrow = useIsNarrowViewport()
   const refreshSession = useAuthStore((s) => s.refreshSession)
 
-  const [skippedSteps, setSkippedSteps] = useState<Set<OnboardingStep>>(new Set())
   /** Set when the user taps a finished paw to go back and change an answer. */
   const [revisiting, setRevisiting] = useState<OnboardingStep | null>(null)
   /** Values typed but not yet saved, so the card preview can react per keystroke. */
@@ -93,11 +112,6 @@ function OnboardingPage() {
     // pet created two steps ago doesn't exist as far as Discover is concerned.
     void refreshSession()
   }, [queryClient, refreshSession])
-
-  const skipStep = useCallback((step: OnboardingStep) => {
-    setRevisiting(null)
-    setSkippedSteps((prev) => new Set(prev).add(step))
-  }, [])
 
   const leaveWizard = useCallback(() => {
     sessionStorage.setItem(ONBOARDING_PROMPTED_KEY, '1')
@@ -127,10 +141,10 @@ function OnboardingPage() {
 
   if (statusQuery.isLoading || !statusQuery.data) {
     return (
-      <div className="px-6 pb-16 pt-24">
+      <div className="px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-16">
           <div>
-            <Skeleton className="mb-8 h-9 w-full max-w-sm rounded-full" />
+            <Skeleton className="mb-8 h-10 w-full max-w-sm rounded-full" />
             <Skeleton className="mb-3 h-10 w-3/4" />
             <Skeleton className="mb-8 h-5 w-full max-w-md" />
             <Skeleton className="h-64 w-full" />
@@ -142,43 +156,62 @@ function OnboardingPage() {
   }
 
   const status = statusQuery.data
-  const firstUnfinished = status.steps.find((s) => !s.completed && !skippedSteps.has(s.step))
-  // A revisited step wins until it is saved or skipped.
+  const firstUnfinished = status.steps.find((s) => !s.completed)
+  // A revisited step wins until it is saved.
   const activeStep = revisiting ? (status.steps.find((s) => s.step === revisiting) ?? firstUnfinished) : firstUnfinished
   const activeIndex = activeStep ? status.steps.findIndex((s) => s.step === activeStep.step) : status.steps.length - 1
 
   const trailItems: TrailItem[] = status.steps.map((s) => ({
     step: s.step,
     label: STEP_COPY[s.step]?.label ?? s.title,
-    completed: s.completed || skippedSteps.has(s.step),
+    completed: s.completed,
   }))
 
   const copy = activeStep ? STEP_COPY[activeStep.step] : STEP_COPY.complete
   const petLabel = card.petName.trim() || 'your pet'
 
+  // A photo of you and a photo of your pet are what the whole product is built
+  // on — an account without them has nothing to show anyone. So the only way
+  // out of a required step is to finish it. The escape hatch survives on the
+  // genuinely optional step (the bio), where "later" is a real answer.
+  const canLeaveWizard = !activeStep || !activeStep.required
+
   const stepMotion = shouldReduceMotion
     ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : {
-        initial: { opacity: 0, y: 16, filter: 'blur(6px)' },
-        animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
-        exit: { opacity: 0, y: -12, filter: 'blur(6px)' },
-      }
+    : isNarrow
+      ? // No blur on phones. Animating a filter over a subtree this size forces a
+        // full-page repaint every frame on mobile GPUs, and the step change —
+        // which happens six times in a row — was the jerkiest moment in the flow.
+        { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -8 } }
+      : {
+          initial: { opacity: 0, y: 16, filter: 'blur(6px)' },
+          animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+          exit: { opacity: 0, y: -12, filter: 'blur(6px)' },
+        }
 
   return (
-    <div className="relative min-h-screen px-6 pb-20 pt-24 lg:pt-28">
+    <div className="relative min-h-screen px-4 pb-10 pt-20 sm:px-6 sm:pb-16 sm:pt-24 lg:pb-20 lg:pt-28">
       {/* Two offset washes rather than one centred blob, so the page has a
-          direction to it and the card column sits in the warmer half. */}
+          direction to it and the card column sits in the warmer half.
+
+          Both are dialled right back on phones: a pair of 480px circles under a
+          140px blur is a very large compositing job to redo on every scroll
+          frame, and it was buying atmosphere the user could barely see behind
+          the form anyway. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-32 top-0 h-[30rem] w-[30rem] rounded-full bg-[#ff6b35]/8 blur-[140px]" />
-        <div className="absolute right-0 top-1/3 h-[26rem] w-[26rem] rounded-full bg-pink-500/8 blur-[140px]" />
+        <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-[#ff6b35]/8 blur-[80px] sm:-left-32 sm:h-[30rem] sm:w-[30rem] sm:blur-[140px]" />
+        <div className="absolute right-0 top-1/3 hidden h-[26rem] w-[26rem] rounded-full bg-pink-500/8 blur-[140px] sm:block" />
       </div>
 
       <div className="mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-16">
         {/* ── Questions ─────────────────────────────────────────────────────── */}
         <div className="min-w-0">
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <PawTrail items={trailItems} activeIndex={activeIndex} onSelect={(step) => setRevisiting(step)} />
-            <div className="mt-4 flex items-baseline justify-between gap-4">
+            {/* Wraps rather than squeezes: "Step 3 of 6 / Finishing touches" and
+                the exit link do not both fit on one line at 320px, and letting
+                them collide was shrinking the step counter to two words a line. */}
+            <div className="mt-3.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 sm:mt-4">
               <p className="text-sm text-neutral-400">
                 {activeStep ? (
                   <>
@@ -193,11 +226,11 @@ function OnboardingPage() {
                   <span className="font-medium text-emerald-400">All steps done</span>
                 )}
               </p>
-              {activeStep && (
+              {activeStep && canLeaveWizard && (
                 <button
                   type="button"
                   onClick={leaveWizard}
-                  className="flex-shrink-0 text-sm text-neutral-500 underline-offset-4 transition-colors hover:text-neutral-300 hover:underline"
+                  className="flex-shrink-0 py-1 text-sm text-neutral-500 underline-offset-4 transition-colors hover:text-neutral-300 hover:underline"
                 >
                   Finish later
                 </button>
@@ -206,8 +239,12 @@ function OnboardingPage() {
           </div>
 
           {/* Compact card preview for narrow screens, where the full card can't sit
-              beside the form. Kept above the question so it stays in view while typing. */}
-          <div className="mb-8 lg:hidden">
+              beside the form.
+
+              Sticky, so it keeps doing on a phone what the full card does on a
+              desktop: react to what you are typing while you type it. Parked
+              flush under the fixed navbar. */}
+          <div className="sticky top-[3.75rem] z-20 mb-6 -mx-4 bg-neutral-950/85 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6 lg:hidden">
             <LiveCardPreview draft={card} compact />
           </div>
 
@@ -217,25 +254,21 @@ function OnboardingPage() {
               {...stepMotion}
               transition={{ duration: 0.4, ease: EASE_OUT }}
             >
-              <h1 className="text-balance font-display text-3xl font-bold leading-[1.1] tracking-[-0.02em] text-white sm:text-4xl">
+              <ScrollToStepTop />
+              <h1 className="text-balance font-display text-[1.7rem] font-bold leading-[1.12] tracking-[-0.02em] text-white sm:text-3xl md:text-4xl">
                 {copy.question}
               </h1>
               {copy.sub && (
-                <p className="mt-3 max-w-[54ch] text-pretty text-base leading-relaxed text-neutral-400">{copy.sub}</p>
+                <p className="mt-3 max-w-[54ch] text-pretty text-[0.9375rem] leading-relaxed text-neutral-400 sm:text-base">
+                  {copy.sub}
+                </p>
               )}
 
-              <div className="mt-8">
+              <div className="mt-7 sm:mt-8">
                 {!activeStep && <CompleteBlock petName={card.petName} onContinue={leaveWizard} />}
 
                 {activeStep?.step === 'email_verification' && (
-                  <EmailVerificationStep
-                    email={profile?.email ?? ''}
-                    onVerified={refreshAll}
-                    // No escape hatch when the server enforces verification on
-                    // swiping. Offering "skip" there just moves the dead end to
-                    // Discover, which is exactly the trap this flow had before.
-                    onSkip={activeStep.required ? undefined : () => skipStep('email_verification')}
-                  />
+                  <EmailVerificationStep email={profile?.email ?? ''} onVerified={refreshAll} />
                 )}
 
                 {activeStep?.step === 'profile_basics' && (
@@ -255,7 +288,6 @@ function OnboardingPage() {
                     currentPhotoUrl={profile?.profile_photo_url ?? null}
                     onDraft={patchDraft}
                     onSaved={refreshAll}
-                    onSkip={() => skipStep('profile_photo')}
                   />
                 )}
 
@@ -277,7 +309,6 @@ function OnboardingPage() {
                       currentPhotoUrl={myPet.primary_photo_url ?? null}
                       onDraft={patchDraft}
                       onSaved={refreshAll}
-                      onSkip={() => skipStep('pet_photos')}
                     />
                   ) : (
                     <Skeleton className="mx-auto h-64 w-full max-w-[260px] rounded-2xl" />
@@ -289,7 +320,6 @@ function OnboardingPage() {
                     initialAddress={profile?.address ?? ''}
                     petName={petLabel}
                     onSaved={refreshAll}
-                    onSkip={() => skipStep('preferences')}
                   />
                 )}
               </div>
@@ -325,7 +355,7 @@ function CompleteBlock({ petName, onContinue }: { petName: string; onContinue: (
         whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
         whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
         transition={{ duration: 0.2, ease: EASE_OUT }}
-        className="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-8 py-3.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/35"
+        className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-8 py-4 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-[#ff6b35]/35 sm:w-auto sm:py-3.5"
       >
         See who's nearby
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
