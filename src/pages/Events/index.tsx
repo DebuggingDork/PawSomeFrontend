@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarDays, Plus, Sparkles } from 'lucide-react'
+import { CalendarDays, Plus } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { listEvents, rsvpToEvent, cancelRsvp } from '@/lib/api/events'
 import { CreateEventModal } from '@/components/events/CreateEventModal'
@@ -88,10 +88,6 @@ function EventsPage() {
 
       {/* Hero */}
       <div className="mb-10">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-neutral-300 backdrop-blur">
-          <Sparkles className="h-3.5 w-3.5 text-[#ff6b35]" />
-          Community meetups near you
-        </div>
         <h1 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
           Get the pack{' '}
           <span className="animate-gradient-pan bg-gradient-to-r from-[#ff6b35] via-pink-500 to-[#ff6b35] bg-[size:200%_auto] bg-clip-text text-transparent">
