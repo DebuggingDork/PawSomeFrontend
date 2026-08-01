@@ -14,8 +14,7 @@
  * and one dog tile plus one cat tile repeated three times each behind invented
  * captions. Those sections now render the real pets from /pets with the photos
  * their owners uploaded, so every entry left is a background genuinely doing a
- * background's job — and two of the three are now the owner's own photographs
- * rather than stock.
+ * background's job rather than standing in for content.
  *
  * Regenerate with:
  *   cd backend && uv run --with pillow python scripts/upload_site_images.py
@@ -33,12 +32,16 @@ export const siteImages = {
    *  first viewport so the photograph is the entire stage. */
   heroPets: `${R2_BASE}/final-home-page-image.png`,
   /** Two dogs running at dusk. The landing's closing band — was `heroDog`
-   *  until it stopped being a hero, and the Auth background until nappingCats
-   *  took that slot. Still referenced, so leave the object in place. */
+   *  until it stopped being a hero, and the Auth background until the cats took
+   *  that slot. Still referenced, so leave the object in place. */
   duskRun: `${R2_BASE}/duskRun.jpg`,
-  /** Auth background: two tabbies asleep against a sunlit wall, supplied by the
-   *  project owner. Uploaded with a gamma lift (see the seeder) because Auth's
-   *  two scrims are tuned for duskRun's low-key dusk light and were left
-   *  untouched — the extra brightness had to come out of the file instead. */
-  nappingCats: `${R2_BASE}/nappingCats.jpg`,
+  /** Auth background: two cats on a garden ledge behind bougainvillea (Prasad
+   *  Bhalerao, Unsplash). Uploaded with a gamma lift (see the seeder) because
+   *  Auth's two scrims are tuned for duskRun's low-key dusk light and were left
+   *  untouched — the extra brightness has to come out of the file instead.
+   *
+   *  Briefly `nappingCats` earlier the same day; that object is still in the
+   *  bucket, unreferenced. The key changed rather than the bytes behind it
+   *  because r2.dev caches, and an overwrite can keep serving the old image. */
+  porchCats: `${R2_BASE}/porchCats.jpg`,
 } as const
