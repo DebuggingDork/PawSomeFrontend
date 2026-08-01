@@ -1,6 +1,19 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Shuffle, Star, Heart, Award, CalendarHeart, Camera, Undo2, SlidersHorizontal } from 'lucide-react'
+import {
+  Shuffle,
+  Star,
+  Heart,
+  Award,
+  CalendarHeart,
+  Camera,
+  Undo2,
+  SlidersHorizontal,
+  PawPrint,
+  Timer,
+  SmilePlus,
+  Search,
+} from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 interface Tip {
@@ -70,6 +83,37 @@ const TIPS: Tip[] = [
     chip: 'bg-cyan-500/15 text-cyan-300 ring-cyan-400/30',
     title: 'Your deck, your rules.',
     body: 'Filter by distance, breed, age, and whether they are vaccinated, neutered, or trained. The deck rebuilds around whatever you pick.',
+  },
+  // MAX_PETS_PER_USER = 5 in pets.py; the Add pet button lives in Profile → Pets.
+  {
+    key: 'more-pets',
+    icon: PawPrint,
+    chip: 'bg-orange-500/15 text-orange-300 ring-orange-400/30',
+    title: 'More than one animal runs your house?',
+    body: 'You can add up to five pets from Profile → Pets. Each one gets its own card, its own photos, and its own matches.',
+  },
+  // MESSAGE_DELETE_WINDOW = 15 minutes in chat.py; ChatBubble gates the same way.
+  {
+    key: 'delete-window',
+    icon: Timer,
+    chip: 'bg-rose-500/15 text-rose-300 ring-rose-400/30',
+    title: 'Sent it to the wrong chat?',
+    body: 'You can delete any message of yours within fifteen minutes of sending it — the menu is on the bubble. After that, it stands.',
+  },
+  // One reaction per person per message; picking again replaces, same emoji removes.
+  {
+    key: 'reactions',
+    icon: SmilePlus,
+    chip: 'bg-lime-500/15 text-lime-300 ring-lime-400/30',
+    title: 'Not everything needs a reply.',
+    body: 'Tap any message to react with an emoji. One reaction per message — picking a different one swaps it, picking the same one takes it back.',
+  },
+  {
+    key: 'chat-search',
+    icon: Search,
+    chip: 'bg-indigo-500/15 text-indigo-300 ring-indigo-400/30',
+    title: '"They mentioned a park… which one?"',
+    body: 'The magnifying glass at the top of any conversation searches that whole thread and jumps you straight to the message.',
   },
 ]
 
