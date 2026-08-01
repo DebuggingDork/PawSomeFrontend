@@ -9,6 +9,15 @@ gsap.registerPlugin(ScrollTrigger)
 
 const STORAGE_KEY = 'pawsome_scroll_y'
 
+/** The live Lenis instance, for anything outside this hook that needs to move
+ * the page (ScrollToHash after route changes). Programmatic native scrolls and
+ * Lenis disagree about who owns the position; going through Lenis avoids the
+ * fight. */
+let activeLenis: Lenis | null = null
+export function getLenis(): Lenis | null {
+  return activeLenis
+}
+
 /** Past this point we reveal the app whether or not the session has resolved.
  * A slow or hanging backend used to pin the splash indefinitely; the navbar
  * renders its own hydrating skeleton, so a late resolution fills that in rather
@@ -49,6 +58,7 @@ export function useSmoothScroll() {
       // Prevent Lenis from creating a second scroll context
       prevent: (node: any) => node.classList?.contains('lenis-prevent-scroll'),
     })
+    activeLenis = lenis
 
     function raf(time: number) {
       lenis.raf(time)
@@ -130,6 +140,7 @@ export function useSmoothScroll() {
         if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
         window.removeEventListener('beforeunload', handleBeforeUnload)
         cancelAnimationFrame(rafId)
+        if (activeLenis === lenis) activeLenis = null
         lenis.destroy()
       }
     }
@@ -141,6 +152,7 @@ export function useSmoothScroll() {
       if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
       window.removeEventListener('beforeunload', handleBeforeUnload)
       cancelAnimationFrame(rafId)
+      if (activeLenis === lenis) activeLenis = null
       lenis.destroy()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
