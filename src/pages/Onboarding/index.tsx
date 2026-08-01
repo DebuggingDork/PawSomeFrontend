@@ -46,9 +46,9 @@ const STEP_COPY: Record<OnboardingStep, { label: string; question: string; sub: 
     sub: 'Tell us about the animal currently running your household.',
   },
   pet_photos: {
-    label: 'Their photo',
-    question: 'Time for the headshot.',
-    sub: 'Everything else on the card is small print until there is a photo above it.',
+    label: 'Their photos',
+    question: 'Time for the photo shoot.',
+    sub: 'One photo is required — that is the card. There are five slots, and nobody should be judged on one angle.',
   },
   preferences: {
     label: 'Finishing touches',
@@ -110,6 +110,15 @@ function OnboardingPage() {
     // The auth store holds its own copy of the pet list, and Discover reads
     // `activePet` from it to decide whether swiping is allowed. Without this, the
     // pet created two steps ago doesn't exist as far as Discover is concerned.
+    void refreshSession()
+  }, [queryClient, refreshSession])
+
+  /** Refresh photo-bearing data without touching onboarding status, so adding
+   * a photo doesn't advance the wizard out from under someone mid-gallery.
+   * The step advances only when they press Continue (which calls refreshAll). */
+  const refreshPets = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['pets', 'me'] })
+    queryClient.invalidateQueries({ queryKey: ['achievements', 'me'] })
     void refreshSession()
   }, [queryClient, refreshSession])
 
@@ -306,9 +315,10 @@ function OnboardingPage() {
                     <PetPhotosStep
                       petId={myPet.id}
                       petName={myPet.name}
-                      currentPhotoUrl={myPet.primary_photo_url ?? null}
+                      photos={myPet.photos ?? []}
                       onDraft={patchDraft}
-                      onSaved={refreshAll}
+                      onPhotosChanged={refreshPets}
+                      onContinue={refreshAll}
                     />
                   ) : (
                     <Skeleton className="mx-auto h-64 w-full max-w-[260px] rounded-2xl" />

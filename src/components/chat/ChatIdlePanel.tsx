@@ -55,7 +55,7 @@ const TIPS: Tip[] = [
     icon: Camera,
     chip: 'bg-violet-500/15 text-violet-300 ring-violet-400/30',
     title: 'One photo is a small sample size.',
-    body: 'Every pet has five photo slots. Fill all five and Photogenic is yours, plus nobody has to judge your dog on one bad angle.',
+    body: 'Every pet has five photo slots — add, remove, or pick the main one from Profile → Photos. Fill all five and Photogenic is yours.',
   },
   {
     key: 'undo',
