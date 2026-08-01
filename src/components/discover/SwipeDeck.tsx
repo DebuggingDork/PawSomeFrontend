@@ -7,7 +7,19 @@ import { PetCardDialog } from '@/components/community/PetCardDialog'
 import { useDiscoverStore } from '@/store/useDiscoverStore'
 import type { BrowseCandidate } from '@/lib/api/types'
 
+// Ceiling for how far a card must travel to count as a swipe, not the value
+// itself — see `swipeThreshold`. On a laptop the card is ~544px wide and this is
+// a comfortable fifth of it. On a phone the same card is ~300px, where 120px is
+// closer to half the card and every swipe becomes a deliberate haul across the
+// screen with the thumb.
 const SWIPE_THRESHOLD = 120
+/** Share of the card's own width that counts as a committed swipe. */
+const SWIPE_THRESHOLD_RATIO = 0.28
+// A fast flick is a swipe even if it never travelled far — the gesture people
+// actually make on a phone. Guarded by a minimum offset so a sharp tap with a
+// few pixels of finger travel can never register as one.
+const FLICK_VELOCITY = 520
+const FLICK_MIN_OFFSET = 40
 // A subtler peek than before — enough to read as a deck with more behind it
 // without the outermost, barely-visible card adding clutter for no benefit.
 const VISIBLE_CARDS = 4
@@ -69,14 +81,21 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
   // left cards stuck mid-transition when they swapped roles.
   const dragX = useMotionValue(0)
   const dragRotate = useTransform(dragX, [-200, 200], [-12, 12])
-  const likeOpacity = useTransform(dragX, [20, 120], [0, 1])
-  const skipOpacity = useTransform(dragX, [-120, -20], [1, 0])
+  // Saturates a little before the widest commit distance so the stamp reads as
+  // "let go now" rather than arriving exactly at the moment the card leaves. 90
+  // also keeps it meaningful at the shorter thresholds a phone-width card gets.
+  const likeOpacity = useTransform(dragX, [16, 90], [0, 1])
+  const skipOpacity = useTransform(dragX, [-90, -16], [1, 0])
   const fan = isTop ? { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 } : fanTransform(stackIndex)
   // Tracks whether the current pointer-down turned into a real drag, so the
   // release can tell a tap (open the preview) from a swipe or an aborted,
   // snapped-back drag (do nothing) — a plain onClick can't tell those apart
   // on its own since both end with a pointerup on the same element.
   const didDragRef = useRef(false)
+  // Measured at release rather than tracked in state: the only thing that reads
+  // it is the drag-end decision, and re-rendering every card on resize to keep a
+  // width in sync would be work done for a value nothing paints.
+  const cardRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
 
   // Reduced motion drops the travel, not the feedback: a card flung 520px
@@ -103,6 +122,7 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
       exit={exitAnimation}
     >
       <motion.div
+        ref={cardRef}
         className="absolute inset-0"
         style={{ x: dragX, rotate: dragRotate }}
         initial={false}
@@ -116,8 +136,18 @@ function DraggableCard({ candidate, isTop, stackIndex, exitAction, isExiting, on
           if (Math.abs(info.offset.x) > TAP_DRAG_TOLERANCE) didDragRef.current = true
         }}
         onDragEnd={(_, info) => {
-          if (info.offset.x > SWIPE_THRESHOLD) onSwiped('like')
-          else if (info.offset.x < -SWIPE_THRESHOLD) onSwiped('skip')
+          // Scale the commit distance to the card actually on screen, capped at
+          // the old constant so nothing changes on a wide viewport: a 544px card
+          // yields 152 and keeps 120, a 300px one drops to 84.
+          const width = cardRef.current?.offsetWidth ?? 0
+          const threshold = width
+            ? Math.min(SWIPE_THRESHOLD, width * SWIPE_THRESHOLD_RATIO)
+            : SWIPE_THRESHOLD
+          const flicked =
+            Math.abs(info.velocity.x) > FLICK_VELOCITY && Math.abs(info.offset.x) > FLICK_MIN_OFFSET
+
+          if (info.offset.x > threshold || (flicked && info.velocity.x > 0)) onSwiped('like')
+          else if (info.offset.x < -threshold || (flicked && info.velocity.x < 0)) onSwiped('skip')
         }}
         onClick={() => {
           if (isTop && !didDragRef.current) onPreview()
@@ -319,7 +349,13 @@ export function SwipeDeck({
           `mb-5` to fake that alignment, which left it sitting at an arbitrary
           height next to three labelled buttons and reading as a stray control
           rather than part of the row. */}
-      <div className="mt-8 flex flex-shrink-0 items-end justify-center gap-4 sm:gap-5">
+      {/* Four columns whose widths are set by their labels, not their buttons —
+          "Super Woof" is wider than the 48px control under it. At gap-4 the row
+          measures ~282px, which overruns a 320px phone once the page gutters
+          are taken off, and the row is centred so it overflows on both sides.
+          gap-2.5 brings it back under. The buttons themselves are untouched:
+          they are already at the floor of a comfortable touch target. */}
+      <div className="mt-4 flex flex-shrink-0 items-end justify-center gap-2.5 sm:mt-8 sm:gap-4 md:gap-5">
         <div className="flex flex-col items-center gap-1.5">
           <button
             onClick={onUndo}

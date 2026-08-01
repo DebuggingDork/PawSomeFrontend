@@ -60,8 +60,14 @@ function SwipingAsSelector({
   if (selectable.length < 2) return null
 
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-2">
-      <span className="flex-shrink-0 text-xs font-medium text-neutral-500">Swiping as</span>
+    /* Labelled for assistive tech even when the visible caption is dropped: on a
+       phone "Swiping as" costs ~78px of a row that also has to hold a chip per
+       pet and the Filters button, and it is the one part of that row a person
+       can infer from the selected state. */
+    <div role="group" aria-label="Swiping as" className="flex min-w-0 flex-wrap items-center gap-2">
+      <span className="hidden flex-shrink-0 text-xs font-medium text-neutral-500 sm:inline">
+        Swiping as
+      </span>
       {selectable.map((pet) => {
         const isActive = pet.id === activePet?.id
         return (
@@ -251,10 +257,22 @@ function DiscoverPage() {
        subtracting its height here too left ~72px of dead space pinned below
        the fold, height the card could not use on a page where height is the
        scarce axis. */
-    <div className="mx-auto flex h-[100dvh] max-w-2xl flex-col px-6 pb-3 pt-20 md:pt-24">
-      <div className="mb-2 flex flex-shrink-0 items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-white">Discover</h1>
+    /* px-4 on a phone rather than px-6: the deck is width-bound at that size, so
+       every pixel of gutter comes straight out of the photo. The bottom padding
+       clears the home indicator on phones that have one — the action row sits
+       flush against the bottom of a viewport-height column, which is exactly
+       where an inset would otherwise cut through it. */
+    <div className="mx-auto flex h-[100dvh] max-w-2xl flex-col px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-20 sm:px-6 md:pt-24">
+      <div className="mb-2 flex flex-shrink-0 items-center justify-between gap-3">
+        {/* The heading and the tab strip together overrun a 360px row at the
+            desktop size, and PillTabs' own overflow-x-auto absorbs that by
+            quietly clipping "Likes you" — a tab that is unreadable rather than
+            one that is missing. Shrinking the heading is what buys the row back;
+            min-w-0 lets the strip scroll as a last resort on the narrowest
+            phones instead of pushing the heading off. */}
+        <h1 className="font-display text-xl font-bold text-white sm:text-2xl">Discover</h1>
         <PillTabs
+          className="min-w-0"
           layoutId="discover-tab-pill"
           active={tab}
           onChange={setTab}
@@ -269,7 +287,7 @@ function DiscoverPage() {
         <div className="flex min-h-0 flex-1 flex-col">
           {/* Both controls share one row — two stacked full-width bars cost
               enough height on a laptop to push the deck's buttons off screen. */}
-          <div className="mb-3 flex flex-shrink-0 items-center gap-3">
+          <div className="mb-2 flex flex-shrink-0 items-center gap-2 sm:mb-3 sm:gap-3">
             <SwipingAsSelector pets={myPets} activePet={activePet} onSelect={setActivePet} />
             <div className="ml-auto flex-shrink-0">
               <BrowseFiltersPanel filters={filters} onChange={setFilters} />
@@ -283,7 +301,11 @@ function DiscoverPage() {
           {!locationError && browseQuery.isLoading && (
             <div
               className="mx-auto max-h-full"
-              style={{ aspectRatio: '4 / 5', width: 'min(100%, 32rem)' }}
+              // 34rem, matching SwipeDeck. At 32 the placeholder was narrower
+              // than the card that replaces it, which is the jump the comment
+              // above says this exists to avoid — invisible on a phone, where
+              // both are capped by the viewport, obvious on a wide screen.
+              style={{ aspectRatio: '4 / 5', width: 'min(100%, 34rem)' }}
             >
               <Skeleton className="h-full w-full rounded-[1.75rem]" />
             </div>
