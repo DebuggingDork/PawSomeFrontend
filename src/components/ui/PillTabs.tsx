@@ -21,7 +21,13 @@ export function PillTabs<T extends string>({ tabs, active, onChange, layoutId, c
             key={t.key}
             type="button"
             onClick={() => onChange(t.key)}
-            className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5 transition-colors ${
+            /* px-3 below `sm`. Profile runs eight of these; at px-4 the strip
+               measures ~850px against roughly 310px of usable width on a phone,
+               so it is a scrolling strip either way — but the tighter padding
+               buys back most of a tab, which is the difference between the
+               fourth one being cut mid-word (a visible hint that the strip
+               scrolls) and it starting off-screen entirely. */
+            className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 transition-colors sm:px-4 ${
               active === t.key ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >

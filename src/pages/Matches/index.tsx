@@ -42,7 +42,7 @@ function MatchesPage() {
   const isLoading = isHydrating || conversationsQuery.isLoading
 
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-16 pt-24 md:pt-28">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
       <h1 className="mb-1 font-display text-2xl font-bold text-white">Your Matches</h1>
       <p className="mb-8 text-neutral-400">Everyone you and your pets have matched with.</p>
 

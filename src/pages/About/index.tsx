@@ -44,7 +44,7 @@ function AboutPage() {
   return (
     <div className="w-full bg-neutral-950">
       {/* Hero */}
-      <section className="mx-auto max-w-5xl px-6 pb-16 pt-28 text-center md:pt-36">
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 pb-16 pt-28 text-center md:pt-36">
         <ScrollReveal>
           <h1 className="text-balance font-display text-4xl font-bold leading-[1.1] tracking-[-0.02em] text-white md:text-6xl">
             It started with a dog named Bruno.
@@ -58,7 +58,7 @@ function AboutPage() {
 
       {/* Our story */}
       <section id="our-story" className="scroll-mt-24 border-t border-neutral-900 py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="gap-14 lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
             <div className="max-w-[68ch]">
               <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">Our story</h2>
@@ -124,7 +124,7 @@ function AboutPage() {
 
       {/* What we are trying to do */}
       <section className="border-t border-neutral-900 py-20">
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <ScrollReveal className="max-w-2xl">
             <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">
               What we are trying to do
@@ -160,7 +160,7 @@ function AboutPage() {
 
       {/* How it works */}
       <section className="border-t border-neutral-900 py-20">
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <ScrollReveal className="max-w-2xl">
             <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">How it works</h2>
             <p className="mt-4 leading-relaxed text-neutral-300">
@@ -186,7 +186,7 @@ function AboutPage() {
 
       {/* What we care about */}
       <section className="border-t border-neutral-900 py-20">
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <ScrollReveal className="max-w-2xl">
             <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">
               What we care about
@@ -245,7 +245,7 @@ function AboutPage() {
 
       {/* CTA */}
       <section className="border-t border-neutral-900 py-20">
-        <ScrollReveal className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
+        <ScrollReveal className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 sm:px-6 text-center">
           <h2 className="text-balance font-display text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">
             Bruno is doing much better, since you asked.
           </h2>

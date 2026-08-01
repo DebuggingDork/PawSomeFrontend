@@ -20,7 +20,7 @@ function OwnerProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-28">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
         <Skeleton className="h-32 w-full rounded-2xl" />
       </div>
     )
@@ -28,20 +28,20 @@ function OwnerProfilePage() {
 
   if (isError || !owner) {
     return (
-      <div className="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-28">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
         <EmptyState icon={UserIcon} title="Owner not found" description="This profile may have been removed." />
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-28">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
       <Link to="/community" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white">
         <ArrowLeft className="h-4 w-4" />
         Back to Community
       </Link>
 
-      <div className="mb-8 flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
+      <div className="mb-8 flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-4 sm:p-6">
         {/* Only a button when there is actually a photo to enlarge — the
             gradient-initial fallback previews to nothing. */}
         {owner.profile_photo_url ? (

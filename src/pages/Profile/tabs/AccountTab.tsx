@@ -169,7 +169,7 @@ function AccountForm({
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
           {/* Left column */}
           <div className="space-y-6">
-            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6">
               <p className="mb-4 text-sm font-semibold text-white">Profile photo</p>
               <PhotoUploader
                 key={photoUploaderKey}
@@ -200,7 +200,7 @@ function AccountForm({
               <p className="mt-3 text-center text-xs text-neutral-500">JPEG, PNG or WebP. Max 5MB.</p>
             </div>
 
-            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6">
               <p className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
                 <Sparkles className="h-4 w-4 text-[#ff6b35]" />
                 Tips for a great profile
@@ -223,7 +223,7 @@ function AccountForm({
 
           {/* Right column */}
           <div className="space-y-6">
-            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6">
               <SectionHeader icon={UserIcon} title="Personal information" className="mb-5" />
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -280,7 +280,7 @@ function AccountForm({
               </div>
             </div>
 
-            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6">
+            <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6">
               <SectionHeader icon={MapPin} title="Location" subtitle="Visible to matches" className="mb-5" />
 
               <LocationPicker

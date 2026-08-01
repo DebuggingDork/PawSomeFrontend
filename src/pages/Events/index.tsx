@@ -78,7 +78,7 @@ function EventsPage() {
   const events = eventsQuery.data?.items ?? []
 
   return (
-    <div className="relative mx-auto max-w-4xl px-6 pb-20 pt-24 md:pt-28">
+    <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pb-20 pt-24 md:pt-28">
       {/* Decorative floating gradient blobs */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-16 -z-10 overflow-hidden">
         <div className="animate-float absolute -left-16 h-64 w-64 rounded-full bg-[#ff6b35]/20 blur-3xl" />

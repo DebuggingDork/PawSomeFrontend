@@ -330,7 +330,7 @@ function AccordionItem({ item }: { item: QA }) {
 function FAQPage() {
   return (
     <div className="w-full bg-neutral-950">
-      <header className="mx-auto max-w-3xl px-6 pb-16 pt-28 md:pt-36">
+      <header className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-28 md:pt-36">
         <Link
           to="/"
           className="group inline-flex items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-white"
@@ -347,7 +347,7 @@ function FAQPage() {
         </p>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 pb-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-24">
         {CATEGORIES.map((category) => (
           <section
             key={category.id}

@@ -26,7 +26,10 @@ const TABS = [
   { key: 'activity', label: 'Activity', icon: BarChart3 },
   { key: 'badges', label: 'Badges', icon: Award },
   { key: 'favorites', label: 'Saved', icon: Bookmark },
-  { key: 'blocked', label: 'Blocked Users', icon: ShieldOff },
+  // "Blocked", not "Blocked Users": it is the widest tab of the eight by some
+  // margin, the icon already says who it is about, and every other label here
+  // is a single word.
+  { key: 'blocked', label: 'Blocked', icon: ShieldOff },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -128,7 +131,7 @@ function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-16 pt-24 md:pt-28">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
       <ProfileIdentityHeader />
 
       <PillTabs layoutId="profile-tab-pill" active={tab} onChange={setTab} tabs={TABS} className="mb-6 w-full" />

@@ -187,7 +187,7 @@ function CommunityPage() {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
   return (
-    <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 md:pt-28">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold text-white mb-2">Community 🐾</h1>

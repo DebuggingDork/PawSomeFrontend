@@ -36,7 +36,7 @@ export function PreferencesTab() {
         e.preventDefault()
         mutation.mutate()
       }}
-      className="space-y-5 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-6"
+      className="space-y-5 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6"
     >
       <SectionHeader
         icon={SlidersHorizontal}
