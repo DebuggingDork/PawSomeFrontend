@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Only the routes that render something without a session. The signed-in app
+  (/discover, /matches, /chat, /profile, /onboarding) is excluded here and in
+  robots.txt for the same reason: a crawler reaching any of them is shown the
+  sign-in screen, so listing them would submit eight URLs that all resolve to
+  one page of identical thin content.
+
+  /pets/:id and /owners/:id are public and worth indexing, but they are per-row
+  and cannot be enumerated from a static file. They are reachable by crawl from
+  /community, which is listed, and are left allowed in robots.txt so that path
+  stays open. Generating them properly needs the sitemap built from the
+  database at deploy time.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://pawsome.bond/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://pawsome.bond/community</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://pawsome.bond/events</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pawsome.bond/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawsome.bond/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawsome.bond/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://pawsome.bond/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

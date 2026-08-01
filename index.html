@@ -27,7 +27,96 @@
          needs its safe-area padding audited first. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#0a0a0a" />
-    <meta name="description" content="Find the right match for your dog or cat, with breeders who are verified and actually responsible." />
+
+    <!-- ── Search ──────────────────────────────────────────────────────────────
+         The description this replaces read "…with breeders who are verified and
+         actually responsible", which describes a different product. Nothing here
+         sells or lists breeders; it matches pets with pets nearby so their
+         owners can arrange a walk. That copy was what a search result promised,
+         so anyone who clicked it arrived somewhere other than where they
+         thought, and the words a page ranks for are the words in this tag. -->
+    <title>PawSome — Find Playdates for Your Dog or Cat</title>
+    <meta
+      name="description"
+      content="Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate. Join local pet meetups on PawSome."
+    />
+    <link rel="canonical" href="https://pawsome.bond/" />
+
+    <!-- ── Link previews ───────────────────────────────────────────────────────
+         There were none of these at all, so every share of this site — LinkedIn,
+         WhatsApp, Slack, iMessage — rendered as a bare blue URL with no image,
+         no title and no summary.
+
+         These are static, which for og:url and the title means they describe the
+         home page no matter which route was shared. That is not a shortcut: the
+         crawlers that build these cards do not run JavaScript, so a value this
+         app set at runtime is a value they would never see. Per-route titles are
+         handled in useSeo for the crawlers that *do* execute (Google's), and the
+         two mechanisms are deliberately separate because their audiences are. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PawSome" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://pawsome.bond/" />
+    <meta property="og:title" content="PawSome — Find Playdates for Your Dog or Cat" />
+    <meta
+      property="og:description"
+      content="Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate. Join local pet meetups on PawSome."
+    />
+    <!-- Absolute, and 1200x630 exactly. A relative path resolves against the
+         crawler, not the site, and an off-ratio image gets cropped somewhere
+         other than where you would have chosen. -->
+    <meta property="og:image" content="https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site/og-card.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Two dogs looking up at the camera on a paved path" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PawSome — Find Playdates for Your Dog or Cat" />
+    <meta
+      name="twitter:description"
+      content="Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate."
+    />
+    <meta name="twitter:image" content="https://pub-2241f255146e4b8ab3347e935732ec62.r2.dev/site/og-card.jpg" />
+    <meta name="twitter:image:alt" content="Two dogs looking up at the camera on a paved path" />
+
+    <!-- Claims only what is demonstrably true on the site. Deliberately no
+         aggregateRating or review markup: there is nothing here for it to
+         describe, and inventing it is what earns a manual action. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://pawsome.bond/#website",
+            "url": "https://pawsome.bond/",
+            "name": "PawSome",
+            "description": "Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate.",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://pawsome.bond/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://pawsome.bond/#organization",
+            "name": "PawSome",
+            "url": "https://pawsome.bond/",
+            "logo": "https://pawsome.bond/logo-256.png"
+          },
+          {
+            "@type": "WebApplication",
+            "name": "PawSome",
+            "url": "https://pawsome.bond/",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript.",
+            "description": "Match your dog or cat with compatible pets nearby, chat with their owner, and plan a real playdate.",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+          }
+        ]
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!--
@@ -45,7 +134,6 @@
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     </noscript>
-    <title>PawSome</title>
     <!-- Fetch the mark alongside the HTML so it's decoded before the splash is
          allowed to become visible 450ms in. -->
     <link rel="preload" as="image" href="/logo-256.png" />

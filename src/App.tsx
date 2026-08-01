@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
+import { RouteSeo } from './components/seo/RouteSeo'
 import LandingPage from './pages/Landing'
 import AuthPage from './pages/Auth'
 import ForgotPasswordPage from './pages/ForgotPassword'
@@ -396,6 +397,11 @@ function App() {
         </Navbar>
 
         <ScrollToHash />
+
+        {/* Before <Routes>, not after: sibling effects run in document order, so
+            a page that sets its own title from loaded data runs second and wins.
+            See RouteSeo. */}
+        <RouteSeo />
 
         {/* Main Content Area */}
         <main className="w-full">

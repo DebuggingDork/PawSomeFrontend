@@ -11,6 +11,7 @@ import { PetAvatar } from '@/components/chat/PetAvatar'
 import { genderMark } from '@/lib/petBadges'
 import { formatAge } from '@/lib/formatAge'
 import { GenderBadge } from '@/components/ui/GenderBadge'
+import { useSeo } from '@/hooks/useSeo'
 
 function PetProfilePage() {
   const { petId } = useParams<{ petId: string }>()
@@ -21,6 +22,18 @@ function PetProfilePage() {
     queryKey: ['pet', petId],
     queryFn: () => getPet(petId!),
     enabled: !!petId,
+  })
+
+  // Above the early returns, because hooks cannot live behind them. RouteSeo's
+  // table has no entry for /pets/:id precisely so this can own the title — a
+  // pet's own name and breed is the whole reason this page is worth indexing,
+  // and it is not knowable until the query lands.
+  useSeo({
+    title: pet ? `${pet.name}, ${pet.breed}` : 'Pet Profile',
+    description: pet
+      ? `${pet.name} is a ${pet.breed} on PawSome. See photos, check vaccination and training, and arrange a playdate.`
+      : undefined,
+    path: petId ? `/pets/${petId}` : undefined,
   })
 
   if (isLoading) {

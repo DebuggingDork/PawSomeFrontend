@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { AvatarPreview } from '@/components/ui/AvatarPreview'
 import { PetAvatar } from '@/components/chat/PetAvatar'
+import { useSeo } from '@/hooks/useSeo'
 
 function OwnerProfilePage() {
   const { userId } = useParams<{ userId: string }>()
@@ -16,6 +17,16 @@ function OwnerProfilePage() {
     queryKey: ['owner', userId],
     queryFn: () => getUserProfile(userId!),
     enabled: !!userId,
+  })
+
+  // Same shape as PetProfile: above the early returns, and absent from
+  // RouteSeo's table so the loaded name wins.
+  useSeo({
+    title: owner?.full_name ? `${owner.full_name} on PawSome` : 'Owner Profile',
+    description: owner?.full_name
+      ? `${owner.full_name}'s pets on PawSome. See who they look after and arrange a playdate.`
+      : undefined,
+    path: userId ? `/owners/${userId}` : undefined,
   })
 
   if (isLoading) {

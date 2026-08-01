@@ -1,0 +1,27 @@
+# Until this file existed, /robots.txt fell through to the SPA rewrite and
+# answered with index.html — so a crawler asking for directives was handed a
+# page of markup, parsed nothing from it, and proceeded on its own defaults.
+# Same for /sitemap.xml. Being served the wrong content type with a 200 is
+# worse than a 404, because nothing anywhere reports it as a problem.
+
+User-agent: *
+Allow: /
+
+# Signed-in surfaces. Nothing here renders without a session, so a crawler
+# reaching them gets the sign-in screen — which is one page of thin, duplicate
+# content standing in for eight distinct URLs. Keeping them out of the index
+# costs nothing: none of them is a page anyone could usefully arrive on.
+Disallow: /profile
+Disallow: /discover
+Disallow: /matches
+Disallow: /chat
+Disallow: /onboarding
+
+# Auth flows. The reset and verify routes additionally carry single-use tokens
+# in the query string, which have no business in a search index.
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /verify-email
+
+Sitemap: https://pawsome.bond/sitemap.xml
