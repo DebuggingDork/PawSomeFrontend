@@ -1,13 +1,16 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, PawPrint, User as UserIcon } from 'lucide-react'
 import { getUserProfile } from '@/lib/api/users'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { AvatarPreview } from '@/components/ui/AvatarPreview'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 
 function OwnerProfilePage() {
   const { userId } = useParams<{ userId: string }>()
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   const { data: owner, isLoading, isError } = useQuery({
     queryKey: ['owner', userId],
@@ -39,7 +42,20 @@ function OwnerProfilePage() {
       </Link>
 
       <div className="mb-8 flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
-        <PetAvatar name={owner.full_name ?? 'Unknown'} photoUrl={owner.profile_photo_url} size="lg" />
+        {/* Only a button when there is actually a photo to enlarge — the
+            gradient-initial fallback previews to nothing. */}
+        {owner.profile_photo_url ? (
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            aria-label={`View ${owner.full_name ?? 'this owner'}'s photo`}
+            className="flex-shrink-0 cursor-zoom-in rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/60 active:scale-95"
+          >
+            <PetAvatar name={owner.full_name ?? 'Unknown'} photoUrl={owner.profile_photo_url} size="lg" />
+          </button>
+        ) : (
+          <PetAvatar name={owner.full_name ?? 'Unknown'} photoUrl={owner.profile_photo_url} size="lg" />
+        )}
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-2xl font-bold text-white">{owner.full_name ?? 'Anonymous'}</h1>
           {owner.occupation && <p className="text-neutral-400">{owner.occupation}</p>}
@@ -83,6 +99,15 @@ function OwnerProfilePage() {
             </Link>
           ))}
         </div>
+      )}
+
+      {owner.profile_photo_url && (
+        <AvatarPreview
+          open={previewOpen}
+          photoUrl={owner.profile_photo_url}
+          name={owner.full_name ?? 'Anonymous'}
+          onClose={() => setPreviewOpen(false)}
+        />
       )}
     </div>
   )
