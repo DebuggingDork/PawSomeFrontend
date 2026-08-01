@@ -40,6 +40,9 @@ export function useChatConversation(selected: Conversation | null) {
       setMessagesLoading(true)
       setMessages([])
       setOtherTyping(false)
+      // The previous conversation's dot must not carry over while the new
+      // status is in flight.
+      setOtherOnline(false)
       setConnected(false)
       try {
         // Fetch together: read-receipts reconciliation needs the history's message
@@ -66,12 +69,27 @@ export function useChatConversation(selected: Conversation | null) {
     }
     loadHistory()
 
-    getChatStatus(selected.matchId)
-      .then((status) => !cancelled && setOtherOnline(status.is_online))
-      .catch(() => {})
+    // Asked repeatedly, not once. A single fetch at open meant whoever opened
+    // the thread first saw the other side as offline forever — their presence
+    // was checked before they connected and never again. The backend's answer
+    // is accurate to within its 60s staleness window; the frontend just has to
+    // keep asking.
+    const refreshStatus = () => {
+      getChatStatus(selected.matchId)
+        .then((status) => !cancelled && setOtherOnline(status.is_online))
+        .catch(() => {})
+    }
+    refreshStatus()
+    const statusTimer = setInterval(refreshStatus, 30_000)
 
     const socket = connectChatSocket(selected.matchId, {
-      onOpen: () => !cancelled && setConnected(true),
+      onOpen: () => {
+        if (cancelled) return
+        setConnected(true)
+        // Coming (back) online is exactly when the other side's dot is most
+        // likely to be stale — a laptop waking up missed every interval tick.
+        refreshStatus()
+      },
       onClose: () => !cancelled && setConnected(false),
       // Pub/sub has no backlog, so whatever arrived while the socket was down
       // is only in the database. Re-reading history on reconnect is what stops
@@ -153,6 +171,7 @@ export function useChatConversation(selected: Conversation | null) {
 
     return () => {
       cancelled = true
+      clearInterval(statusTimer)
       socket.close()
       socketRef.current = null
       if (remoteTypingTimeoutRef.current) clearTimeout(remoteTypingTimeoutRef.current)
