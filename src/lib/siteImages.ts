@@ -41,7 +41,10 @@ export const siteImages = {
    *  untouched — the extra brightness has to come out of the file instead.
    *
    *  Briefly `nappingCats` earlier the same day; that object is still in the
-   *  bucket, unreferenced. The key changed rather than the bytes behind it
-   *  because r2.dev caches, and an overwrite can keep serving the old image. */
-  porchCats: `${R2_BASE}/porchCats.jpg`,
+   *  bucket, unreferenced. The key carries a version because the objects here
+   *  are served with no Cache-Control: there is no TTL to wait out, but a
+   *  browser that already has the file has no reason to re-ask either, so a
+   *  rewrite behind an unchanged URL is invisible to exactly the people most
+   *  likely to look. Bump the suffix rather than overwriting. */
+  porchCats: `${R2_BASE}/porchCats-v2.jpg`,
 } as const
