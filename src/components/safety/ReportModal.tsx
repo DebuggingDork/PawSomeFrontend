@@ -32,12 +32,19 @@ export function ReportModal({ reportedUserId, reportedPetId, onClose }: ReportMo
   const rateLimited = mutation.error instanceof ApiError && mutation.error.status === 429
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+    // Bottom sheet on a phone, centred dialog from `sm` up. With the on-screen
+    // keyboard raised for the Details field there is very little viewport left,
+    // and this used to have no height cap and no scroll at all — the Submit
+    // button was simply off the bottom of the screen with no way to reach it.
+    <div
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-900 p-6 shadow-2xl"
+        className="thin-scrollbar lenis-prevent-scroll max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-2xl border border-white/10 bg-neutral-900 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-display text-lg font-bold text-white">

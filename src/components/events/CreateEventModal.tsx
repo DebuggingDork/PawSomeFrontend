@@ -64,16 +64,24 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
   const canSubmit = title.trim().length > 0 && locationName.trim().length > 0 && lat !== null && lng !== null
 
   return (
-    <div className="thin-scrollbar lenis-prevent-scroll fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overscroll-contain bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
+    // The scroll lives inside the panel, not on the overlay. Centring a taller-
+    // than-viewport child inside an `overflow-y-auto` flex container puts its
+    // top edge at a negative offset, and there is no scroll position that can
+    // reach it — this form carries a location picker, so on a phone the title
+    // field was permanently above the top of the screen.
+    <div
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-4"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', bounce: 0.28, duration: 0.5 }}
         onClick={(e) => e.stopPropagation()}
-        className="my-8 w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 shadow-2xl"
+        className="flex max-h-[100dvh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-neutral-900 shadow-2xl sm:max-h-[92dvh] sm:rounded-3xl"
       >
         {/* Live gradient cover preview */}
-        <div className="relative h-20" style={{ background: preview.css }}>
+        <div className="relative h-20 flex-shrink-0" style={{ background: preview.css }}>
           <span className="absolute -right-2 -top-3 select-none text-7xl opacity-25">🎉</span>
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 to-transparent" />
           <button
@@ -88,7 +96,7 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
           </h2>
         </div>
 
-        <div className="p-6">
+        <div className="thin-scrollbar lenis-prevent-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           {mutation.isSuccess ? (
             <div className="flex flex-col items-center py-6 text-center">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">

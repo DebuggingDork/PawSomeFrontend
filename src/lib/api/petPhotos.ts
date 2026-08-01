@@ -16,6 +16,14 @@ export function confirmPetPhoto(petId: string, objectKey: string): Promise<PetPh
   })
 }
 
+/** Routes the bytes through the API rather than the browser's own PUT to R2.
+ * See uploadProfilePhoto in users.ts for why this exists. */
+export function uploadPetPhoto(petId: string, file: File): Promise<PetPhoto> {
+  const form = new FormData()
+  form.append('file', file)
+  return apiFetch<PetPhoto>(`/pets/${petId}/photos/upload`, { method: 'POST', body: form })
+}
+
 /** Step 1 of swapping an existing photo's image in place (same id, primary
  * status, and position — not a delete + re-add). */
 export function presignPetPhotoReplace(
@@ -34,6 +42,13 @@ export function confirmPetPhotoReplace(petId: string, photoId: string, objectKey
     method: 'POST',
     body: { object_key: objectKey },
   })
+}
+
+/** Replace routed through the API rather than the browser's own PUT to R2. */
+export function uploadPetPhotoReplace(petId: string, photoId: string, file: File): Promise<PetPhoto> {
+  const form = new FormData()
+  form.append('file', file)
+  return apiFetch<PetPhoto>(`/pets/${petId}/photos/${photoId}/replace/upload`, { method: 'POST', body: form })
 }
 
 export function setPrimaryPhoto(petId: string, photoId: string): Promise<PetPhoto> {

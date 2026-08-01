@@ -315,15 +315,31 @@ h1, h2, h3 {
  * panning sideways to find the next field. It is the single biggest source of
  * "the mobile site feels broken", and it is caused entirely by the font size.
  *
- * There is no blanket fix to write here: an unlayered rule outranks every
- * Tailwind utility regardless of specificity, so it would also shrink the
- * fields that are deliberately larger (the verification code boxes, the lead
- * inputs). So the rule is a convention instead, applied at each field:
+ * A blanket `input { font-size: 16px }` is not the fix: an unlayered rule
+ * outranks every Tailwind utility regardless of specificity, so it would also
+ * shrink the fields that are deliberately larger — the verification code boxes,
+ * the lead inputs on onboarding.
  *
- *     text-base sm:text-sm
+ * So this names the offenders exactly. `input.text-sm` only matches a field
+ * that asked to be 14px, which is precisely the set that triggers the zoom;
+ * anything larger, or with no size set at all (the auth fields inherit 16px),
+ * is left alone. Any field written from here on is covered the moment it is
+ * given `text-sm`, which is the point — the alternative was thirty hand-edited
+ * class strings and a thirty-first that gets forgotten.
  *
- * 16px on a phone, back to 14px from `sm` up where nothing zooms.
+ * Onboarding additionally spells this out per field as `text-base sm:text-sm`,
+ * since there the touch sizing is part of the design rather than a correction.
  */
+@media (pointer: coarse) and (max-width: 767px) {
+  input.text-xs,
+  input.text-sm,
+  textarea.text-xs,
+  textarea.text-sm,
+  select.text-xs,
+  select.text-sm {
+    font-size: 16px;
+  }
+}
 
 /*
  * A range input sized for a fingertip.

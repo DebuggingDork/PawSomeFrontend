@@ -1,6 +1,6 @@
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { PET_CARD_ASPECT } from '@/components/ui/ImageCropper'
-import { confirmPetPhoto, presignPetPhoto } from '@/lib/api/petPhotos'
+import { confirmPetPhoto, presignPetPhoto, uploadPetPhoto } from '@/lib/api/petPhotos'
 
 interface Props {
   petId: string
@@ -17,6 +17,7 @@ export function PetPhotosStep({ petId, petName, currentPhotoUrl, onDraft, onSave
         label={`Choose a photo of ${petName}`}
         presign={(contentType) => presignPetPhoto(petId, contentType)}
         confirm={(key) => confirmPetPhoto(petId, key).then(() => onSaved())}
+        directUpload={(file) => uploadPetPhoto(petId, file).then(() => onSaved())}
         currentPhotoUrl={currentPhotoUrl}
         onLocalPreview={(url) => onDraft({ petPhotoUrl: url })}
         photoAlt={petName}

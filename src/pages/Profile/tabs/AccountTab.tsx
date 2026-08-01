@@ -8,6 +8,7 @@ import {
   getProfileCompletion,
   presignProfilePhoto,
   updateMyProfile,
+  uploadProfilePhoto,
 } from '@/lib/api/users'
 import { LocationPicker } from '@/components/ui/LocationPicker'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
@@ -175,6 +176,7 @@ function AccountForm({
                 label="Upload a profile photo"
                 presign={presignProfilePhoto}
                 confirm={(key) => confirmProfilePhoto(key).then(() => invalidate())}
+                directUpload={(file) => uploadProfilePhoto(file).then(() => invalidate())}
                 variant="card"
                 className="mx-auto max-w-[180px]"
                 currentPhotoUrl={profile.profile_photo_url}

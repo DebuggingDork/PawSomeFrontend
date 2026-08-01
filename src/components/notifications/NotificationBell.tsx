@@ -224,11 +224,18 @@ export function NotificationBell() {
                       </div>
                     </div>
 
+                    {/* Revealed on hover where there is a pointer, permanently
+                        visible where there isn't. Hiding it behind `group-hover`
+                        unconditionally meant that on a phone — where nothing
+                        hovers — there was no way to see this control at all, let
+                        alone dismiss a notification. Also a 24px target became
+                        36px on touch, which is the difference between hitting it
+                        and opening the notification underneath it. */}
                     <button
                       onClick={() => deleteMutation.mutate(n.id)}
                       aria-label="Dismiss notification"
                       title="Dismiss"
-                      className="absolute right-2 top-3 flex h-6 w-6 items-center justify-center rounded-full text-neutral-600 opacity-0 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 group-hover:opacity-100"
+                      className="absolute right-2 top-2 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-neutral-600 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 hoverable:top-3 hoverable:h-6 hoverable:w-6 hoverable:opacity-0 hoverable:group-hover:opacity-100"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>

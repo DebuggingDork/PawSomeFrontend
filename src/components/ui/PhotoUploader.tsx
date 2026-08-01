@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, AlertTriangle, Loader2, Check, RotateCcw, ImagePlus } from 'lucide-react'
 import { ApiError } from '@/lib/api/client'
 import { ImageCropper } from './ImageCropper'
-import { contentTypeOf, uploadToPresignedUrl } from '@/lib/api/upload'
+import { contentTypeOf, uploadToPresignedUrl, UploadRejectedError, UploadTransportError } from '@/lib/api/upload'
 import type { PresignResponse } from '@/lib/api/types'
 
 interface PhotoUploaderProps {
@@ -11,6 +11,21 @@ interface PhotoUploaderProps {
   presign: (contentType: 'image/jpeg' | 'image/png' | 'image/webp') => Promise<PresignResponse>
   /** Tells the backend the upload finished, so it can validate + record it. */
   confirm: (objectKey: string) => Promise<void>
+  /**
+   * Sends the file through our own API instead of the browser's direct PUT to
+   * R2, doing the whole job in one request — no presign, no confirm.
+   *
+   * Used when the direct PUT never left the device. R2 matches CORS origins
+   * exactly, so a phone on a LAN address or a preview deployment is refused
+   * before the request is sent, with no status code to explain it. Without
+   * this, an origin that isn't on the bucket's allowlist simply cannot upload
+   * a photo — which, since the photo steps have no skip, means it cannot
+   * finish onboarding either.
+   *
+   * Should have the same effect as `confirm` on success (invalidate queries,
+   * advance the step); the two paths differ only in how the bytes travel.
+   */
+  directUpload?: (file: File) => Promise<void>
   label?: string
   className?: string
   /**
@@ -65,6 +80,29 @@ interface PhotoUploaderProps {
 type Status = 'idle' | 'uploading' | 'unavailable' | 'error'
 
 /**
+ * Says what actually went wrong.
+ *
+ * Every failure used to collapse into "Upload failed. Try again." — which on a
+ * step with no skip is a wall with no handle on it, and gives whoever reports
+ * it nothing to pass on. These distinguish the three kinds that behave
+ * differently: retry now, retry later, or this file will never work.
+ */
+function describeUploadFailure(err: unknown): string {
+  if (err instanceof UploadTransportError) {
+    return "Couldn't reach photo storage from this device. Check your connection and try again."
+  }
+  if (err instanceof ApiError) {
+    if (typeof err.detail === 'string') return err.detail
+    if (err.status === 413) return 'That image is too large. Try a smaller one.'
+    if (err.status >= 500) return 'Our server had trouble saving that. Try again in a moment.'
+  }
+  if (err instanceof UploadRejectedError) {
+    return `Photo storage refused that upload (${err.status}). Try again.`
+  }
+  return 'Upload failed. Try again.'
+}
+
+/**
  * Presign -> PUT-to-R2 -> confirm flow shared by pet photos and the profile photo.
  * R2 isn't provisioned in every environment, so a 503 gets its own calm, expected-looking state
  * instead of the generic error banner. The preview is drawn from a local object URL so it shows
@@ -73,6 +111,7 @@ type Status = 'idle' | 'uploading' | 'unavailable' | 'error'
 export function PhotoUploader({
   presign,
   confirm,
+  directUpload,
   label = 'Add photo',
   className = '',
   variant = 'compact',
@@ -103,6 +142,31 @@ export function PhotoUploader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /**
+   * Presign -> PUT -> confirm, with a single retry through our own API if the
+   * browser could not deliver the bytes to R2 itself.
+   *
+   * Only a transport failure falls back. An upload R2 actually answered and
+   * rejected — a signature mismatch, an expired URL — would be rejected by the
+   * proxy for the same underlying reason, so retrying it there just doubles
+   * the wait before showing the same error.
+   */
+  const performUpload = async (file: File, contentType: NonNullable<ReturnType<typeof contentTypeOf>>) => {
+    const presigned = await presign(contentType)
+
+    try {
+      await uploadToPresignedUrl(presigned.upload_url, file, contentType)
+    } catch (err) {
+      if (directUpload && err instanceof UploadTransportError) {
+        await directUpload(file)
+        return
+      }
+      throw err
+    }
+
+    await confirm(presigned.object_key)
+  }
+
   const handleFile = async (file: File) => {
     const contentType = contentTypeOf(file)
     if (!contentType) {
@@ -122,9 +186,7 @@ export function PhotoUploader({
     setMessage(null)
 
     try {
-      const presigned = await presign(contentType)
-      await uploadToPresignedUrl(presigned.upload_url, file, contentType)
-      await confirm(presigned.object_key)
+      await performUpload(file, contentType)
       setStatus('idle')
       setJustSaved(true)
       if (resetAfterUpload) {
@@ -143,7 +205,7 @@ export function PhotoUploader({
         setMessage("Photo storage isn't set up yet — you can add this later from Profile.")
       } else {
         setStatus('error')
-        setMessage(err instanceof ApiError && typeof err.detail === 'string' ? err.detail : 'Upload failed. Try again.')
+        setMessage(describeUploadFailure(err))
       }
     } finally {
       if (inputRef.current) inputRef.current.value = ''

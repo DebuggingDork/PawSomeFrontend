@@ -9,8 +9,10 @@ import {
   presignPetPhoto,
   presignPetPhotoReplace,
   setPrimaryPhoto,
+  uploadPetPhoto,
+  uploadPetPhotoReplace,
 } from '@/lib/api/petPhotos'
-import { contentTypeOf, uploadToPresignedUrl } from '@/lib/api/upload'
+import { contentTypeOf, uploadToPresignedUrl, UploadTransportError } from '@/lib/api/upload'
 import { ApiError } from '@/lib/api/client'
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { PET_CARD_ASPECT } from '@/components/ui/ImageCropper'
@@ -68,11 +70,27 @@ export function PhotosTab() {
     setReplacingPhotoId(photoId)
     try {
       const presigned = await presignPetPhotoReplace(selectedPet.id, photoId, contentType)
-      await uploadToPresignedUrl(presigned.upload_url, file, contentType)
+      try {
+        await uploadToPresignedUrl(presigned.upload_url, file, contentType)
+      } catch (err) {
+        // The browser never got the bytes to R2 — almost always its origin
+        // missing from the bucket's exactly-matched CORS allowlist. Same
+        // fallback as PhotoUploader: send them via our own API instead.
+        if (!(err instanceof UploadTransportError)) throw err
+        await uploadPetPhotoReplace(selectedPet.id, photoId, file)
+        invalidate()
+        return
+      }
       await confirmPetPhotoReplace(selectedPet.id, photoId, presigned.object_key)
       invalidate()
     } catch (err) {
-      setReplaceError(err instanceof ApiError && typeof err.detail === 'string' ? err.detail : 'Replace failed. Try again.')
+      setReplaceError(
+        err instanceof UploadTransportError
+          ? "Couldn't reach photo storage from this device. Check your connection and try again."
+          : err instanceof ApiError && typeof err.detail === 'string'
+            ? err.detail
+            : 'Replace failed. Try again.',
+      )
     } finally {
       setReplacingPhotoId(null)
       if (replaceInputRef.current) replaceInputRef.current.value = ''
@@ -146,7 +164,11 @@ export function PhotosTab() {
                 <Loader2 className="h-5 w-5 animate-spin text-white" />
               </div>
             )}
-            <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
+            {/* Always on where nothing hovers. This whole toolbar — set primary,
+                replace, delete — was behind `group-hover`, so on a phone there
+                was no way to reach any of it: a photo, once uploaded, could not
+                be changed or removed at all. */}
+            <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1.5 bg-gradient-to-t from-black/80 to-transparent p-2 transition-opacity hoverable:gap-1 hoverable:opacity-0 hoverable:group-hover:opacity-100">
               {!photo.is_primary && (
                 <button
                   onClick={() => setPrimaryMutation.mutate(photo.id)}
@@ -193,6 +215,7 @@ export function PhotosTab() {
             label={photos.length === 0 ? `Add a photo of ${selectedPet.name}` : 'Add another'}
             presign={(contentType) => presignPetPhoto(selectedPet.id, contentType)}
             confirm={(key) => confirmPetPhoto(selectedPet.id, key).then(() => invalidate())}
+            directUpload={(file) => uploadPetPhoto(selectedPet.id, file).then(() => invalidate())}
             cropAspect={PET_CARD_ASPECT}
             cropTitle={`Frame ${selectedPet.name}'s photo`}
             cropHint="This is exactly what other owners will see on the card."

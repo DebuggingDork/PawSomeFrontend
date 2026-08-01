@@ -1,6 +1,6 @@
 import { PhotoUploader } from '@/components/ui/PhotoUploader'
 import { AVATAR_ASPECT } from '@/components/ui/ImageCropper'
-import { confirmProfilePhoto, presignProfilePhoto } from '@/lib/api/users'
+import { confirmProfilePhoto, presignProfilePhoto, uploadProfilePhoto } from '@/lib/api/users'
 
 interface Props {
   currentPhotoUrl: string | null
@@ -15,6 +15,7 @@ export function ProfilePhotoStep({ currentPhotoUrl, onDraft, onSaved }: Props) {
         label="Choose a photo"
         presign={presignProfilePhoto}
         confirm={(key) => confirmProfilePhoto(key).then(() => onSaved())}
+        directUpload={(file) => uploadProfilePhoto(file).then(() => onSaved())}
         currentPhotoUrl={currentPhotoUrl}
         onLocalPreview={(url) => onDraft({ ownerPhotoUrl: url })}
         photoAlt="Your profile photo"

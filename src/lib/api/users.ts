@@ -32,6 +32,22 @@ export function presignProfilePhoto(contentType: UploadableContentType): Promise
   })
 }
 
+/**
+ * Uploads the photo through the API instead of straight to R2.
+ *
+ * The presign + PUT pair above is the fast path and stays the default — it
+ * keeps the bytes off our server. This is what PhotoUploader falls back to
+ * when the browser could not deliver them to R2 itself, which on a phone is
+ * usually the bucket's CORS allowlist not naming that origin. Adding a photo
+ * is a required onboarding step, so this path is the difference between a
+ * slower upload and an account that cannot be finished.
+ */
+export function uploadProfilePhoto(file: File): Promise<UserProfile> {
+  const form = new FormData()
+  form.append('file', file)
+  return apiFetch<UserProfile>('/users/me/photo/upload', { method: 'POST', body: form })
+}
+
 export function confirmProfilePhoto(objectKey: string): Promise<UserProfile> {
   return apiFetch<UserProfile>('/users/me/photo', {
     method: 'POST',

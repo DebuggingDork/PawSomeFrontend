@@ -155,9 +155,14 @@ export async function apiFetch<T>(
   path: string,
   { body, auth = true, headers, ...rest }: RequestOptions = {},
 ): Promise<T> {
+  // FormData has to set its own Content-Type. The multipart boundary is
+  // generated per body by the browser, so declaring the header by hand omits it
+  // and the server gets a body it cannot parse.
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
+
   const doFetch = async (): Promise<Response> => {
     const finalHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...(headers as Record<string, string> | undefined),
     }
 
@@ -169,7 +174,7 @@ export async function apiFetch<T>(
     return fetch(`${API_BASE_URL}${path}`, {
       ...rest,
       headers: finalHeaders,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
     })
   }
 
