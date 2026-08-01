@@ -36,7 +36,6 @@ function ChatPage() {
     messagesLoading,
     otherOnline,
     otherTyping,
-    connected,
     draft,
     handleDraftChange,
     handleSend,
@@ -182,11 +181,6 @@ function ChatPage() {
                     )}
                   </p>
                 </div>
-                {!connected && (
-                  <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-[11px] text-neutral-400">
-                    Connecting…
-                  </span>
-                )}
                 <button
                   type="button"
                   onClick={() => {
