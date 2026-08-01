@@ -49,6 +49,12 @@ export function PetAvatar({ name, photoUrl, size = 'md', online, className = '' 
           src={photoUrl}
           alt={name}
           onError={() => setFailedUrl(photoUrl)}
+          // A conversation list is dozens of these, all full-size originals off
+          // R2. Deferring the ones below the fold is the difference between a
+          // list that fills in as you scroll and one that spends the first few
+          // seconds of a phone's data allowance on avatars nobody has reached.
+          loading="lazy"
+          decoding="async"
           className={`${SIZE_CLASSES[size]} rounded-full object-cover ring-2 ring-white/10`}
         />
       ) : (

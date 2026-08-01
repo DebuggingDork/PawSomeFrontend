@@ -91,7 +91,7 @@ function PetPanel({ pet }: { pet: Pet }) {
         <span className="mt-8 inline-flex items-center gap-2 font-semibold text-white">
           See {pet.name}'s profile
           <ArrowRight
-            className="h-5 w-5 transition-transform duration-200 ease-out-quart group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+            className="h-5 w-5 transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none"
             aria-hidden="true"
           />
         </span>

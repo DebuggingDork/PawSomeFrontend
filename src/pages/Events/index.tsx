@@ -105,9 +105,9 @@ function EventsPage() {
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <button
             onClick={() => setShowCreate(true)}
-            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/40"
+            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hoverable:hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/40"
           >
-            <Plus className="h-4 w-4 transition-transform group-hover:rotate-90" /> Post a meetup
+            <Plus className="h-4 w-4 transition-transform hoverable:group-hover:rotate-90" /> Post a meetup
           </button>
           <PillTabs layoutId="events-species" active={species} onChange={setSpecies} tabs={SPECIES_FILTERS} />
         </div>
@@ -130,7 +130,7 @@ function EventsPage() {
           action={
             <button
               onClick={() => setShowCreate(true)}
-              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               Post a meetup
             </button>

@@ -155,7 +155,7 @@ export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCe
               <button
                 onClick={() => data?.matchId && onOpenChat(data.matchId)}
                 disabled={!data?.matchId}
-                className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <MessageCircle className="h-4 w-4" />
                 Send a message

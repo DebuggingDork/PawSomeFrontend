@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router'
 import { motion } from 'framer-motion'
-import { Lock, Eye, EyeOff, PawPrint, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react'
+import logoIcon from '@/assets/logo-256.png'
 import * as authApi from '@/lib/api/auth'
 import { ApiError } from '@/lib/api/client'
 import { useLoaderStore } from '@/store/useLoaderStore'
@@ -64,8 +65,12 @@ function ResetPasswordPage() {
       >
         <div className="rounded-2xl border border-white/10 bg-neutral-900/60 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl">
           <div className="mb-6 flex flex-col items-center text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/30">
-              <PawPrint className="h-7 w-7 text-white" fill="white" />
+            {/* Brand mark — the real PawSome logo, given the same treatment as
+                the auth page. A gradient tile with a stock paw glyph stood here,
+                on the screens where the brand most needs to be recognisable. */}
+            <div className="relative mb-4">
+              <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-[#ff6b35]/30 blur-xl" />
+              <img src={logoIcon} alt="PawSome" className="h-14 w-14 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
             </div>
             <h2 className="font-display text-2xl font-bold text-white">Set a new password</h2>
             <p className="mt-1 text-sm text-neutral-400">Choose a new password for your account.</p>
@@ -103,7 +108,7 @@ function ResetPasswordPage() {
                 className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40"
               >
                 Go to Sign In
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />
               </button>
             </div>
           ) : (
@@ -159,7 +164,7 @@ function ResetPasswordPage() {
                 ) : (
                   <>
                     Reset Password
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />
                   </>
                 )}
               </motion.button>

@@ -358,7 +358,7 @@ function CompleteBlock({ petName, onContinue }: { petName: string; onContinue: (
         className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-8 py-4 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-[#ff6b35]/35 sm:w-auto sm:py-3.5"
       >
         See who's nearby
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />
       </motion.button>
     </div>
   )

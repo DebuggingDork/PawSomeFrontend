@@ -38,7 +38,7 @@ export function BlockedUsersTab() {
             className="flex items-center gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-3 transition-colors hover:border-neutral-700"
           >
             {block.blocked_user.profile_photo_url ? (
-              <img src={block.blocked_user.profile_photo_url} alt="" className="h-10 w-10 rounded-full object-cover" />
+              <img src={block.blocked_user.profile_photo_url} alt="" loading="lazy" decoding="async" className="h-10 w-10 rounded-full object-cover" />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800">
                 <UserIcon className="h-4 w-4 text-neutral-600" />

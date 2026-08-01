@@ -168,7 +168,7 @@ export function ChatBubble({
                     key={emoji}
                     type="button"
                     onClick={() => handlePick(emoji)}
-                    className="rounded-full p-1 text-base transition-transform hover:scale-125"
+                    className="rounded-full p-1 text-base transition-transform hoverable:hover:scale-125"
                   >
                     {emoji}
                   </button>

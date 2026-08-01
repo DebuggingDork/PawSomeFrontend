@@ -88,7 +88,7 @@ export function ConversationSidebar({
             action={
               <Link
                 to="/discover"
-                className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+                className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
               >
                 Find matches
               </Link>

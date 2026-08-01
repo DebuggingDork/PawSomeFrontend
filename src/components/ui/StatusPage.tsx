@@ -22,7 +22,7 @@ const TONE_STYLES = {
 
 /** Shared button classes so every state page's actions look consistent. */
 export const statusPagePrimaryButton =
-  'rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5'
+  'rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5'
 export const statusPageSecondaryButton =
   'rounded-full border border-neutral-700 px-6 py-2.5 font-semibold text-neutral-300 transition-colors hover:border-[#ff6b35] hover:text-white'
 

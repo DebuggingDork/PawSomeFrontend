@@ -227,7 +227,7 @@ export const PetToggleSection: React.FC = () => {
             >
               See all {pets.total} pets
               <ArrowRight
-                className="h-4 w-4 transition-transform duration-200 ease-out-quart group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+                className="h-4 w-4 transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none"
                 aria-hidden="true"
               />
             </Link>

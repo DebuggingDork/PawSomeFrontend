@@ -53,7 +53,7 @@ function PetProfilePage() {
       <div className="mb-6 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50">
         <div className="relative aspect-square w-full bg-neutral-800 md:aspect-[16/9]">
           {heroPhoto ? (
-            <img src={heroPhoto} alt={pet.name} className="h-full w-full object-cover" />
+            <img src={heroPhoto} alt={pet.name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
               <PawPrint className="h-20 w-20 text-neutral-700" />
@@ -78,7 +78,7 @@ function PetProfilePage() {
                   heroPhoto === photo.url ? 'border-[#ff6b35]' : 'border-transparent hover:border-neutral-600'
                 }`}
               >
-                <img src={photo.url} alt="" className="h-full w-full object-cover" />
+                <img src={photo.url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
               </button>
             ))}
           </div>

@@ -68,7 +68,7 @@ function OwnerProfilePage() {
                     src={pet.primary_photo_url}
                     alt={pet.name}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform hoverable:group-hover:scale-105"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">

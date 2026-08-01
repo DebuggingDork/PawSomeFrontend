@@ -48,7 +48,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
     >
       {/* Cover band with a deterministic gradient + oversized glyph */}
       <div className="relative h-28 overflow-hidden" style={{ background: g.css }}>
-        <span className="pointer-events-none absolute -right-3 -top-4 select-none text-[7rem] leading-none opacity-25 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+        <span className="pointer-events-none absolute -right-3 -top-4 select-none text-[7rem] leading-none opacity-25 transition-transform duration-500 hoverable:group-hover:scale-110 hoverable:group-hover:rotate-6">
           {emoji}
         </span>
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-white/10" />
@@ -141,7 +141,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
             <button
               onClick={() => onToggleGoing(event)}
               disabled={togglingId === event.id}
-              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-1.5 text-xs font-semibold text-white shadow-md shadow-[#ff6b35]/30 transition-all hover:-translate-y-0.5 disabled:opacity-50"
+              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-1.5 text-xs font-semibold text-white shadow-md shadow-[#ff6b35]/30 transition-all hoverable:hover:-translate-y-0.5 disabled:opacity-50"
             >
               I'm going
             </button>

@@ -132,7 +132,14 @@ function ChatPage() {
 
   return (
     <div className="px-3 pb-4 pt-24 md:px-6 md:pt-28">
-      <div className="mx-auto flex h-[calc(100vh-7.5rem)] max-w-6xl overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/40 shadow-2xl shadow-black/30">
+      {/* `dvh`, not `vh`. On a phone `vh` is measured against the viewport with
+          the browser chrome retracted, so this box was ~60px taller than what
+          you can see whenever the address bar is showing — and the thing that
+          fell off the bottom was the composer, on the one screen people use
+          every day. Paired with `interactive-widget=resizes-content` in the
+          viewport meta, so the keyboard shortens this box instead of covering
+          it. */}
+      <div className="mx-auto flex h-[calc(100dvh-7.5rem)] max-w-6xl overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/40 shadow-2xl shadow-black/30">
         {/* One pane at a time on mobile, both side by side from md up. The
             sidebar is `w-full` below md, so leaving both mounted there left
             the thread squeezed to almost no width — a conversation opened on a

@@ -44,7 +44,7 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/75 backdrop-blur-sm sm:items-center sm:p-4"
       onClick={onClose}
     >
       <motion.div
@@ -55,7 +55,15 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 shadow-2xl"
+        // Bottom sheet on a phone, centred card from `sm`. Capped in `dvh` and
+        // scrollable: with several eligible pets and an error line this runs
+        // taller than a short screen, and an uncapped centred panel inside a
+        // flex overlay puts its top edge at an offset no scroll can reach —
+        // "Yes, we're in" was off the bottom with no way down to it.
+        // `relative` also matters: without it the close button resolved against
+        // the full-screen overlay and sat in the corner of the screen rather
+        // than the corner of the dialog.
+        className="thin-scrollbar lenis-prevent-scroll relative max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-3xl border border-white/10 bg-neutral-900 pb-[env(safe-area-inset-bottom)] shadow-2xl sm:max-h-[88dvh] sm:max-w-sm sm:rounded-3xl sm:pb-0"
       >
         <button
           onClick={onClose}
@@ -151,7 +159,7 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
             type="button"
             onClick={() => onConfirm(petId)}
             disabled={isSubmitting}
-            className="flex flex-[1.4] items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="flex flex-[1.4] items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <PawPrint className="h-4 w-4" />
             {isSubmitting ? 'Confirming…' : "Yes, we're in"}

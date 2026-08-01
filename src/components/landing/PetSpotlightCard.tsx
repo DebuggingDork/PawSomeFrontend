@@ -111,7 +111,7 @@ export function PetSpotlightCard({ pet, layout = 'tall', className = '' }: PetSp
   return (
     <Link
       to={`/pets/${pet.id}`}
-      className={`group flex overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/70 shadow-[0_0_0_rgba(0,0,0,0)] transition-[transform,box-shadow,border-color] duration-300 ease-out-quart hoverable:hover:-translate-y-1.5 hoverable:hover:border-[#ff6b35]/50 hoverable:hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6b35] motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+      className={`group flex overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/70 shadow-[0_0_0_rgba(0,0,0,0)] transition-[transform,box-shadow,border-color] duration-300 ease-out-quart motion-safe:hoverable:hover:-translate-y-1.5 hoverable:hover:border-[#ff6b35]/50 hoverable:hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6b35] motion-reduce:transition-none ${
         // A fixed height on the wide card, because its own content cannot give
         // it a sensible one: let the photo size the card and a portrait shot at
         // 46% width makes it 750px tall, with the copy marooned in the middle of

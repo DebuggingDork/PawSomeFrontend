@@ -84,7 +84,7 @@ export function LikesReceivedList({ likes, isLoading, onAccept, onReject, respon
                 onClick={() => onAccept(like.id)}
                 disabled={isResponding}
                 aria-label="Match back"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-md shadow-[#ff6b35]/30 transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-md shadow-[#ff6b35]/30 transition-transform hoverable:hover:scale-105 active:scale-95 disabled:opacity-40"
               >
                 <Heart className="h-4 w-4" fill="currentColor" />
               </button>

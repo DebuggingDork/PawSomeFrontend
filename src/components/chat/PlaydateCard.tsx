@@ -127,7 +127,7 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
               <button
                 onClick={onAccept}
                 disabled={responding}
-                className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-3 py-1.5 text-xs font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-3 py-1.5 text-xs font-semibold text-white transition-transform hoverable:hover:-translate-y-0.5 disabled:opacity-50"
               >
                 <Check className="h-3.5 w-3.5" /> Accept
               </button>

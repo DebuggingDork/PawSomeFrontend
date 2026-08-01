@@ -153,7 +153,7 @@ export function PhotosTab() {
           const isReplacing = replacingPhotoId === photo.id
           return (
           <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-xl border border-neutral-800">
-            <img src={photo.url} alt="" className="h-full w-full object-cover" />
+            <img src={photo.url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             {photo.is_primary && (
               <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
                 <Star className="h-3 w-3" fill="currentColor" /> Primary

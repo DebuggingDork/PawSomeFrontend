@@ -112,7 +112,7 @@ export function PetsTab() {
             className="flex items-center gap-4 rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 transition-colors hover:border-neutral-700"
           >
             {pet.primary_photo_url ? (
-              <img src={pet.primary_photo_url} alt={pet.name} className="h-14 w-14 rounded-xl object-cover" />
+              <img src={pet.primary_photo_url} alt={pet.name} loading="lazy" decoding="async" className="h-14 w-14 rounded-xl object-cover" />
             ) : (
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800">
                 <PawPrint className="h-6 w-6 text-neutral-600" />

@@ -163,7 +163,7 @@ function NotFoundPage() {
             <Link
               to="/"
               onMouseEnter={dodge}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               <Home className="h-4 w-4" />
               {DODGE_LABELS[Math.min(dodges, DODGE_LABELS.length - 1)]}

@@ -8,7 +8,17 @@
          iOS rounds the corners itself, which is why the PNG has square ones. -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="PawSome" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- `interactive-widget=resizes-content` makes the on-screen keyboard
+         shorten the layout viewport rather than slide over it, so anything
+         sized in `dvh` — the chat pane, the modals, the docked onboarding
+         actions — resizes to what's left instead of putting its bottom edge
+         under the keys. Chrome on Android honours it; iOS ignores it and keeps
+         scrolling the focused field into view as before, which is why the
+         layouts are capped in `dvh` and scrollable rather than relying on it.
+         Deliberately no `viewport-fit=cover`: that would push content under the
+         notch and home indicator app-wide, and every bottom-docked element
+         needs its safe-area padding audited first. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="description" content="Find the right match for your dog or cat, with breeders who are verified and actually responsible." />
     <link rel="preconnect" href="https://fonts.googleapis.com">

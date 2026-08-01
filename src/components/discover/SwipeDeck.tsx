@@ -298,7 +298,7 @@ export function SwipeDeck({
             onClick={() => rotateWindow(-1)}
             disabled={!canCycle}
             aria-label="Show previous pet"
-            className={`absolute left-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md transition duration-150 ease-out hover:bg-white/25 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
+            className={`absolute left-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md transition duration-150 ease-out hover:bg-white/25 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hoverable:hover:scale-110`}
           >
             <ChevronLeft className="h-5 w-5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
           </button>
@@ -307,7 +307,7 @@ export function SwipeDeck({
             onClick={() => rotateWindow(1)}
             disabled={!canCycle}
             aria-label="Show next pet"
-            className={`absolute right-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md transition duration-150 ease-out hover:bg-white/25 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hover:scale-110`}
+            className={`absolute right-2 top-[38%] ${LAYER.CHEVRON} flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md transition duration-150 ease-out hover:bg-white/25 active:scale-95 disabled:pointer-events-none disabled:opacity-0 motion-safe:hoverable:hover:scale-110`}
           >
             <ChevronRight className="h-5 w-5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
           </button>
@@ -337,7 +337,7 @@ export function SwipeDeck({
             onClick={() => handleSwiped('skip')}
             disabled={!top}
             aria-label="Pass"
-            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition duration-150 ease-out hover:border-red-500/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hover:scale-105"
+            className="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-red-400 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition duration-150 ease-out hover:border-red-500/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hoverable:hover:scale-105"
           >
             <X className="h-7 w-7" strokeWidth={2.5} />
           </button>
@@ -370,7 +370,7 @@ export function SwipeDeck({
               disabled={superWoofDisabled}
               aria-label="Super Woof"
               title={superWoofAvailable ? 'Super Woof — jump to the top of their likes' : "You've used today's Super Woof"}
-              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-[0_0_28px_rgba(56,189,248,0.55)] ring-2 ring-sky-300/50 transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-400 disabled:opacity-60 disabled:shadow-none disabled:ring-0 motion-safe:hover:scale-110"
+              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-cyan-300 text-neutral-950 shadow-[0_0_28px_rgba(56,189,248,0.55)] ring-2 ring-sky-300/50 transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:from-neutral-700 disabled:to-neutral-800 disabled:text-neutral-400 disabled:opacity-60 disabled:shadow-none disabled:ring-0 motion-safe:hoverable:hover:scale-110"
             >
               <Star className="h-6 w-6" fill="currentColor" />
             </button>
@@ -388,7 +388,7 @@ export function SwipeDeck({
             onClick={() => handleSwiped('like')}
             disabled={!top}
             aria-label="Like"
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hover:scale-105"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hoverable:hover:scale-105"
           >
             <Heart className="h-7 w-7" fill="currentColor" />
           </button>

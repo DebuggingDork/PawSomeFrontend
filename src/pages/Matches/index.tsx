@@ -63,7 +63,7 @@ function MatchesPage() {
           action={
             <Link
               to="/discover"
-              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               Find matches
             </Link>
@@ -117,7 +117,7 @@ function MatchesPage() {
 
               <Link
                 to={`/chat?match=${conversation.matchId}`}
-                className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/20 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/30"
+                className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/20 transition-all hoverable:hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/30"
               >
                 <MessageCircle className="h-4 w-4" />
                 Send Message

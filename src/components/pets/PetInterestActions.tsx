@@ -126,7 +126,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
       <Link
         to="/auth"
         onClick={onNavigate}
-        className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+        className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
       >
         <LogIn className="h-4 w-4" />
         Sign in to show interest
@@ -234,7 +234,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
             type="button"
             onClick={() => likeMutation.mutate()}
             disabled={!selected || likeMutation.isPending}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Heart className="h-4 w-4" />
             {likeMutation.isPending ? 'Sending…' : 'Interested'}

@@ -397,7 +397,7 @@ function AuthPage() {
                   ) : (
                     <>
                       {isForgot ? 'Send Reset Link' : isSignUp ? 'Create Account' : 'Sign In'}
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />
                     </>
                   )}
                 </motion.button>

@@ -60,7 +60,7 @@ function Toast({ toast, onDismiss, onClick }: { toast: ToastItem; onDismiss: (id
       exit={{ opacity: 0, x: 40, scale: 0.95 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
       onClick={() => onClick(toast.event)}
-      className="flex w-80 items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/95 p-4 text-left shadow-2xl shadow-black/50 transition-transform hover:-translate-y-0.5"
+      className="flex w-80 items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/95 p-4 text-left shadow-2xl shadow-black/50 transition-transform hoverable:hover:-translate-y-0.5"
     >
       <PetAvatar name={data.other_pet.name} photoUrl={data.other_pet.primary_photo_url} size="md" />
       <div className="min-w-0 flex-1">

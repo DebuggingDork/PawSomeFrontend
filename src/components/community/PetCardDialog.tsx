@@ -77,7 +77,7 @@ export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDi
         <div className="relative aspect-square w-full bg-neutral-800 sm:aspect-[4/3]">
           {isLoading && <Skeleton className="absolute inset-0 rounded-none" />}
           {!isLoading && heroPhoto && (
-            <img src={heroPhoto} alt={pet?.name} className="h-full w-full object-cover" />
+            <img src={heroPhoto} alt={pet?.name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
           )}
           {!isLoading && !heroPhoto && (
             <div className="flex h-full items-center justify-center">
@@ -116,7 +116,7 @@ export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDi
                   heroPhoto === photo.url ? 'border-[#ff6b35]' : 'border-transparent hover:border-neutral-600'
                 }`}
               >
-                <img src={photo.url} alt="" className="h-full w-full object-cover" />
+                <img src={photo.url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
               </button>
             ))}
           </div>

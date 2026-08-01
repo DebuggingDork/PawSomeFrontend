@@ -158,7 +158,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="flex items-center gap-1 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm shadow-[#ff6b35]/30 transition-transform hover:-translate-y-0.5"
+            className="flex items-center gap-1 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
           >
             <Plus className="h-3.5 w-3.5" /> Propose
           </button>

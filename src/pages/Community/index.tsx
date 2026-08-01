@@ -43,7 +43,7 @@ function PetCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: (index % PAGE_SIZE) * 0.05, ease: 'easeOut' }}
-      className="group overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 text-left backdrop-blur transition-all hover:-translate-y-1 hover:border-[#ff6b35]/70 hover:shadow-xl hover:shadow-[#ff6b35]/10"
+      className="group overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 text-left backdrop-blur transition-all hoverable:hover:-translate-y-1 hover:border-[#ff6b35]/70 hover:shadow-xl hover:shadow-[#ff6b35]/10"
     >
       {/* Pet Photo */}
       <div className="relative aspect-square overflow-hidden bg-neutral-800">
@@ -52,7 +52,7 @@ function PetCard({
             src={pet.primary_photo_url}
             alt={pet.name}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 hoverable:group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center">
