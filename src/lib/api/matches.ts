@@ -34,6 +34,10 @@ export function getMyMatches(): Promise<MatchSummary[]> {
  * batch and both Matches and Chat rendered as though the user had no matches at
  * all, while the other side could still message them.
  */
+/** Shared so the notification socket can invalidate the same cache the chat
+ *  page reads, without either side hardcoding the string. */
+export const CONVERSATIONS_QUERY_KEY = ['conversations'] as const
+
 export async function getConversations(): Promise<Conversation[]> {
   const matches = await getMyMatches()
 

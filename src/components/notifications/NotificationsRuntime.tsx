@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
-import { connectNotificationSocket } from '@/lib/api/matches'
+import { CONVERSATIONS_QUERY_KEY, connectNotificationSocket } from '@/lib/api/matches'
 import { useNotificationsStore } from '@/store/useNotificationsStore'
 import { NotificationToastStack } from './NotificationToast'
 import { MatchCelebrationOverlay } from './MatchCelebrationOverlay'
@@ -31,6 +31,21 @@ export function NotificationsRuntime() {
 
     const socket = connectNotificationSocket((event: NotificationPushEvent) => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] })
+
+      // The conversation list is not just a toast source — a message arriving
+      // in a thread you don't have open, or a brand-new match, changes what the
+      // sidebar should show. It used to load once per mount with no cache key,
+      // so nothing could tell it to look again.
+      //
+      // Refetched rather than patched from the payload on purpose: this event
+      // carries "X sent you a message", not the message, so there is nothing
+      // here to write a preview from. The server is the only thing that knows.
+      if (
+        event.data.notification_type === 'new_message' ||
+        event.data.notification_type === 'new_match'
+      ) {
+        queryClient.invalidateQueries({ queryKey: CONVERSATIONS_QUERY_KEY })
+      }
 
       // A match is a bigger moment than a normal toast can carry — show the
       // full celebration instead of (not in addition to) the usual toast,

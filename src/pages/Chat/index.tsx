@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Search, CalendarHeart, ArrowLeft } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
-import { getConversations, getPlaydates } from '@/lib/api/matches'
+import { CONVERSATIONS_QUERY_KEY, getConversations, getPlaydates } from '@/lib/api/matches'
 import type { Conversation } from '@/lib/api/types'
 import { PetAvatar } from '@/components/chat/PetAvatar'
 import { ChatBubble } from '@/components/chat/ChatBubble'
@@ -24,8 +24,6 @@ function ChatPage() {
   const { isAuthenticated, isHydrating, pets, user } = useAuthStore()
   const [searchParams] = useSearchParams()
 
-  const [conversations, setConversations] = useState<Conversation[]>([])
-  const [conversationsLoading, setConversationsLoading] = useState(true)
   const [selected, setSelected] = useState<Conversation | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [playdatesOpen, setPlaydatesOpen] = useState(false)
@@ -47,45 +45,39 @@ function ChatPage() {
     handleDeleteMessage,
   } = useChatConversation(selected)
 
-  // Load the pet-owner's matches once we know who they and their pets are.
+  // React Query rather than a one-shot effect, so the list has a cache key
+  // something else can invalidate. The notification socket does exactly that on
+  // NEW_MESSAGE (see NotificationsRuntime): before this, the sidebar was loaded
+  // once per mount and nothing could refresh it, so a conversation that arrived
+  // while you sat on this page stayed invisible until a reload.
+  const conversationsQuery = useQuery({
+    queryKey: CONVERSATIONS_QUERY_KEY,
+    queryFn: getConversations,
+    enabled: !isHydrating && isAuthenticated && pets.length > 0,
+    // A refetch must not replace the object `selected` points at, or the chat
+    // socket — keyed on that identity — would tear down and re-open on every
+    // incoming message. `selected` stays its own state for that reason.
+    staleTime: 10_000,
+  })
+
+  const conversations = conversationsQuery.data ?? []
+
+  // Open the thread a `?match=` link explicitly asked for, once the list that
+  // can resolve it has arrived.
   useEffect(() => {
-    let cancelled = false
-
-    const load = async () => {
-      if (isHydrating || !isAuthenticated || pets.length === 0) {
-        if (!cancelled) setConversationsLoading(false)
-        return
-      }
-
-      setConversationsLoading(true)
-      try {
-        const convos = await getConversations()
-        if (cancelled) return
-        setConversations(convos)
-        const requestedMatchId = searchParams.get('match')
-        const requested = requestedMatchId ? convos.find((c) => c.matchId === requestedMatchId) : undefined
-        // Deliberately no `?? convos[0]`: landing on /chat must not put a real
-        // conversation on screen by itself. Opening the page in a cafe or next
-        // to a colleague would otherwise expose whichever thread happened to be
-        // most recent, with no action taken to ask for it. A `?match=` link is
-        // different — that is an explicit request for one specific thread, so
-        // it still opens directly.
-        setSelected((current) => current ?? requested ?? null)
-      } catch {
-        // A failed load leaves the sidebar empty rather than taking the page
-        // down with an unhandled rejection; the next mount retries.
-        if (!cancelled) setConversations([])
-      } finally {
-        if (!cancelled) setConversationsLoading(false)
-      }
-    }
-
-    load()
-
-    return () => {
-      cancelled = true
-    }
-  }, [isHydrating, isAuthenticated, pets])
+    if (!conversationsQuery.data) return
+    const requestedMatchId = searchParams.get('match')
+    const requested = requestedMatchId
+      ? conversationsQuery.data.find((c) => c.matchId === requestedMatchId)
+      : undefined
+    // Deliberately no `?? convos[0]`: landing on /chat must not put a real
+    // conversation on screen by itself. Opening the page in a cafe or next
+    // to a colleague would otherwise expose whichever thread happened to be
+    // most recent, with no action taken to ask for it. A `?match=` link is
+    // different — that is an explicit request for one specific thread, so
+    // it still opens directly.
+    setSelected((current) => current ?? requested ?? null)
+  }, [conversationsQuery.data, searchParams])
 
   // Keep the thread scrolled to the latest message.
   useEffect(() => {
@@ -146,7 +138,7 @@ function ChatPage() {
             phone was effectively invisible. */}
         <ConversationSidebar
           conversations={conversations}
-          isLoading={isHydrating || conversationsLoading}
+          isLoading={isHydrating || conversationsQuery.isLoading}
           selectedMatchId={selected?.matchId ?? null}
           onSelect={setSelected}
           className={selected ? 'hidden md:flex' : 'flex'}

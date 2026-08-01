@@ -115,12 +115,50 @@ export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers)
     }
   }
 
+  // A socket worth keeping: either live, or still completing its handshake.
+  // CONNECTING has to count, or a burst of visibility/online events each
+  // decides the half-open socket is unusable and replaces it, and the churn
+  // never converges on a connection.
+  const isUsable = (ws: WebSocket | null): boolean =>
+    ws !== null && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)
+
+  /**
+   * Cut a socket loose so nothing it does afterwards touches shared state.
+   *
+   * This is the fix for overlapping connections. The handlers below close over
+   * `socket`, `attempts` and `reconnectTimer` rather than belonging to one
+   * instance, so a socket being replaced still ran its `onclose` — saw
+   * `closedByCaller === false`, and scheduled a reconnect *for the socket that
+   * had already replaced it*. That second `open()` overwrote the reference to
+   * the first, leaving a live connection with nothing pointing at it: never
+   * closed, never heartbeated, and only reaped when a proxy eventually gave up.
+   *
+   * Detaching before closing means a retired socket cannot schedule, cannot
+   * report, and cannot clear a timer that now belongs to its successor.
+   */
+  const retire = (ws: WebSocket | null) => {
+    if (!ws) return
+    ws.onopen = null
+    ws.onclose = null
+    ws.onmessage = null
+    ws.onerror = null
+    try {
+      ws.close()
+    } catch {
+      // Already closing or closed — nothing to do.
+    }
+  }
+
   // Forces a fresh connection attempt right now instead of waiting on a
   // pending backoff timer or an onclose event that a zombie socket will
   // never fire. Used both by the staleness check below and by the
   // visibility/online listeners, so a laptop that just woke up or a tab that
   // just regained focus doesn't sit on a dead socket until its next natural
   // reconnect slot.
+  //
+  // Idempotent: calling it repeatedly retires whatever exists and leaves
+  // exactly one socket behind, because the old one is detached and closed
+  // before the new one is created.
   const forceReconnect = () => {
     if (closedByCaller) return
     if (reconnectTimer) {
@@ -128,18 +166,29 @@ export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers)
       reconnectTimer = null
     }
     attempts = 0
-    socket?.close()
-    // socket.close() only synchronously fires onclose for a genuinely live
-    // connection; a zombie one may never fire it at all, so open() is called
-    // directly rather than relying on onclose to schedule it.
+    // Measured from the attempt, not the last message. Otherwise a socket that
+    // never manages to open leaves `lastActivity` ancient, and every heartbeat
+    // tick re-triggers this.
+    lastActivity = Date.now()
+    const stale = socket
+    socket = null
+    retire(stale)
     open()
   }
 
   const open = () => {
-    const token = getAccessToken()
-    socket = new WebSocket(`${WS_BASE_URL}/chat/ws/${matchId}?token=${encodeURIComponent(token ?? '')}`)
+    if (closedByCaller) return
 
-    socket.onopen = () => {
+    const token = getAccessToken()
+    const ws = new WebSocket(`${WS_BASE_URL}/chat/ws/${matchId}?token=${encodeURIComponent(token ?? '')}`)
+    socket = ws
+
+    // Every handler is guarded on `ws === socket`. Detaching in `retire`
+    // already prevents most of this, but an event dispatched in the same tick
+    // as the swap can still be in flight, and the guard makes the rule
+    // explicit: only the current socket may touch shared state.
+    ws.onopen = () => {
+      if (ws !== socket) return
       attempts = 0
       lastActivity = Date.now()
       handlers.onOpen?.()
@@ -148,7 +197,9 @@ export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers)
       hasConnectedOnce = true
     }
 
-    socket.onclose = () => {
+    ws.onclose = () => {
+      if (ws !== socket) return
+      socket = null
       handlers.onClose?.()
       if (closedByCaller) return
       // Exponential backoff, capped, so a server that is down doesn't get
@@ -158,7 +209,8 @@ export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers)
       reconnectTimer = setTimeout(open, delay)
     }
 
-    socket.onmessage = (event) => {
+    ws.onmessage = (event) => {
+      if (ws !== socket) return
       lastActivity = Date.now()
       try {
         handlers.onEvent(JSON.parse(event.data) as ChatSocketEvent)
@@ -190,10 +242,10 @@ export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers)
   // every time" after stepping away. Recheck the moment focus/network return.
   const onVisible = () => {
     if (document.visibilityState !== 'visible') return
-    if (!socket || socket.readyState !== WebSocket.OPEN) forceReconnect()
+    if (!isUsable(socket)) forceReconnect()
   }
   const onOnline = () => {
-    if (!socket || socket.readyState !== WebSocket.OPEN) forceReconnect()
+    if (!isUsable(socket)) forceReconnect()
   }
   document.addEventListener('visibilitychange', onVisible)
   window.addEventListener('online', onOnline)
@@ -213,11 +265,19 @@ export function connectChatSocket(matchId: string, handlers: ChatSocketHandlers)
     sendRead: (messageId) => send({ type: 'read', message_id: messageId }),
     close: () => {
       closedByCaller = true
-      if (reconnectTimer) clearTimeout(reconnectTimer)
-      if (heartbeatTimer) clearInterval(heartbeatTimer)
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer)
+        reconnectTimer = null
+      }
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer)
+        heartbeatTimer = null
+      }
       document.removeEventListener('visibilitychange', onVisible)
       window.removeEventListener('online', onOnline)
-      socket?.close()
+      const last = socket
+      socket = null
+      retire(last)
     },
   }
 }
