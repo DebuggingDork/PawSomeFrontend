@@ -5,6 +5,7 @@ import { SlidersHorizontal, ChevronDown, X } from 'lucide-react'
 import { getBreeds } from '@/lib/api/matches'
 import type { BrowseFilters } from '@/lib/api/types'
 import { Combobox } from '@/components/ui/Combobox'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 interface Props {
   filters: BrowseFilters
@@ -33,6 +34,10 @@ function countActive(filters: BrowseFilters): number {
 export function BrowseFiltersPanel({ filters, onChange }: Props) {
   const [open, setOpen] = useState(false)
   const activeCount = countActive(filters)
+  // Below Tailwind's `sm`. Read in JS because it decides Framer's enter/exit
+  // direction and whether the dismiss header renders at all, neither of which a
+  // breakpoint class can reach.
+  const isPhone = useMediaQuery('(max-width: 639px)')
 
   const breedsQuery = useQuery({
     queryKey: ['breeds', filters.species],
@@ -67,14 +72,48 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
 
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.18 }}
-            className="absolute right-0 top-full z-[60] mt-2 max-h-[60vh] w-80 max-w-[calc(100vw-3rem)] overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-950 shadow-2xl shadow-black/60"
-          >
-            <div className="space-y-4 px-4 py-4">
+          <>
+            {/* On a phone the panel leaves the flow entirely, so it needs its
+                own way out — and something to stop taps landing on the deck
+                behind it. */}
+            {isPhone && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                onClick={() => setOpen(false)}
+                className="fixed inset-0 z-[59] bg-black/60 backdrop-blur-sm"
+              />
+            )}
+            <motion.div
+              // A 20rem popover hanging off a button is a desktop shape. On a
+              // phone it left a cramped column of paired selects and number
+              // fields squeezed against the right edge, on the control people
+              // reach for most. Bottom sheet below `sm`, anchored dropdown from
+              // `sm` up — unchanged on a laptop.
+              initial={isPhone ? { opacity: 0, y: 24 } : { opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={isPhone ? { opacity: 0, y: 24 } : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.18 }}
+              className="thin-scrollbar lenis-prevent-scroll fixed inset-x-0 bottom-0 z-[60] max-h-[85dvh] overflow-y-auto overscroll-contain rounded-t-2xl border border-neutral-800 bg-neutral-950 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-black/60 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-[60dvh] sm:w-80 sm:max-w-[calc(100vw-3rem)] sm:rounded-xl sm:pb-0"
+            >
+              {/* Phone-only header. Filters apply as you set them, so this is a
+                  dismiss, not an apply — worded so it doesn't read as one. */}
+              {isPhone && (
+                <div className="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-800 bg-neutral-950/95 px-4 py-3 backdrop-blur">
+                  <span className="text-sm font-semibold text-white">Filters</span>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    aria-label="Close filters"
+                    className="-mr-1 flex h-9 w-9 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-900 hover:text-white"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              )}
+              <div className="space-y-4 px-4 py-4">
               <div>
                 <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-neutral-500">
                   <span>Distance</span>
@@ -192,8 +231,9 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                   Clear filters
                 </button>
               )}
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

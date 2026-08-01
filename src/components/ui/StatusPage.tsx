@@ -38,7 +38,7 @@ export function StatusPage({
   children,
 }: StatusPageProps) {
   return (
-    <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center px-6 pb-16 pt-24 text-center md:pt-28">
+    <div className="flex min-h-[calc(100dvh-6rem)] flex-col items-center justify-center px-6 pb-16 pt-24 text-center md:pt-28">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

@@ -8,6 +8,13 @@
          iOS rounds the corners itself, which is why the PNG has square ones. -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="PawSome" />
+    <!-- Without a manifest, Chrome on Android cannot offer to install this at
+         all, and an iOS home-screen save opens in full Safari chrome. The
+         separate maskable icon is what stops Android cropping the mark into its
+         own icon shape: the "any" icons are full-bleed, the maskable one is
+         inset to sit inside the safe circle. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <!-- `interactive-widget=resizes-content` makes the on-screen keyboard
          shorten the layout viewport rather than slide over it, so anything
          sized in `dvh` — the chat pane, the modals, the docked onboarding

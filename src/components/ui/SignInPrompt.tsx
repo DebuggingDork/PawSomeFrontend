@@ -8,7 +8,7 @@ interface SignInPromptProps {
 
 export function SignInPrompt({ title, message }: SignInPromptProps) {
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
+    <div className="flex min-h-[70dvh] flex-col items-center justify-center px-6 text-center">
       <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/30">
         <LogIn className="h-7 w-7 text-white" />
       </div>

@@ -7,6 +7,7 @@ import { activeHealthTags } from '@/lib/petBadges'
 import { formatAge } from '@/lib/formatAge'
 import { speciesEmoji } from '@/lib/species'
 import { useLandingPets } from '../useLandingPets'
+import { PetPhoto } from '@/components/landing/PetPhoto'
 import type { Pet } from '@/lib/api/types'
 
 /**
@@ -24,7 +25,7 @@ import type { Pet } from '@/lib/api/types'
  *  strip without turning the section into a scroll trap. */
 const PANEL_COUNT = 5
 
-const PANEL_SIZE = 'w-[85vw] md:w-[60vw] max-w-4xl shrink-0 h-[60vh] min-h-[400px]'
+const PANEL_SIZE = 'w-[85vw] md:w-[60vw] max-w-4xl shrink-0 h-[60dvh] min-h-[400px]'
 
 function PetPanel({ pet }: { pet: Pet }) {
   const tags = activeHealthTags(pet)
@@ -34,11 +35,9 @@ function PetPanel({ pet }: { pet: Pet }) {
       to={`/pets/${pet.id}`}
       className={`group relative overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff6b35] ${PANEL_SIZE}`}
     >
-      <img
-        src={pet.primary_photo_url ?? ''}
+      <PetPhoto
+        src={pet.primary_photo_url}
         alt=""
-        loading="lazy"
-        decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
       />
       {/* The old panels laid a flat `opacity-20` over the whole photo, which made
@@ -146,7 +145,7 @@ export const FeaturedPetsSection: React.FC = () => {
         {/* Closing panel. Solid brand orange rather than the pink-to-violet
             gradient that used to sit here — one committed colour, and one that
             the rest of the product actually uses. */}
-        <div className="flex w-[85vw] min-h-[400px] max-w-xl shrink-0 flex-col justify-center rounded-3xl bg-[#ff6b35] p-8 md:h-[60vh] md:w-[40vw] md:p-12">
+        <div className="flex w-[85vw] min-h-[400px] max-w-xl shrink-0 flex-col justify-center rounded-3xl bg-[#ff6b35] p-8 md:h-[60dvh] md:w-[40vw] md:p-12">
           <h3
             className="text-balance font-serif text-4xl font-medium leading-tight text-white md:text-5xl"
             style={{ letterSpacing: '-0.02em' }}

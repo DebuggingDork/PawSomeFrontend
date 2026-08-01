@@ -5,6 +5,7 @@ import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
 import { formatAge } from '@/lib/formatAge'
 import { useLandingPets } from '../useLandingPets'
+import { PetPhoto } from '@/components/landing/PetPhoto'
 import type { Pet } from '@/lib/api/types'
 
 /**
@@ -42,15 +43,8 @@ function PhotoOrGlyph({ pet, className = '' }: { pet: Pet | undefined; className
       </div>
     )
   }
-  return (
-    <img
-      src={pet.primary_photo_url}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      className={`${PHOTO_CLASS} ${className}`}
-    />
-  )
+  // Same glyph again if the URL is present but the object behind it is gone.
+  return <PetPhoto src={pet.primary_photo_url} alt="" className={`${PHOTO_CLASS} ${className}`} />
 }
 
 /** Step 1 — one pet, shown the way a finished profile looks. */

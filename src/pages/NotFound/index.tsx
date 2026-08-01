@@ -82,7 +82,7 @@ function NotFoundPage() {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-24 text-center md:pt-28">
+    <div className="relative flex min-h-[calc(100dvh-6rem)] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-24 text-center md:pt-28">
       {/* Floating paw prints, judging you from the background */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         {BG_PAWS.map((p, i) => (

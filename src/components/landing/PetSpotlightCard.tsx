@@ -4,6 +4,7 @@ import { GenderBadge } from '@/components/ui/GenderBadge'
 import { activeHealthTags } from '@/lib/petBadges'
 import { formatAge } from '@/lib/formatAge'
 import { speciesEmoji } from '@/lib/species'
+import { PetPhoto } from '@/components/landing/PetPhoto'
 import type { Pet } from '@/lib/api/types'
 
 /**
@@ -38,11 +39,9 @@ export function PetSpotlightCard({ pet, layout = 'tall', className = '' }: PetSp
         isWide ? 'aspect-[4/3] sm:aspect-auto sm:h-full sm:w-[46%]' : 'aspect-[4/5]'
       }`}
     >
-      <img
-        src={pet.primary_photo_url ?? ''}
+      <PetPhoto
+        src={pet.primary_photo_url}
         alt={`${pet.name}, a ${pet.breed}`}
-        loading="lazy"
-        decoding="async"
         className="h-full w-full object-cover"
       />
       {/* Sits on the photo, so it needs its own ground to be legible against

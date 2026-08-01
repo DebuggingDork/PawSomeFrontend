@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useIsTouchDevice } from '@/hooks/useMediaQuery'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -44,9 +45,19 @@ export const ScrollPinnedSlider: React.FC<ScrollPinnedSliderProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const reduceMotion = usePrefersReducedMotion()
+  const isTouch = useIsTouchDevice()
+
+  // Two reasons to hand the panels back to the user as an ordinary scroller.
+  // Reduced motion is the stated preference; touch is the one where the pin is
+  // simply the wrong instrument. It converts vertical scroll into horizontal
+  // travel, and a thumb has no third axis to escape with — a flick down the
+  // page becomes several screens of sideways drift you have to sit through, and
+  // Lenis is already multiplying touch deltas on top of it. A phone can swipe a
+  // strip natively, which is the gesture this content wanted anyway.
+  const unpinned = reduceMotion || isTouch
 
   useEffect(() => {
-    if (reduceMotion) return
+    if (unpinned) return
     if (!containerRef.current || !wrapperRef.current) return
 
     const container = containerRef.current
@@ -90,13 +101,14 @@ export const ScrollPinnedSlider: React.FC<ScrollPinnedSliderProps> = ({
       // leaving all other page ScrollTriggers intact
       ctx.revert()
     }
-  }, [reduceMotion, contentKey])
+  }, [unpinned, contentKey])
 
   // Pinning the viewport and driving the panels sideways off the scroll wheel is
   // exactly the kind of hijacking that makes people motion-sick, so with reduced
-  // motion the same panels become an ordinary horizontal scroller they can flick
-  // through at their own pace. Same content, same order, no takeover.
-  if (reduceMotion) {
+  // motion — or on a phone — the same panels become an ordinary horizontal
+  // scroller they can flick through at their own pace. Same content, same
+  // order, no takeover.
+  if (unpinned) {
     return (
       <div className={`w-full min-w-0 max-w-full py-16 ${className}`}>
         <div className="thin-scrollbar flex snap-x snap-mandatory items-center gap-8 overflow-x-auto px-4 pb-6 md:px-12">
