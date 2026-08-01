@@ -96,7 +96,11 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
               animate={{ opacity: 1, y: 0 }}
               exit={isPhone ? { opacity: 0, y: 24 } : { opacity: 0, y: -6 }}
               transition={{ duration: 0.18 }}
-              className="thin-scrollbar lenis-prevent-scroll fixed inset-x-0 bottom-0 z-[60] max-h-[85dvh] overflow-y-auto overscroll-contain rounded-t-2xl border border-neutral-800 bg-neutral-950 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-black/60 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-[60dvh] sm:w-80 sm:max-w-[calc(100vw-3rem)] sm:rounded-xl sm:pb-0"
+              // `sm:bottom-auto` is load-bearing: the phone sheet pins bottom-0,
+              // and without clearing it the desktop popover gets both top-full
+              // AND bottom-0 inside a button-sized container — a zero-height
+              // box, i.e. an open panel that shows nothing at all.
+              className="thin-scrollbar lenis-prevent-scroll fixed inset-x-0 bottom-0 z-[60] max-h-[85dvh] overflow-y-auto overscroll-contain rounded-t-2xl border border-neutral-800 bg-neutral-950 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-black/60 sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-[60dvh] sm:w-80 sm:max-w-[calc(100vw-3rem)] sm:rounded-xl sm:pb-0"
             >
               {/* Phone-only header. Filters apply as you set them, so this is a
                   dismiss, not an apply — worded so it doesn't read as one. */}
