@@ -320,8 +320,30 @@ h1, h2, h3 {
  * ringing a whole panel because the page changed is noise rather than
  * feedback. */
 @layer base {
+  /* The colour is set on everything, not just on focus, and that is the whole
+     trick. Tailwind's `transition-colors` includes outline-color in its
+     property list, and around forty elements here carry it. With the colour
+     applied only by the :focus-visible rule, tabbing onto one of those started
+     an interpolation from whatever outline-color already computed to — which,
+     unset, is currentColor — so the ring appeared grey and warmed to orange
+     across 150ms. Caught it in the browser doing exactly that.
+
+     An outline with `outline-style: none` paints nothing, so declaring the
+     colour up front is invisible until something sets a style. By the time the
+     rule below does, the colour is already brand and there is nothing left to
+     interpolate: the ring arrives correct on its first frame. outline-style is
+     a discrete property and cannot tween, so it flips instantly either way. */
+  *,
+  ::before,
+  ::after {
+    outline-color: var(--color-brand);
+  }
+
+  /* Longhands rather than the `outline` shorthand — the shorthand resets
+     outline-color to currentColor, which would undo the rule above. */
   :focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline-width: 2px;
+    outline-style: solid;
     outline-offset: 2px;
   }
 
