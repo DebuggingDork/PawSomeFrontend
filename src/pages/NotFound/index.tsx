@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { PawPrint, Home, Bug, Ghost } from 'lucide-react'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { leapDistance, pickEscape } from './escape'
 
 // A few snark options — one is picked per visit so refreshing keeps roasting you.
 const HEADLINES = [
@@ -45,7 +47,19 @@ function lostSnark(seconds: number): string {
   return "Okay, this is just sad. There's a button. Two, actually."
 }
 
-const DODGE_LABELS = ['Take me home', 'Nope.', 'Missed me. 😜', 'Ugh, fine — go →']
+/* The chase, in order. The last one is the surrender, and reaching it is what
+ * ends the gag — see `surrendered` below. Seven dodges is long enough to be
+ * funny and short enough that nobody is actually trapped on a 404. */
+const DODGE_LABELS = [
+  'Take me home',
+  'Nope.',
+  'Missed me. 😜',
+  'Too slow!',
+  'Not even close.',
+  'Are you even trying?',
+  'This is getting embarrassing.',
+  'Ugh, fine — go →',
+]
 
 function NotFoundPage() {
   const [headline, setHeadline] = useState(HEADLINES[0])
@@ -55,7 +69,19 @@ function NotFoundPage() {
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [reported, setReported] = useState(false)
 
+  const homeRef = useRef<HTMLDivElement>(null)
+  const hasPointer = useMediaQuery('(hover: hover) and (pointer: fine)')
+  const reduceMotion = useReducedMotion()
+
   const surrendered = dodges >= DODGE_LABELS.length - 1
+
+  /* The gag needs a mouse to be a gag. On touch there is no hover to trigger it
+   * and a button that teleports out from under a tap is not a joke, it is a
+   * broken 404 on the device most likely to have mistyped the URL. And a button
+   * that bolts across the screen is precisely what someone asking for reduced
+   * motion is asking not to have. Both cases get an ordinary button that goes
+   * home on the first click. */
+  const canDodge = hasPointer && !reduceMotion
 
   // Pick a random roast on mount (deferred so it's not a synchronous effect setState).
   useEffect(() => {
@@ -75,10 +101,40 @@ function NotFoundPage() {
     return () => clearInterval(id)
   }, [])
 
-  const dodge = () => {
-    if (surrendered) return
-    setDodges((d) => d + 1)
-    setPos({ x: (Math.random() - 0.5) * 260, y: (Math.random() - 0.5) * 90 })
+  const dodge = (event: React.MouseEvent) => {
+    if (surrendered || !canDodge) return
+
+    // The wrapper never transforms, so its box is always the button's home —
+    // reading it here rather than the moving element's own rect means a dodge
+    // triggered mid-spring still measures from the right origin.
+    const home = homeRef.current?.getBoundingClientRect()
+    if (!home) return
+
+    const next = dodges + 1
+    setDodges(next)
+
+    // The surrender. It walks back to where it belongs instead of stopping
+    // wherever it happened to land, so the bit has an ending and the button is
+    // somewhere sensible when it finally lets itself be caught.
+    if (next >= DODGE_LABELS.length - 1) {
+      setPos({ x: 0, y: 0 })
+      return
+    }
+
+    const viewport = { width: window.innerWidth, height: window.innerHeight }
+
+    setPos(
+      pickEscape({
+        home,
+        offset: pos,
+        cursor: { x: event.clientX, y: event.clientY },
+        viewport,
+        reach: leapDistance(viewport),
+        // Rotates the ring of candidates so two dodges from the same spot do not
+        // retrace the same landing points.
+        spin: Math.random() * Math.PI * 2,
+      }),
+    )
   }
 
   return (
@@ -159,16 +215,27 @@ function NotFoundPage() {
 
         {/* The gag: a home button that runs away (mouse only), plus a real escape hatch */}
         <div className="relative flex min-h-[6rem] w-full flex-col items-center justify-center gap-4">
-          <motion.div animate={pos} transition={{ type: 'spring', stiffness: 500, damping: 20 }}>
-            <Link
-              to="/"
-              onMouseEnter={dodge}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
+          {/* Two elements on purpose. The outer one never transforms, so its box
+              stays the button's home for the dodge maths above; the inner one
+              does all the running. */}
+          <div ref={homeRef} className="relative z-20">
+            <motion.div
+              animate={pos}
+              // Lower stiffness and looser damping than a UI spring wants,
+              // because this one is supposed to overshoot slightly and skid —
+              // a leap that arrives perfectly damped looks teleported.
+              transition={{ type: 'spring', stiffness: 320, damping: 18, mass: 0.7 }}
             >
-              <Home className="h-4 w-4" />
-              {DODGE_LABELS[Math.min(dodges, DODGE_LABELS.length - 1)]}
-            </Link>
-          </motion.div>
+              <Link
+                to="/"
+                onMouseEnter={dodge}
+                className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
+              >
+                <Home className="h-4 w-4" />
+                {DODGE_LABELS[Math.min(dodges, DODGE_LABELS.length - 1)]}
+              </Link>
+            </motion.div>
+          </div>
 
           <Link
             to="/discover"
