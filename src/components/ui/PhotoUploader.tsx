@@ -329,7 +329,7 @@ export function PhotoUploader({
             }`}
           >
             {hasPreview ? (
-              <img src={displayUrl} alt={photoAlt} className="h-full w-full object-cover" />
+              <img src={displayUrl} alt={photoAlt} decoding="async" className="h-full w-full object-cover" />
             ) : (
               <>
                 <Camera className="h-6 w-6 text-neutral-400 transition-colors group-hover:text-brand" />
@@ -382,7 +382,7 @@ export function PhotoUploader({
         <div className="flex items-center gap-3">
           {hasPreview && (
             <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
-              <img src={displayUrl} alt={photoAlt} className="h-full w-full object-cover" />
+              <img src={displayUrl} alt={photoAlt} decoding="async" className="h-full w-full object-cover" />
               {status === 'uploading' && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                   <Loader2 className="h-4 w-4 animate-spin text-white" />

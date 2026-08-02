@@ -42,7 +42,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
   return (
     <div className="relative h-full w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-neutral-900 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85)]">
       {photo ? (
-        <img src={photo} alt={pet.name} className="h-full w-full object-cover object-top" draggable={false} />
+        <img src={photo} alt={pet.name} decoding="async" className="h-full w-full object-cover object-top" draggable={false} />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-900">
           <PawPrint className="h-20 w-20 text-neutral-700" />

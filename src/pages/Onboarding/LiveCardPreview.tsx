@@ -50,7 +50,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
       <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900/80 p-2.5">
         <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-neutral-800">
           {hasPhoto ? (
-            <img src={draft.petPhotoUrl!} alt="" className="h-full w-full object-cover" />
+            <img src={draft.petPhotoUrl!} alt="" decoding="async" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <PawPrint className="h-5 w-5 text-neutral-400" />
@@ -176,7 +176,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
               {draft.ownerName && (
                 <motion.span {...rise} transition={riseTransition} className="flex items-center gap-1.5">
                   {draft.ownerPhotoUrl ? (
-                    <img src={draft.ownerPhotoUrl} alt="" className="h-4 w-4 rounded-full object-cover" />
+                    <img src={draft.ownerPhotoUrl} alt="" width={16} height={16} decoding="async" className="h-4 w-4 rounded-full object-cover" />
                   ) : null}
                   Owned by {draft.ownerName}
                 </motion.span>

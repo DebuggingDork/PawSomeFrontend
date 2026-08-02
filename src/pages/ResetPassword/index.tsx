@@ -70,7 +70,7 @@ function ResetPasswordPage() {
                 on the screens where the brand most needs to be recognisable. */}
             <div className="relative mb-4">
               <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/30 blur-xl" />
-              <img src={logoIcon} alt="PawSome" className="h-14 w-14 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
+              <img src={logoIcon} alt="PawSome" width={56} height={56} decoding="async" className="h-14 w-14 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
             </div>
             <h2 className="font-display text-2xl font-bold text-white">Set a new password</h2>
             <p className="mt-1 text-sm text-neutral-400">Choose a new password for your account.</p>

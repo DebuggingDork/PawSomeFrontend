@@ -278,7 +278,7 @@ function App() {
           <NavBody>
             {/* Left: Logo — pinned to the true edge, not a centered column */}
             <Link to="/" className="flex items-center gap-2 justify-self-start">
-              <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
+              <img src={logoIcon} alt="PawSome" width={40} height={40} decoding="async" className="h-10 w-10 drop-shadow-lg" />
               <span
                 className="text-2xl font-bold text-brand drop-shadow-sm"
                 style={{ fontFamily: 'Pacifico, cursive' }}
@@ -347,7 +347,7 @@ function App() {
           <MobileNav>
             <MobileNavHeader>
               <Link to="/" className="flex items-center gap-2">
-                <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
+                <img src={logoIcon} alt="PawSome" width={40} height={40} decoding="async" className="h-10 w-10 drop-shadow-lg" />
                 {/* Wordmark drops off on narrow screens — the icon alone is enough
                     to identify the brand once space gets tight. */}
                 <span

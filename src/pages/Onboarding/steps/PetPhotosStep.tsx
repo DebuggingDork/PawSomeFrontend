@@ -102,7 +102,7 @@ export function PetPhotosStep({ petId, petName, photos, onDraft, onPhotosChanged
               key={photo.id}
               className="group relative aspect-square overflow-hidden rounded-xl border border-neutral-800"
             >
-              <img src={photo.url} alt={petName} className="h-full w-full object-cover" />
+              <img src={photo.url} alt={petName} decoding="async" className="h-full w-full object-cover" />
               {photo.is_primary && (
                 <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
                   <Star className="h-3 w-3" fill="currentColor" /> Main photo

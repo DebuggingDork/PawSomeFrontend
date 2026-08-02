@@ -152,6 +152,7 @@ function AuthPage() {
         <img
           src={siteImages.porchCats}
           alt=""
+          decoding="async"
           className={`h-full w-full object-cover ${shouldReduceMotion ? '' : 'animate-slow-pan'}`}
         />
         {/* Deepens left-to-right so the glass card on the right has real
@@ -239,7 +240,7 @@ function AuthPage() {
             <div className="mb-6 flex flex-col items-center text-center">
               <div className="relative mb-4">
                 <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/30 blur-xl" />
-                <img src={logoIcon} alt="PawSome" className="h-16 w-16 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
+                <img src={logoIcon} alt="PawSome" width={64} height={64} decoding="async" className="h-16 w-16 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
               </div>
               <h2 className="font-display text-2xl font-bold text-white">
                 {isForgot ? 'Reset your password' : isSignUp ? 'Join PawSome' : 'Welcome back'}

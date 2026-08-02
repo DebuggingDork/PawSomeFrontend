@@ -95,6 +95,7 @@ function OwnerProfilePage() {
                     src={pet.primary_photo_url}
                     alt={pet.name}
                     loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform hoverable:group-hover:scale-105"
                   />
                 ) : (
