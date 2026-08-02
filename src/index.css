@@ -290,6 +290,46 @@ h1, h2, h3 {
   color: #fff;
 }
 
+/* Keyboard focus, everywhere, by default.
+ *
+ * Two files out of a hundred and fifty-eight drew a focus outline. Everything
+ * else — the whole onboarding flow, the eight profile tabs, the chat composer,
+ * the image cropper, every dialog — was reachable with Tab and gave no sign of
+ * where you had got to. Forty-two elements went further and set
+ * `focus:outline-none`, which drops the browser's own ring on keyboard focus
+ * too, because `:focus` matches both the click and the Tab.
+ *
+ * `:focus-visible` rather than `:focus` is what stops this being irritating.
+ * The browser only matches it when it judges the focus worth advertising —
+ * keyboard navigation yes, a plain mouse click on a button no — so pointer
+ * users never see a ring they did not ask for.
+ *
+ * It sits in `@layer base` on purpose. Tailwind's utilities are a later layer,
+ * so anything that has already thought about its own focus treatment still
+ * wins: the two cards with `focus-visible:outline-*`, and every input pairing
+ * `focus:outline-none` with its own `focus:ring-2`. This is a floor, not an
+ * override. It appears exactly where nothing else was doing the job.
+ *
+ * The offset is load-bearing on brand-coloured controls. An orange ring drawn
+ * flush against an orange button is invisible; pushing it out 2px puts a band
+ * of page background between the two, so the ring reads on any surface it
+ * lands on.
+ *
+ * tabindex="-1" is excluded. Those four elements are focused by script to move
+ * the reading position after a route change, not by someone navigating, and
+ * ringing a whole panel because the page changed is noise rather than
+ * feedback. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  [tabindex='-1']:focus-visible {
+    outline: none;
+  }
+}
+
 /* Radial gradient utility */
 .bg-gradient-radial {
   background-image: radial-gradient(circle, var(--tw-gradient-stops));

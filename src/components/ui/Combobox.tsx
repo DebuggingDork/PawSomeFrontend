@@ -220,7 +220,7 @@ export function Combobox({
           onKeyDown={onKeyDown}
           className={cn(
             'w-full rounded-lg border bg-neutral-800 py-2 pl-10 pr-16 text-sm text-white',
-            'placeholder-neutral-500 transition-colors duration-150 focus:outline-none',
+            'placeholder-neutral-400 transition-colors duration-150 focus:outline-none',
             value && !open ? 'placeholder-white' : '',
             open ? 'border-brand' : 'border-neutral-700 hover:border-neutral-600',
             disabled && 'cursor-not-allowed opacity-50',

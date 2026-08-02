@@ -184,7 +184,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                     placeholder="0"
                     value={filters.age_min ?? ''}
                     onChange={(e) => set({ age_min: e.target.value ? Number(e.target.value) : undefined })}
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-brand focus:outline-none"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-400 focus:border-brand focus:outline-none"
                   />
                 </div>
                 <div>
@@ -195,7 +195,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                     placeholder="Any"
                     value={filters.age_max ?? ''}
                     onChange={(e) => set({ age_max: e.target.value ? Number(e.target.value) : undefined })}
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-brand focus:outline-none"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-400 focus:border-brand focus:outline-none"
                   />
                 </div>
               </div>
