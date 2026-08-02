@@ -1,7 +1,22 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
-import { DotLottieLoader } from './DotLottieLoader'
 import { useLoaderStore } from '@/store/useLoaderStore'
+
+/* The Lottie player is the heaviest thing this component pulls in — 332 kB on
+ * its own — and GlobalLoader is mounted for the whole session while the overlay
+ * it belongs to is visible only during an explicit action: signing in,
+ * uploading a photo. So it was riding in the initial bundle, for everyone, to
+ * render artwork most visitors never see.
+ *
+ * The headline, the flavour line and the sweeping rail all render immediately
+ * from this file, so the overlay is never empty while the player arrives. The
+ * artwork appears a beat later, which is invisible next to the network call the
+ * overlay exists to cover.
+ *
+ * A named export, hence the `.then` — React.lazy resolves a module's default. */
+const DotLottieLoader = lazy(() =>
+  import('./DotLottieLoader').then((m) => ({ default: m.DotLottieLoader })),
+)
 
 /** Warm, low-stakes asides that rotate under the real status line. The headline
  * always tells the user what's actually happening; these just keep the wait from
@@ -115,14 +130,18 @@ export const GlobalLoader = () => {
       />
 
       <div className="relative flex flex-col items-center">
-        <DotLottieLoader
-          src={defaultAnimationSrc}
-          size="custom"
-          customSize={180}
-          showOverlay={false}
-          position="static"
-          speed={1.2}
-        />
+        {/* Reserves the artwork's box so the caption below doesn't jump up and
+            then back down when the player lands. */}
+        <Suspense fallback={<div aria-hidden="true" className="h-[180px] w-[180px]" />}>
+          <DotLottieLoader
+            src={defaultAnimationSrc}
+            size="custom"
+            customSize={180}
+            showOverlay={false}
+            position="static"
+            speed={1.2}
+          />
+        </Suspense>
 
         {/* The Lottie artwork is centred inside its own square canvas with a
             good chunk of empty space beneath it, which left the caption

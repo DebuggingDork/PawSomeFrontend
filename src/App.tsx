@@ -1,29 +1,20 @@
 import { BrowserRouter, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { RouteSeo } from './components/seo/RouteSeo'
+/* Eager, and each for a reason.
+ *
+ * Landing is the first thing most people see; making them wait on a second
+ * network round trip to find out what the site is would be a strange trade for
+ * a few kilobytes.
+ *
+ * Offline and ServerError are the important ones. Both render precisely when
+ * the network has stopped working, so a lazy chunk for either is a page that
+ * cannot arrive exactly when it is needed — the user would get a blank screen
+ * in place of the screen explaining why they are seeing a blank screen. They
+ * also render outside BrowserRouter, so they are not routes anyway. */
 import LandingPage from './pages/Landing'
-import AuthPage from './pages/Auth'
-import ForgotPasswordPage from './pages/ForgotPassword'
-import ResetPasswordPage from './pages/ResetPassword'
-import VerifyEmailPage from './pages/VerifyEmail'
-import DiscoverPage from './pages/Discover'
-import CommunityPage from './pages/Community'
-import AboutPage from './pages/About'
-import PrivacyPage from './pages/Privacy'
-import TermsPage from './pages/Terms'
-import FAQPage from './pages/FAQ'
-import PetProfilePage from './pages/PetProfile'
-import OwnerProfilePage from './pages/OwnerProfile'
-import NotFoundPage from './pages/NotFound'
-import SessionExpiredPage from './pages/SessionExpired'
-import MatchesPage from './pages/Matches'
-import EventsPage from './pages/Events'
-import ChatPage from './pages/Chat'
-import ProfilePage from './pages/Profile'
-import OnboardingPage from './pages/Onboarding'
 import OfflinePage from './pages/Offline'
 import ServerErrorPage from './pages/ServerError'
-import MaintenancePage from './pages/Maintenance'
 import { getOnboardingStatus } from './lib/api/onboarding'
 import { POST_LOGIN_ROUTE } from './lib/routes'
 import { ONBOARDING_PROMPTED_KEY } from './lib/queryClient'
@@ -50,7 +41,34 @@ import logoIcon from './assets/logo-256.png'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
 import { Heart, LogOut } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
+
+/* Everything else loads on navigation.
+ *
+ * The app used to ship as one 1.33 MB chunk, so opening the marketing page
+ * downloaded the image cropper, the six-step onboarding wizard, the chat and
+ * its playdate scheduler before a single dog appeared. Most of that belongs to
+ * signed-in routes a first-time visitor may never reach. */
+const AuthPage = lazy(() => import('./pages/Auth'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPassword'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPassword'))
+const VerifyEmailPage = lazy(() => import('./pages/VerifyEmail'))
+const DiscoverPage = lazy(() => import('./pages/Discover'))
+const CommunityPage = lazy(() => import('./pages/Community'))
+const AboutPage = lazy(() => import('./pages/About'))
+const PrivacyPage = lazy(() => import('./pages/Privacy'))
+const TermsPage = lazy(() => import('./pages/Terms'))
+const FAQPage = lazy(() => import('./pages/FAQ'))
+const PetProfilePage = lazy(() => import('./pages/PetProfile'))
+const OwnerProfilePage = lazy(() => import('./pages/OwnerProfile'))
+const NotFoundPage = lazy(() => import('./pages/NotFound'))
+const SessionExpiredPage = lazy(() => import('./pages/SessionExpired'))
+const MatchesPage = lazy(() => import('./pages/Matches'))
+const EventsPage = lazy(() => import('./pages/Events'))
+const ChatPage = lazy(() => import('./pages/Chat'))
+const ProfilePage = lazy(() => import('./pages/Profile'))
+const OnboardingPage = lazy(() => import('./pages/Onboarding'))
+const MaintenancePage = lazy(() => import('./pages/Maintenance'))
 import { useAuthStore } from './store/useAuthStore'
 import { NotificationBell } from './components/notifications/NotificationBell'
 import { NotificationsRuntime } from './components/notifications/NotificationsRuntime'
@@ -154,6 +172,29 @@ function SessionExpiryWatcher() {
   }, [sessionJustExpired, clearSessionExpiredFlag, navigate])
 
   return null
+}
+
+/* Shown while a route's chunk is in flight.
+ *
+ * Deliberately not the GlobalLoader: that one takes over the screen with a
+ * Lottie and rotating flavour copy, which is right for "signing you in" and
+ * absurd for a fetch that usually finishes inside a hundred milliseconds. A
+ * full-screen takeover that flashes and vanishes reads as a glitch.
+ *
+ * So this is the same sweeping rail the pre-React splash and the GlobalLoader
+ * both use — the app's established "working on it" language — reduced to a
+ * hairline at the top of the content area. It reserves height too, because a
+ * fallback with no size lets the footer jump up the screen and back down again
+ * on every navigation, which is more distracting than the wait it covers. */
+function RouteFallback() {
+  return (
+    <div className="min-h-[70vh] w-full" role="status" aria-live="polite" aria-busy="true">
+      <span className="sr-only">Loading page</span>
+      <div aria-hidden="true" className="relative h-0.5 w-full overflow-hidden bg-white/5">
+        <div className="motion-safe:animate-rail-sweep absolute inset-y-0 left-0 w-[42%] rounded-full bg-gradient-to-r from-transparent via-brand to-transparent" />
+      </div>
+    </div>
+  )
 }
 
 function App() {
@@ -405,36 +446,41 @@ function App() {
 
         {/* Main Content Area */}
         <main className="w-full">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route
-              path="/auth"
-              element={
-                <GuestOnlyRoute>
-                  <AuthPage />
-                </GuestOnlyRoute>
-              }
-            />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/pets/:petId" element={<PetProfilePage />} />
-            <Route path="/owners/:userId" element={<OwnerProfilePage />} />
-            <Route path="/discover" element={<DiscoverPage />} />
-            <Route path="/matches" element={<MatchesPage />} />
-            <Route path="/events" element={<EventsPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/session-expired" element={<SessionExpiredPage />} />
-            <Route path="/maintenance" element={<MaintenancePage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          {/* One boundary around the whole table rather than one per route:
+              only a single route ever resolves at a time, so per-route
+              boundaries would be twenty copies of the same thing. */}
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/auth"
+                element={
+                  <GuestOnlyRoute>
+                    <AuthPage />
+                  </GuestOnlyRoute>
+                }
+              />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/pets/:petId" element={<PetProfilePage />} />
+              <Route path="/owners/:userId" element={<OwnerProfilePage />} />
+              <Route path="/discover" element={<DiscoverPage />} />
+              <Route path="/matches" element={<MatchesPage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/session-expired" element={<SessionExpiredPage />} />
+              <Route path="/maintenance" element={<MaintenancePage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </BrowserRouter>
