@@ -66,7 +66,7 @@ function Toast({ toast, onDismiss, onClick }: { toast: ToastItem; onDismiss: (id
       <div className="min-w-0 flex-1">
         <div className="mb-0.5 flex items-center gap-1.5">
           <Icon className={`h-3.5 w-3.5 ${NOTIFICATION_TYPE_ACCENT[data.notification_type]}`} />
-          <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
             {TOAST_LABELS[data.notification_type]}
           </span>
         </div>

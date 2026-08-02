@@ -180,7 +180,7 @@ export const PetToggleSection: React.FC = () => {
                   <span className="relative z-10">
                     {tab.label}
                     {counts[tab.id] > 0 && (
-                      <span className={isActive ? 'text-white/70' : 'text-neutral-500'}>
+                      <span className={isActive ? 'text-white/70' : 'text-neutral-400'}>
                         {' '}
                         {counts[tab.id]}
                       </span>

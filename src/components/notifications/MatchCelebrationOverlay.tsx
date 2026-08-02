@@ -85,7 +85,7 @@ export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCe
             <button
               onClick={onDismiss}
               aria-label="Close"
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-white/10 hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>

@@ -105,7 +105,7 @@ function OwnerProfilePage() {
               </div>
               <div className="p-3">
                 <p className="truncate font-semibold text-white">{pet.name}</p>
-                <p className="truncate text-xs text-neutral-500">{pet.breed}</p>
+                <p className="truncate text-xs text-neutral-400">{pet.breed}</p>
               </div>
             </Link>
           ))}

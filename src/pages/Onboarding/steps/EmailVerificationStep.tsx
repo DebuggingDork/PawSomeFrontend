@@ -225,7 +225,7 @@ export function EmailVerificationStep({ email, onVerified }: Props) {
           <Mail className="h-4 w-4 text-brand" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-neutral-500">Code sent to</p>
+          <p className="text-xs text-neutral-400">Code sent to</p>
           <p className="truncate text-sm font-medium text-neutral-100">{email}</p>
         </div>
       </div>
@@ -287,7 +287,7 @@ export function EmailVerificationStep({ email, onVerified }: Props) {
       {/* Quiet footnotes, separated from the controls by a hairline so they read as
           reference rather than as another thing to act on. */}
       <div className="space-y-2.5 border-t border-neutral-900 pt-4">
-        <p className="text-xs leading-relaxed text-neutral-500 [overflow-wrap:anywhere]">
+        <p className="text-xs leading-relaxed text-neutral-400 [overflow-wrap:anywhere]">
           It comes from <span className="font-medium text-neutral-300">{SENDER}</span>. Yes, we hear
           it too.
         </p>
@@ -300,7 +300,7 @@ export function EmailVerificationStep({ email, onVerified }: Props) {
               transition={{ duration: 0.45, ease: EASE_OUT }}
               className="flex items-start gap-2 text-xs leading-relaxed text-neutral-400"
             >
-              <Inbox className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-neutral-500" />
+              <Inbox className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-neutral-400" />
               <span>
                 Still nothing? Have a look in spam. New senders tend to get treated like strays.
               </span>

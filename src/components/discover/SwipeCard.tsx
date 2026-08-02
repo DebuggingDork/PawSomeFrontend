@@ -154,7 +154,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           </span>
           {pet.owner?.full_name && (
             <>
-              <span aria-hidden="true" className="flex-shrink-0 text-neutral-600">
+              <span aria-hidden="true" className="flex-shrink-0 text-neutral-400">
                 &middot;
               </span>
               <span className="truncate">{pet.owner.full_name}</span>

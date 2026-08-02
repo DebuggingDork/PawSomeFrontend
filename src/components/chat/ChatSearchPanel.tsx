@@ -40,7 +40,7 @@ export function ChatSearchPanel({ matchId, onClose, onJumpToMessage }: ChatSearc
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search this conversation..."
-          className="flex-1 rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
+          className="flex-1 rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none"
         />
         <button
           type="submit"
@@ -53,7 +53,7 @@ export function ChatSearchPanel({ matchId, onClose, onJumpToMessage }: ChatSearc
           type="button"
           onClick={onClose}
           aria-label="Close search"
-          className="rounded-lg p-2 text-neutral-500 hover:text-white"
+          className="rounded-lg p-2 text-neutral-400 hover:text-white"
         >
           <X className="h-4 w-4" />
         </button>
@@ -62,7 +62,7 @@ export function ChatSearchPanel({ matchId, onClose, onJumpToMessage }: ChatSearc
       {results && (
         <div className="thin-scrollbar lenis-prevent-scroll mt-2 max-h-48 space-y-1 overflow-y-auto">
           {results.length === 0 ? (
-            <p className="px-1 py-2 text-sm text-neutral-500">No messages found.</p>
+            <p className="px-1 py-2 text-sm text-neutral-400">No messages found.</p>
           ) : (
             results.map((m) => (
               <button

@@ -150,7 +150,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
           <MessageCircle className="h-4 w-4" />
           Matched — open chat
         </Link>
-        <p className="text-center text-xs text-neutral-500">
+        <p className="text-center text-xs text-neutral-400">
           {matched.name} and {pet.name} are matched.
         </p>
       </div>
@@ -181,7 +181,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
           eligible pet the answer is never in doubt and a picker is just noise. */}
       {candidates.length > 1 && (
         <div>
-          <p className="mb-1.5 text-xs font-medium text-neutral-500">Acting as</p>
+          <p className="mb-1.5 text-xs font-medium text-neutral-400">Acting as</p>
           <div className="flex flex-wrap gap-2">
             {candidates.map((candidate) => {
               const isSelected = candidate.pet_id === selected?.pet_id
@@ -261,7 +261,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
       {actionError ? (
         <p className="text-xs text-rose-400">{actionError}</p>
       ) : (
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-neutral-400">
           {justLiked
             ? `${pet.name}'s owner has been notified. You'll match once they accept.`
             : alreadySkipped

@@ -45,7 +45,7 @@ export function NearbyPlaces({ latitude, longitude, onPick, className = '' }: Ne
 
   if (isLoading) {
     return (
-      <p className={`flex items-center gap-1.5 text-xs text-neutral-600 ${className}`}>
+      <p className={`flex items-center gap-1.5 text-xs text-neutral-400 ${className}`}>
         <Loader2 className="h-3.5 w-3.5 animate-spin" />
         Looking for spots nearby…
       </p>
@@ -64,7 +64,7 @@ export function NearbyPlaces({ latitude, longitude, onPick, className = '' }: Ne
 
   return (
     <div className={className}>
-      <span className="mb-1.5 block text-xs font-medium text-neutral-500">Spots nearby</span>
+      <span className="mb-1.5 block text-xs font-medium text-neutral-400">Spots nearby</span>
       <div className="flex flex-wrap gap-1.5">
         {places.map((place) => {
           const Icon = KIND_ICON[place.kind]
@@ -77,7 +77,7 @@ export function NearbyPlaces({ latitude, longitude, onPick, className = '' }: Ne
             >
               <Icon className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate">{place.name}</span>
-              <span className="flex-shrink-0 text-neutral-600">{distanceLabel(place.distance_m)}</span>
+              <span className="flex-shrink-0 text-neutral-400">{distanceLabel(place.distance_m)}</span>
             </button>
           )
         })}

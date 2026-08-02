@@ -60,7 +60,7 @@ export function PreferencesStep({ initialBio, initialAddress, petName, onSaved }
             rows={4}
             placeholder={`Whatever you'd want to know about someone before meeting them and ${petName || 'their pet'} at a park.`}
           />
-          <p className="text-right text-xs text-neutral-500">
+          <p className="text-right text-xs text-neutral-400">
             {bio.length} / {MAX_BIO}
           </p>
         </div>

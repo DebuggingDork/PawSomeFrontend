@@ -139,7 +139,7 @@ function AboutPage() {
             {AIMS.map((aim, index) => (
               <StaggerRevealItem key={aim.title}>
                 <div className="flex gap-6 border-t border-neutral-900 py-8 md:gap-10">
-                  <span className="font-accent text-sm text-neutral-600">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="font-accent text-sm text-neutral-400">{String(index + 1).padStart(2, '0')}</span>
                   <div>
                     <h3 className="font-display text-xl font-semibold text-white">{aim.title}</h3>
                     <p className="mt-2 max-w-[62ch] text-pretty leading-relaxed text-neutral-300">{aim.body}</p>
@@ -172,7 +172,13 @@ function AboutPage() {
             {STEPS.map((step) => (
               <StaggerRevealItem key={step.number}>
                 <div className="flex gap-6 border-t border-neutral-900 pt-8 first:border-t-0 first:pt-0 md:gap-10">
-                  <span className="font-display text-3xl font-bold text-neutral-700 md:text-4xl">{step.number}</span>
+                  {/* Quiet, but not invisible. At neutral-700 this sat at
+                      1.9:1 — below even the 3:1 that large text is allowed to
+                      stop at, so the step numbers read as smudges rather than
+                      as an index. neutral-500 clears that bar at 4.2:1 and
+                      still sits a full step below the body copy beside it,
+                      which is the whole job. */}
+                  <span className="font-display text-3xl font-bold text-neutral-500 md:text-4xl">{step.number}</span>
                   <div>
                     <h3 className="text-lg font-bold text-white md:text-xl">{step.title}</h3>
                     <p className="mt-2 max-w-xl text-pretty leading-relaxed text-neutral-300">{step.description}</p>

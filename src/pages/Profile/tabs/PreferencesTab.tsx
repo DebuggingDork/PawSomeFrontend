@@ -119,7 +119,7 @@ export function PreferencesTab() {
           value={breeds}
           onChange={(e) => setBreeds(e.target.value)}
           placeholder="Golden Retriever, Labrador (comma-separated)"
-          className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
+          className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none"
         />
       </div>
 

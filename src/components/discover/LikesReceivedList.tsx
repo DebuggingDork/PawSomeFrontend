@@ -70,7 +70,7 @@ export function LikesReceivedList({ likes, isLoading, onAccept, onReject, respon
                     </span>
                   )}
                 </p>
-                <p className="truncate text-xs text-neutral-500">liked {like.your_pet.name}</p>
+                <p className="truncate text-xs text-neutral-400">liked {like.your_pet.name}</p>
               </div>
               <button
                 onClick={() => onReject(like.id)}

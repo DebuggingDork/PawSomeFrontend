@@ -38,8 +38,8 @@ const PROFILE_TIPS = [
 ]
 
 const inputClass =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
-const iconPrefixClass = 'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
+const iconPrefixClass = 'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400'
 
 export function AccountTab() {
   const queryClient = useQueryClient()
@@ -191,13 +191,13 @@ function AccountForm({
                   type="button"
                   onClick={() => deletePhotoMutation.mutate()}
                   disabled={deletePhotoMutation.isPending}
-                  className="mx-auto mt-3 flex items-center gap-1.5 text-xs font-medium text-neutral-500 transition-colors hover:text-red-400 disabled:opacity-50"
+                  className="mx-auto mt-3 flex items-center gap-1.5 text-xs font-medium text-neutral-400 transition-colors hover:text-red-400 disabled:opacity-50"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   {deletePhotoMutation.isPending ? 'Removing…' : 'Remove photo'}
                 </button>
               )}
-              <p className="mt-3 text-center text-xs text-neutral-500">JPEG, PNG or WebP. Max 5MB.</p>
+              <p className="mt-3 text-center text-xs text-neutral-400">JPEG, PNG or WebP. Max 5MB.</p>
             </div>
 
             <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6">
@@ -271,9 +271,9 @@ function AccountForm({
                     maxLength={BIO_MAX_LENGTH}
                     rows={4}
                     placeholder="Tell others about yourself and your pet…"
-                    className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 pb-6 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
+                    className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 pb-6 text-sm text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
                   />
-                  <span className="pointer-events-none absolute bottom-2.5 right-3.5 text-xs text-neutral-600">
+                  <span className="pointer-events-none absolute bottom-2.5 right-3.5 text-xs text-neutral-400">
                     {bio.length}/{BIO_MAX_LENGTH}
                   </span>
                 </div>
@@ -305,7 +305,7 @@ function AccountForm({
                     setDirty(true)
                   }}
                   placeholder="Auto-filled from location"
-                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
                 />
               </div>
             </div>

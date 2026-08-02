@@ -106,7 +106,7 @@ export function BadgesTab() {
       </div>
 
       {hasMore && (
-        <div ref={sentinelRef} className="flex items-center justify-center gap-2 py-6 text-xs text-neutral-500">
+        <div ref={sentinelRef} className="flex items-center justify-center gap-2 py-6 text-xs text-neutral-400">
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
           Loading more badges
         </div>

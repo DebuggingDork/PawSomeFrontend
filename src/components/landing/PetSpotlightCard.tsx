@@ -69,7 +69,7 @@ export function PetSpotlightCard({ pet, layout = 'tall', className = '' }: PetSp
           {pet.name}
         </h4>
         <ArrowUpRight
-          className="h-4 w-4 shrink-0 translate-y-0.5 text-neutral-600 transition-colors duration-200 group-hover:text-brand-light"
+          className="h-4 w-4 shrink-0 translate-y-0.5 text-neutral-400 transition-colors duration-200 group-hover:text-brand-light"
           aria-hidden="true"
         />
       </div>

@@ -89,7 +89,7 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
               <span className="truncate">{playdate.location_name}</span>
             </p>
             {playdate.address && (
-              <p className="ml-5 line-clamp-2 text-[11px] leading-relaxed text-neutral-600">{playdate.address}</p>
+              <p className="ml-5 line-clamp-2 text-[11px] leading-relaxed text-neutral-400">{playdate.address}</p>
             )}
             <ShowInMap className="ml-5 mt-1.5" point={point} />
           </div>
@@ -103,9 +103,9 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
             />
           )}
 
-          {playdate.note && <p className="mt-1 text-xs italic text-neutral-500">"{playdate.note}"</p>}
+          {playdate.note && <p className="mt-1 text-xs italic text-neutral-400">"{playdate.note}"</p>}
 
-          <p className="mt-1.5 text-[11px] text-neutral-600">Proposed by {isProposer ? 'you' : playdate.proposed_by_pet.name}</p>
+          <p className="mt-1.5 text-[11px] text-neutral-400">Proposed by {isProposer ? 'you' : playdate.proposed_by_pet.name}</p>
 
           {/* Only once it's actually on — an unanswered proposal isn't a plan. */}
           {confirmed && (
@@ -145,7 +145,7 @@ export function PlaydateCard({ playdate, yourPetId, onAccept, onDecline, onCance
             <button
               onClick={onCancel}
               disabled={responding}
-              className="mt-2 flex items-center gap-1 text-xs font-medium text-neutral-500 transition-colors hover:text-red-400 disabled:opacity-50"
+              className="mt-2 flex items-center gap-1 text-xs font-medium text-neutral-400 transition-colors hover:text-red-400 disabled:opacity-50"
             >
               <Ban className="h-3.5 w-3.5" /> Cancel playdate
             </button>

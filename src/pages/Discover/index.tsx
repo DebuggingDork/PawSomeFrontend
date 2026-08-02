@@ -65,7 +65,7 @@ function SwipingAsSelector({
        pet and the Filters button, and it is the one part of that row a person
        can infer from the selected state. */
     <div role="group" aria-label="Swiping as" className="flex min-w-0 flex-wrap items-center gap-2">
-      <span className="hidden flex-shrink-0 text-xs font-medium text-neutral-500 sm:inline">
+      <span className="hidden flex-shrink-0 text-xs font-medium text-neutral-400 sm:inline">
         Swiping as
       </span>
       {selectable.map((pet) => {

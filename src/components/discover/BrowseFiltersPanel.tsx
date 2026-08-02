@@ -119,7 +119,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
               )}
               <div className="space-y-4 px-4 py-4">
               <div>
-                <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-neutral-500">
+                <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-neutral-400">
                   <span>Distance</span>
                   <span className="text-neutral-400">
                     {(filters.radius ?? 5000) >= 5000 ? 'Anywhere' : `${filters.radius} km`}
@@ -138,7 +138,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-neutral-500">Species</label>
+                  <label className="mb-1.5 block text-xs font-medium text-neutral-400">Species</label>
                   <select
                     value={filters.species ?? ''}
                     onChange={(e) => set({ species: e.target.value || undefined, breed: undefined })}
@@ -151,7 +151,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-neutral-500">Gender</label>
+                  <label className="mb-1.5 block text-xs font-medium text-neutral-400">Gender</label>
                   <select
                     value={filters.gender ?? ''}
                     onChange={(e) => set({ gender: e.target.value || undefined })}
@@ -165,7 +165,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Breed</label>
+                <label className="mb-1.5 block text-xs font-medium text-neutral-400">Breed</label>
                 <Combobox
                   value={filters.breed}
                   onChange={(breed) => set({ breed })}
@@ -177,7 +177,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-neutral-500">Min age (months)</label>
+                  <label className="mb-1.5 block text-xs font-medium text-neutral-400">Min age (months)</label>
                   <input
                     type="number"
                     min={0}
@@ -188,7 +188,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-neutral-500">Max age (months)</label>
+                  <label className="mb-1.5 block text-xs font-medium text-neutral-400">Max age (months)</label>
                   <input
                     type="number"
                     min={0}
@@ -201,7 +201,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Health & training</label>
+                <label className="mb-1.5 block text-xs font-medium text-neutral-400">Health & training</label>
                 <div className="flex flex-wrap gap-2">
                   {HEALTH_TOGGLES.map(({ key, label }) => {
                     const active = Boolean(filters[key])

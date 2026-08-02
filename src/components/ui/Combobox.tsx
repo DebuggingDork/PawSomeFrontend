@@ -195,7 +195,7 @@ export function Combobox({
           aria-hidden="true"
           className={cn(
             'pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-150',
-            open ? 'text-brand' : 'text-neutral-500',
+            open ? 'text-brand' : 'text-neutral-400',
           )}
         />
 
@@ -233,7 +233,7 @@ export function Combobox({
               type="button"
               onClick={clear}
               aria-label="Clear breed filter"
-              className="rounded-md p-1 text-neutral-500 transition-[color,transform] duration-150 ease-out hover:text-white active:scale-90 motion-reduce:transition-none"
+              className="rounded-md p-1 text-neutral-400 transition-[color,transform] duration-150 ease-out hover:text-white active:scale-90 motion-reduce:transition-none"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -246,7 +246,7 @@ export function Combobox({
               setOpen((isOpen) => !isOpen)
               inputRef.current?.focus()
             }}
-            className="rounded-md p-1 text-neutral-500 transition-colors duration-150 hover:text-neutral-300"
+            className="rounded-md p-1 text-neutral-400 transition-colors duration-150 hover:text-neutral-300"
           >
             <ChevronDown
               className="h-4 w-4 transition-transform duration-200 ease-out motion-reduce:transition-none"
@@ -289,7 +289,7 @@ export function Combobox({
               )}
             >
               {filtered.length === 0 ? (
-                <p className="px-4 py-6 text-center text-sm text-neutral-500">
+                <p className="px-4 py-6 text-center text-sm text-neutral-400">
                   {emptyLabel}
                   {query ? <span className="text-neutral-400"> for "{query}"</span> : null}
                 </p>

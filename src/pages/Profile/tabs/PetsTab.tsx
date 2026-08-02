@@ -115,7 +115,7 @@ export function PetsTab() {
               <img src={pet.primary_photo_url} alt={pet.name} loading="lazy" decoding="async" className="h-14 w-14 rounded-xl object-cover" />
             ) : (
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800">
-                <PawPrint className="h-6 w-6 text-neutral-600" />
+                <PawPrint className="h-6 w-6 text-neutral-400" />
               </div>
             )}
             <div className="min-w-0 flex-1">
@@ -123,13 +123,13 @@ export function PetsTab() {
                 <p className="truncate font-semibold text-white">{pet.name}</p>
                 <span
                   className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                    pet.is_active ? 'bg-emerald-500/10 text-emerald-400' : 'bg-neutral-800 text-neutral-500'
+                    pet.is_active ? 'bg-emerald-500/10 text-emerald-400' : 'bg-neutral-800 text-neutral-400'
                   }`}
                 >
                   {pet.is_active ? 'Active' : 'Needs a photo'}
                 </span>
               </div>
-              <p className="truncate text-xs text-neutral-500">
+              <p className="truncate text-xs text-neutral-400">
                 {pet.breed} · {pet.gender} · {pet.age_months}mo
               </p>
             </div>
@@ -152,7 +152,7 @@ export function PetsTab() {
                 </button>
                 <button
                   onClick={() => setConfirmDeleteId(null)}
-                  className="rounded-full px-3 py-1.5 text-xs font-medium text-neutral-500"
+                  className="rounded-full px-3 py-1.5 text-xs font-medium text-neutral-400"
                 >
                   Cancel
                 </button>

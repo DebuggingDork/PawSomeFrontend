@@ -41,7 +41,7 @@ export function BlockedUsersTab() {
               <img src={block.blocked_user.profile_photo_url} alt="" loading="lazy" decoding="async" className="h-10 w-10 rounded-full object-cover" />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800">
-                <UserIcon className="h-4 w-4 text-neutral-600" />
+                <UserIcon className="h-4 w-4 text-neutral-400" />
               </div>
             )}
             <p className="flex-1 truncate font-medium text-white">{block.blocked_user.full_name ?? 'Unknown user'}</p>

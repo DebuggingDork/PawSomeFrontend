@@ -229,7 +229,7 @@ function OnboardingPage() {
                     </span>
                     <span className="mx-2 text-neutral-700">/</span>
                     {copy.label}
-                    {!activeStep.required && <span className="ml-2 text-neutral-500">optional</span>}
+                    {!activeStep.required && <span className="ml-2 text-neutral-400">optional</span>}
                   </>
                 ) : (
                   <span className="font-medium text-emerald-400">All steps done</span>
@@ -239,7 +239,7 @@ function OnboardingPage() {
                 <button
                   type="button"
                   onClick={leaveWizard}
-                  className="flex-shrink-0 py-1 text-sm text-neutral-500 underline-offset-4 transition-colors hover:text-neutral-300 hover:underline"
+                  className="flex-shrink-0 py-1 text-sm text-neutral-400 underline-offset-4 transition-colors hover:text-neutral-300 hover:underline"
                 >
                   Finish later
                 </button>
@@ -340,7 +340,7 @@ function OnboardingPage() {
         {/* ── Live card ─────────────────────────────────────────────────────── */}
         <aside className="hidden lg:sticky lg:top-28 lg:flex lg:flex-col lg:items-center lg:gap-4 lg:self-start">
           <LiveCardPreview draft={card} />
-          <p className="max-w-[34ch] text-center text-xs leading-relaxed text-neutral-500">
+          <p className="max-w-[34ch] text-center text-xs leading-relaxed text-neutral-400">
             {activeStep
               ? 'This is the card other owners swipe on. It updates as you type.'
               : `${card.petName || 'Your pet'} is live in Discover.`}

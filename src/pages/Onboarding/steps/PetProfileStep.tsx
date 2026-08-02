@@ -185,7 +185,7 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
         <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 px-4 py-4">
           <p
             className={`mb-3 font-display text-xl font-bold ${
-              ageMonths === null ? 'text-neutral-500' : 'text-white'
+              ageMonths === null ? 'text-neutral-400' : 'text-white'
             }`}
             aria-live="polite"
           >
@@ -209,7 +209,7 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
             // the touch and scrolling the page instead of moving the handle.
             className="range-touch lenis-prevent-scroll accent-brand"
           />
-          <div className="mt-1.5 flex justify-between text-xs text-neutral-500">
+          <div className="mt-1.5 flex justify-between text-xs text-neutral-400">
             <span>1 month</span>
             <span>20 years</span>
           </div>
@@ -262,7 +262,7 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
           Create {name.trim() || 'their'}{name.trim() ? "'s profile" : ' profile'}
         </PrimaryAction>
         {!canSubmit && (
-          <p className="text-center text-xs text-neutral-500">
+          <p className="text-center text-xs text-neutral-400">
             Still needs {missing.slice(0, -1).join(', ')}
             {missing.length > 1 ? ' and ' : ''}
             {missing[missing.length - 1]}.

@@ -152,9 +152,9 @@ function PetProfilePage() {
         >
           <PetAvatar name={pet.owner.full_name ?? 'Unknown'} photoUrl={pet.owner.profile_photo_url} size="md" />
           <div className="flex-1 overflow-hidden">
-            <p className="truncate text-xs uppercase tracking-wide text-neutral-500">Owner</p>
+            <p className="truncate text-xs uppercase tracking-wide text-neutral-400">Owner</p>
             <p className="truncate font-semibold text-white">{pet.owner.full_name ?? 'Anonymous'}</p>
-            {pet.owner.occupation && <p className="truncate text-sm text-neutral-500">{pet.owner.occupation}</p>}
+            {pet.owner.occupation && <p className="truncate text-sm text-neutral-400">{pet.owner.occupation}</p>}
           </div>
         </Link>
       ) : (

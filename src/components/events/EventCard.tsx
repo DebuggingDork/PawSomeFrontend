@@ -78,7 +78,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
           <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
           <span className="truncate">{event.location_name}</span>
         </p>
-        {event.address && <p className="ml-5 truncate text-xs text-neutral-600">{event.address}</p>}
+        {event.address && <p className="ml-5 truncate text-xs text-neutral-400">{event.address}</p>}
 
         <DistanceBadge className="ml-5 mt-1.5" latitude={event.latitude} longitude={event.longitude} />
 
@@ -110,7 +110,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
         )}
 
         <div className="mt-4 flex items-center justify-between border-t border-neutral-800 pt-3">
-          <p className="flex items-center gap-1.5 text-xs text-neutral-500">
+          <p className="flex items-center gap-1.5 text-xs text-neutral-400">
             <Users className="h-3.5 w-3.5" />
             <span className="font-semibold text-neutral-300">{event.attendee_count}</span> going
             <span className="mx-1 text-neutral-700">·</span>
@@ -152,7 +152,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
           {isAuthenticated && !event.is_host && !isGoing && !event.can_rsvp && upcoming && (
             <span
               title={event.rsvp_blocked_reason ?? undefined}
-              className="flex items-center gap-1 rounded-full border border-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-500"
+              className="flex items-center gap-1 rounded-full border border-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-400"
             >
               <Ban className="h-3.5 w-3.5" />
               {event.species ? `${event.species}s only` : 'Unavailable'}
@@ -161,7 +161,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
         </div>
 
         {isAuthenticated && !event.is_host && !event.can_rsvp && !isGoing && event.rsvp_blocked_reason && upcoming && (
-          <p className="mt-2 text-xs text-neutral-500">{event.rsvp_blocked_reason}</p>
+          <p className="mt-2 text-xs text-neutral-400">{event.rsvp_blocked_reason}</p>
         )}
       </div>
     </motion.div>

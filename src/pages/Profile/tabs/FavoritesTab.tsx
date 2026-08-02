@@ -122,7 +122,7 @@ export function FavoritesTab() {
                 <PetAvatar name={fav.target_pet.name} photoUrl={fav.target_pet.primary_photo_url} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-white">{fav.target_pet.name}</p>
-                  <p className="truncate text-xs text-neutral-500">{fav.target_pet.breed}</p>
+                  <p className="truncate text-xs text-neutral-400">{fav.target_pet.breed}</p>
                 </div>
               </Link>
               <button

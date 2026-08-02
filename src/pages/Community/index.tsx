@@ -127,7 +127,7 @@ function PetCard({
             <PetAvatar name={pet.owner.full_name ?? 'Unknown'} photoUrl={pet.owner.profile_photo_url} size="sm" />
             <div className="flex-1 overflow-hidden">
               <div className="truncate text-sm font-medium text-white">{pet.owner.full_name ?? 'Anonymous'}</div>
-              {pet.owner.occupation && <div className="truncate text-xs text-neutral-500">{pet.owner.occupation}</div>}
+              {pet.owner.occupation && <div className="truncate text-xs text-neutral-400">{pet.owner.occupation}</div>}
             </div>
           </div>
         )}
@@ -206,7 +206,7 @@ function CommunityPage() {
       {/* Filters */}
       <div className="mb-6 flex flex-wrap items-end gap-4 rounded-xl border border-neutral-800/80 bg-neutral-900/40 p-4">
         <div className="min-w-[180px] flex-1">
-          <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+          <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-neutral-400">
             <PawPrint className="h-3.5 w-3.5" /> Species
           </label>
           <select
@@ -223,7 +223,7 @@ function CommunityPage() {
         </div>
 
         <div className="min-w-[180px] flex-1">
-          <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+          <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-neutral-400">
             <Venus className="h-3.5 w-3.5" /> Gender
           </label>
           <select
@@ -240,7 +240,7 @@ function CommunityPage() {
         </div>
 
         <div className="min-w-[200px] flex-1">
-          <label className="mb-1.5 block text-xs font-medium text-neutral-500">Breed</label>
+          <label className="mb-1.5 block text-xs font-medium text-neutral-400">Breed</label>
           <Combobox
             value={filters.breed}
             onChange={(breed) => setFilters((f) => ({ ...f, breed }))}
@@ -305,7 +305,7 @@ function CommunityPage() {
             </div>
           )}
           {!hasNextPage && pets.length > 0 && (
-            <p className="mt-8 text-center text-sm text-neutral-500">You've reached the end 🐾</p>
+            <p className="mt-8 text-center text-sm text-neutral-400">You've reached the end 🐾</p>
           )}
         </>
       )}

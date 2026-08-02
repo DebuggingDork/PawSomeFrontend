@@ -69,7 +69,7 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
                     ? 'border-brand bg-brand text-white'
                     : isActive
                       ? 'border-brand bg-neutral-950 text-brand'
-                      : 'border-neutral-800 bg-neutral-950 text-neutral-600'
+                      : 'border-neutral-800 bg-neutral-950 text-neutral-400'
                 } ${canVisit ? 'cursor-pointer hoverable:hover:brightness-110' : 'cursor-default'}`}
               >
                 {/* A single soft ring on the current step. Not a pulse loop:

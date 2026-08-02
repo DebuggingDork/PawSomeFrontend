@@ -77,7 +77,7 @@ export function ShowInMap({ point, variant = 'inline', className = '' }: ShowInM
                 className="block h-44 w-full border-0"
               />
             </div>
-            <p className="mt-1.5 text-[11px] text-neutral-600">{label}</p>
+            <p className="mt-1.5 text-[11px] text-neutral-400">{label}</p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -29,7 +29,7 @@ export function Field({
     <div>
       <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-neutral-200">
         {label}
-        {hint && <span className="ml-2 font-normal text-neutral-500">{hint}</span>}
+        {hint && <span className="ml-2 font-normal text-neutral-400">{hint}</span>}
       </label>
       {children}
     </div>
@@ -37,7 +37,7 @@ export function Field({
 }
 
 const INPUT_BASE =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-900/60 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand/25'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-900/60 text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand/25'
 
 /** `emphasis="lead"` is for the one field a step is really about. The scale jump is
  * the hierarchy: it tells you where to start typing without a "start here" label.

@@ -154,7 +154,7 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
   return (
     <div className={className} ref={containerRef}>
       <div className="relative">
-        <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+        <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
         <input
           type="text"
           value={query}
@@ -164,10 +164,10 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
           autoComplete="off"
           // 16px until `sm` — anything smaller makes iOS zoom the page in on
           // focus and never zoom back out. See index.css.
-          className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-3 pl-10 pr-9 text-base text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none sm:py-2.5 sm:text-sm"
+          className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-3 pl-10 pr-9 text-base text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none sm:py-2.5 sm:text-sm"
         />
         {searching && (
-          <Loader2 className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-neutral-500" />
+          <Loader2 className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-neutral-400" />
         )}
 
         {showSuggestions && suggestions.length > 0 && (
@@ -182,7 +182,7 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
                   // not a mistake you notice until the matches are wrong.
                   className="flex w-full touch-manipulation items-start gap-2 px-3 py-3 text-left text-sm text-neutral-200 hover:bg-neutral-800 sm:py-2"
                 >
-                  <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-neutral-500" />
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-neutral-400" />
                   <span className="line-clamp-2">{s.address}</span>
                 </button>
               </li>
@@ -211,7 +211,7 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
        * of the city, and a playdate is a real-world meetup. */}
       {latitude !== null && longitude !== null && (
         <>
-          <p className="mt-2 flex items-center gap-1.5 text-xs text-neutral-500">
+          <p className="mt-2 flex items-center gap-1.5 text-xs text-neutral-400">
             <MapPin className="h-3.5 w-3.5" />
             {latitude.toFixed(4)}, {longitude.toFixed(4)}
           </p>

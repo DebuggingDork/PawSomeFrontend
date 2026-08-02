@@ -115,7 +115,7 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
         {/* Which pet is coming — the question the restriction is really about. */}
         {pets.length > 0 && (
           <div className="border-t border-neutral-800 px-6 py-4">
-            <p className="mb-2.5 text-xs font-medium text-neutral-500">
+            <p className="mb-2.5 text-xs font-medium text-neutral-400">
               {pets.length === 1 ? 'Bringing' : "Who's coming?"}
             </p>
             <div className="flex flex-wrap gap-2">

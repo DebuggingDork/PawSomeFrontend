@@ -293,7 +293,7 @@ function AccordionItem({ item }: { item: QA }) {
           <span className="text-pretty font-medium leading-snug text-white">{item.q}</span>
           <ChevronDown
             aria-hidden="true"
-            className="mt-0.5 h-5 w-5 shrink-0 text-neutral-500 transition-[transform,color] duration-200 ease-out group-hover:text-neutral-300 motion-reduce:transition-none"
+            className="mt-0.5 h-5 w-5 shrink-0 text-neutral-400 transition-[transform,color] duration-200 ease-out group-hover:text-neutral-300 motion-reduce:transition-none"
             style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
           />
         </button>

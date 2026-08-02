@@ -16,7 +16,7 @@ const SPECIES_OPTIONS = [
 ]
 
 const FIELD =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
 
 function defaultDateTimeLocal(): string {
   const d = new Date(Date.now() + 24 * 60 * 60 * 1000)

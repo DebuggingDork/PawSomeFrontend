@@ -54,12 +54,12 @@ export function ConversationSidebar({
       <div className="flex-shrink-0 border-b border-neutral-800/80 p-4">
         <h1 className="mb-3 font-display text-xl font-bold text-white">Messages</h1>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search matches..."
-            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-2 pl-9 pr-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
+            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-2 pl-9 pr-3 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none"
           />
         </div>
       </div>
@@ -97,7 +97,7 @@ export function ConversationSidebar({
         )}
 
         {!isLoading && conversations.length > 0 && filtered.length === 0 && (
-          <p className="px-4 py-8 text-center text-sm text-neutral-500">No matches found for "{query}".</p>
+          <p className="px-4 py-8 text-center text-sm text-neutral-400">No matches found for "{query}".</p>
         )}
 
         <ul className="p-2">
@@ -117,7 +117,7 @@ export function ConversationSidebar({
                     <div className="flex items-center justify-between gap-2">
                       <p className="truncate font-semibold text-white">{conversation.otherPet.name}</p>
                     </div>
-                    <p className="truncate text-xs text-neutral-500">
+                    <p className="truncate text-xs text-neutral-400">
                       {yourPetName(conversation.yourPetId) && (
                         <span className="text-brand-light">{yourPetName(conversation.yourPetId)} · </span>
                       )}

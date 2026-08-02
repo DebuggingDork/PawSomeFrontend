@@ -130,7 +130,7 @@ function NotFoundPage() {
             <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
-            <span className="ml-2 text-[10px] text-neutral-600">not-found — zsh — 80×24</span>
+            <span className="ml-2 text-[10px] text-neutral-400">not-found — zsh — 80×24</span>
           </div>
           <div className="space-y-1 px-4 py-3">
             {ERROR_LOG.slice(0, visibleLogLines).map((line, i) => (
@@ -150,11 +150,11 @@ function NotFoundPage() {
         </div>
 
         {/* Live shame counter */}
-        <p className="mb-8 flex flex-wrap items-center justify-center gap-2 text-sm text-neutral-500">
-          <Ghost className="h-4 w-4 text-neutral-600" />
+        <p className="mb-8 flex flex-wrap items-center justify-center gap-2 text-sm text-neutral-400">
+          <Ghost className="h-4 w-4 text-neutral-400" />
           Lost for{' '}
           <span className="font-accent font-semibold text-brand-light">{seconds}s</span>
-          <span className="text-neutral-600">— {lostSnark(seconds)}</span>
+          <span className="text-neutral-400">— {lostSnark(seconds)}</span>
         </p>
 
         {/* The gag: a home button that runs away (mouse only), plus a real escape hatch */}
@@ -172,7 +172,7 @@ function NotFoundPage() {
 
           <Link
             to="/discover"
-            className="text-sm font-medium text-neutral-500 underline decoration-neutral-700 underline-offset-4 transition-colors hover:text-neutral-300"
+            className="text-sm font-medium text-neutral-400 underline decoration-neutral-700 underline-offset-4 transition-colors hover:text-neutral-300"
           >
             or just click here, quitter — go find some pets instead
           </Link>
@@ -184,14 +184,14 @@ function NotFoundPage() {
             <motion.p
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-xs text-neutral-500"
+              className="text-xs text-neutral-400"
             >
               ✅ Report received. We've assigned it to the dog. Estimated fix: <span className="text-neutral-400">never</span>.
             </motion.p>
           ) : (
             <button
               onClick={() => setReported(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 transition-colors hover:text-neutral-400"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-400 transition-colors hover:text-neutral-400"
             >
               <Bug className="h-3.5 w-3.5" />
               Report this "bug"

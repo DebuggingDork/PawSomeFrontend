@@ -158,7 +158,7 @@ export function NotificationBell() {
             {(!notifications || notifications.length === 0) && (
               <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
                 <BellOff className="h-6 w-6 text-neutral-700" />
-                <p className="text-sm text-neutral-500">You're all caught up.</p>
+                <p className="text-sm text-neutral-400">You're all caught up.</p>
               </div>
             )}
 
@@ -182,7 +182,7 @@ export function NotificationBell() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm text-neutral-200">{n.message}</p>
-                        <p className="mt-0.5 text-xs text-neutral-500">{timeAgo(n.created_at)}</p>
+                        <p className="mt-0.5 text-xs text-neutral-400">{timeAgo(n.created_at)}</p>
 
                         {n.notification_type === 'new_like' && !n.is_read && (
                           <div className="mt-2 flex gap-2">
@@ -235,7 +235,7 @@ export function NotificationBell() {
                       onClick={() => deleteMutation.mutate(n.id)}
                       aria-label="Dismiss notification"
                       title="Dismiss"
-                      className="absolute right-2 top-2 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-neutral-600 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 hoverable:top-3 hoverable:h-6 hoverable:w-6 hoverable:opacity-0 hoverable:group-hover:opacity-100"
+                      className="absolute right-2 top-2 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-neutral-400 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 hoverable:top-3 hoverable:h-6 hoverable:w-6 hoverable:opacity-0 hoverable:group-hover:opacity-100"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>

@@ -174,13 +174,13 @@ function ForgotPasswordPage() {
                 className="space-y-4"
               >
                 <div className="relative">
-                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                   <input
                     type="email"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none"
                     required
                     autoComplete="email"
                   />
@@ -230,12 +230,12 @@ function ForgotPasswordPage() {
                     placeholder="000000"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 text-center text-2xl font-bold tracking-[0.5em] text-white placeholder:text-neutral-600 transition-colors focus:border-brand focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 text-center text-2xl font-bold tracking-[0.5em] text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none"
                     required
                     maxLength={6}
                     autoComplete="one-time-code"
                   />
-                  <p className="mt-2 text-center text-xs text-neutral-500">Enter the 6-digit code from your email</p>
+                  <p className="mt-2 text-center text-xs text-neutral-400">Enter the 6-digit code from your email</p>
                 </div>
 
                 <motion.button
@@ -286,13 +286,13 @@ function ForgotPasswordPage() {
                 className="space-y-4"
               >
                 <div className="relative">
-                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="New password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none"
                     required
                     minLength={8}
                     autoComplete="new-password"
@@ -300,7 +300,7 @@ function ForgotPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-300"
                     tabIndex={-1}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -309,13 +309,13 @@ function ForgotPasswordPage() {
                 </div>
 
                 <div className="relative">
-                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none"
                     required
                     minLength={8}
                     autoComplete="new-password"

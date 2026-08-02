@@ -50,7 +50,7 @@ export function ReportModal({ reportedUserId, reportedPetId, onClose }: ReportMo
           <h2 className="flex items-center gap-2 font-display text-lg font-bold text-white">
             <Flag className="h-4 w-4 text-red-400" /> Report
           </h2>
-          <button onClick={onClose} aria-label="Close" className="text-neutral-500 hover:text-white">
+          <button onClick={onClose} aria-label="Close" className="text-neutral-400 hover:text-white">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -97,7 +97,7 @@ export function ReportModal({ reportedUserId, reportedPetId, onClose }: ReportMo
                 maxLength={2000}
                 required
                 placeholder="What happened? (minimum 10 characters)"
-                className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:border-red-400 focus:outline-none"
+                className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-400 focus:border-red-400 focus:outline-none"
               />
             </div>
 

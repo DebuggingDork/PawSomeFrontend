@@ -91,7 +91,7 @@ export function ChatBubble({
               type="button"
               onClick={() => setPickerOpen((v) => !v)}
               aria-label="React"
-              className="rounded-full p-1.5 text-neutral-500 hover:bg-neutral-800 hover:text-white"
+              className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-white"
             >
               <SmilePlus className="h-3.5 w-3.5" />
             </button>
@@ -104,7 +104,7 @@ export function ChatBubble({
                     else setConfirmOpen(true)
                   }}
                   aria-label="Delete message"
-                  className="rounded-full p-1.5 text-neutral-500 hover:bg-neutral-800 hover:text-red-400"
+                  className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-red-400"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -197,7 +197,7 @@ export function ChatBubble({
           </div>
         )}
 
-        <div className="flex items-center gap-1 px-1 text-[11px] text-neutral-500">
+        <div className="flex items-center gap-1 px-1 text-[11px] text-neutral-400">
           <span>{formatTime(message.created_at)}</span>
           {/* Delivery state, in the order it actually happens: still in flight,
               gave up waiting, delivered, then seen. Without the first two a
@@ -210,7 +210,7 @@ export function ChatBubble({
             </span>
           )}
           {isMine && message.pending && !message.failed && (
-            <Clock className="h-3.5 w-3.5 text-neutral-500" aria-label="Sending" />
+            <Clock className="h-3.5 w-3.5 text-neutral-400" aria-label="Sending" />
           )}
           {isMine && showSeen && !message.pending && !message.failed && (
             <span className="text-brand-light" title={message.is_read ? 'Seen' : 'Sent'}>

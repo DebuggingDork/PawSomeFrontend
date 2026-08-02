@@ -15,7 +15,7 @@ interface PlaydatePanelProps {
 }
 
 const FIELD =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder:text-neutral-400 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
 
 /** `datetime-local` wants "YYYY-MM-DDTHH:mm" in *local* time, but toISOString
  * emits UTC — hence shifting by the offset before slicing. */
@@ -162,7 +162,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           >
             <Plus className="h-3.5 w-3.5" /> Propose
           </button>
-          <button type="button" onClick={onClose} aria-label="Close playdates" className="rounded-lg p-1.5 text-neutral-500 hover:text-white">
+          <button type="button" onClick={onClose} aria-label="Close playdates" className="rounded-lg p-1.5 text-neutral-400 hover:text-white">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -179,7 +179,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           className="mb-3 space-y-3 rounded-xl border border-neutral-800 bg-neutral-950/70 p-3"
         >
           <div>
-            <span className="mb-1.5 block text-xs font-medium text-neutral-500">When</span>
+            <span className="mb-1.5 block text-xs font-medium text-neutral-400">When</span>
 
             <div className="mb-2 flex flex-wrap gap-1.5">
               {quickSlots.map((slot) => (
@@ -199,7 +199,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
             </div>
 
             <div className="relative">
-              <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+              <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
               <input
                 type="datetime-local"
                 value={when}
@@ -210,7 +210,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
             </div>
 
             {whenDate && (
-              <p className="mt-1.5 text-xs text-neutral-500">
+              <p className="mt-1.5 text-xs text-neutral-400">
                 {WHEN_FORMAT.format(whenDate)}
                 {isSoon && <span className="ml-1.5 text-brand">· within 24 hours</span>}
               </p>
@@ -218,7 +218,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           </div>
 
           <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-neutral-500">Where (name)</span>
+            <span className="mb-1.5 block text-xs font-medium text-neutral-400">Where (name)</span>
             <input
               type="text"
               value={locationName}
@@ -241,7 +241,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           />
 
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-neutral-500">Pincode</span>
+            <span className="mb-1 block text-xs font-medium text-neutral-400">Pincode</span>
             <input
               type="text"
               value={pincode}
@@ -253,7 +253,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           </label>
 
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-neutral-500">Note (optional)</span>
+            <span className="mb-1 block text-xs font-medium text-neutral-400">Note (optional)</span>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -284,7 +284,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
       {!playdatesQuery.isLoading && playdates.length === 0 && !showForm && (
         <div className="flex flex-col items-center gap-1 py-6 text-center">
           <CalendarHeart className="h-8 w-8 text-neutral-700" />
-          <p className="text-sm text-neutral-500">No playdates yet — propose one!</p>
+          <p className="text-sm text-neutral-400">No playdates yet — propose one!</p>
         </div>
       )}
 

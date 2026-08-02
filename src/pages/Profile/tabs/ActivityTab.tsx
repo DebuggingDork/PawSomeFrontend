@@ -102,7 +102,7 @@ function HistoryView({ petId }: { petId: string }) {
   const set = (patch: Partial<SwipeHistoryFilters>) => setFilters((f) => ({ ...f, ...patch, offset: 0 }))
 
   const filterInputClass =
-    'rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none'
+    'rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none'
 
   return (
     <div>
@@ -160,7 +160,7 @@ function HistoryView({ petId }: { petId: string }) {
                 <PetAvatar name={item.target_pet.name} photoUrl={item.target_pet.primary_photo_url} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-white">{item.target_pet.name}</p>
-                  <p className="truncate text-xs text-neutral-500">
+                  <p className="truncate text-xs text-neutral-400">
                     {item.target_pet.breed} • {new Date(item.created_at).toLocaleDateString()}
                   </p>
                 </div>

@@ -161,7 +161,7 @@ export const HowItWorksSection: React.FC = () => {
               <article>
                 {step.art}
                 <div className="mt-6 flex gap-4">
-                  <span className="font-accent text-sm text-neutral-600" aria-hidden="true">
+                  <span className="font-accent text-sm text-neutral-400" aria-hidden="true">
                     {step.number}
                   </span>
                   <div className="min-w-0">

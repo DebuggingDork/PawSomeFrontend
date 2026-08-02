@@ -29,14 +29,14 @@ export function EmptyState({ icon: Icon, title, description, action, size = 'sm'
         </div>
       ) : (
         <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-900 ring-1 ring-neutral-800/80">
-          <Icon className="h-6 w-6 text-neutral-500" />
+          <Icon className="h-6 w-6 text-neutral-400" />
         </div>
       )}
       <p className={isLarge ? 'mb-2 font-display text-2xl font-bold text-white' : 'mb-1 font-semibold text-neutral-200'}>
         {title}
       </p>
       {description && (
-        <p className={isLarge ? 'mb-6 max-w-sm text-neutral-400' : 'mb-5 max-w-xs text-sm text-neutral-500'}>
+        <p className={isLarge ? 'mb-6 max-w-sm text-neutral-400' : 'mb-5 max-w-xs text-sm text-neutral-400'}>
           {description}
         </p>
       )}

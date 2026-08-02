@@ -301,7 +301,7 @@ export function PhotoUploader({
             </>
           ) : (
             <>
-              <ImagePlus className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-brand" />
+              <ImagePlus className="h-6 w-6 text-neutral-400 transition-colors group-hover:text-brand" />
               <span className="px-2 text-center text-xs font-medium text-neutral-300 group-hover:text-white">
                 {label}
               </span>
@@ -332,7 +332,7 @@ export function PhotoUploader({
               <img src={displayUrl} alt={photoAlt} className="h-full w-full object-cover" />
             ) : (
               <>
-                <Camera className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-brand" />
+                <Camera className="h-6 w-6 text-neutral-400 transition-colors group-hover:text-brand" />
                 <span className="text-sm font-medium text-neutral-300 group-hover:text-white">{label}</span>
               </>
             )}

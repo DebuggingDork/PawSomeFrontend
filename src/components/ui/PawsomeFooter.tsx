@@ -142,12 +142,12 @@ function PawsomeFooter() {
         {/* Footer bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center text-xs space-y-4 md:space-y-0">
           {/* Copyright */}
-          <p className="text-neutral-500">
+          <p className="text-neutral-400">
             &copy; {new Date().getFullYear()} PawSome. All rights reserved.
           </p>
 
           {/* Links */}
-          <div className="flex gap-6 text-neutral-500">
+          <div className="flex gap-6 text-neutral-400">
             <Link to="/privacy" className="hover:text-neutral-300 transition-colors">
               Privacy Policy
             </Link>

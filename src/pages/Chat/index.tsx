@@ -171,13 +171,13 @@ function ChatPage() {
                   <Link to={`/pets/${selected.otherPet.id}`} className="block w-fit max-w-full truncate font-semibold text-white hover:text-brand-light">
                     {selected.otherPet.name}
                   </Link>
-                  <p className="truncate text-xs text-neutral-500">
+                  <p className="truncate text-xs text-neutral-400">
                     {otherOnline ? 'Online now' : selected.otherPet.breed}
                     {/* Whose conversation this is. Every message you send here
                         is from this pet, and with several pets there was
                         nothing on screen saying which. */}
                     {pets.length > 1 && yourPetName && (
-                      <span className="text-neutral-600"> · as {yourPetName}</span>
+                      <span className="text-neutral-400"> · as {yourPetName}</span>
                     )}
                   </p>
                 </div>
@@ -253,13 +253,13 @@ function ChatPage() {
                 className="thin-scrollbar lenis-prevent-scroll flex-1 space-y-3 overflow-y-auto px-5 py-4"
               >
                 {messagesLoading && (
-                  <div className="flex h-full items-center justify-center text-sm text-neutral-500">
+                  <div className="flex h-full items-center justify-center text-sm text-neutral-400">
                     Loading conversation…
                   </div>
                 )}
 
                 {!messagesLoading && messages.length === 0 && (
-                  <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-neutral-500">
+                  <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-neutral-400">
                     <PetAvatar name={selected.otherPet.name} photoUrl={selected.otherPet.primary_photo_url} size="lg" />
                     <p className="font-medium text-neutral-300">You matched with {selected.otherPet.name}!</p>
                     <p className="text-sm">Say hello 👋</p>
@@ -301,7 +301,7 @@ function ChatPage() {
                   value={draft}
                   onChange={(e) => handleDraftChange(e.target.value)}
                   placeholder={`Message ${selected.otherPet.name}...`}
-                  className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
+                  className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none"
                 />
                 <button
                   type="submit"

@@ -224,7 +224,7 @@ export function PhotosTab() {
       </div>
 
       {selectedPet && (
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-neutral-400">
           {photos.length >= MAX_PHOTOS_PER_PET
             ? `That's the ${MAX_PHOTOS_PER_PET}-photo limit. Remove one to add another.`
             : `${photos.length} of ${MAX_PHOTOS_PER_PET} photos. The primary one is what people see first in Discover.`}

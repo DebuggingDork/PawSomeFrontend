@@ -170,7 +170,7 @@ export function PetPhotosStep({ petId, petName, photos, onDraft, onPhotosChanged
 
       {actionError && <p className="text-xs text-red-400">{actionError}</p>}
 
-      <p className="text-xs leading-relaxed text-neutral-500">
+      <p className="text-xs leading-relaxed text-neutral-400">
         {hasPhotos
           ? `${photos.length} of ${MAX_PHOTOS} photos. The main one is what other owners see first — tap the star on any photo to change it.`
           : 'The first photo is required — it is the whole first impression. The other four slots are optional but worth filling.'}

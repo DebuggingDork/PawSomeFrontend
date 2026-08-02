@@ -53,7 +53,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
             <img src={draft.petPhotoUrl!} alt="" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <PawPrint className="h-5 w-5 text-neutral-600" />
+              <PawPrint className="h-5 w-5 text-neutral-400" />
             </div>
           )}
         </div>
@@ -106,7 +106,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
               className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center"
             >
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-neutral-800 bg-neutral-950">
-                <Camera className="h-6 w-6 text-neutral-600" />
+                <Camera className="h-6 w-6 text-neutral-400" />
               </div>
               <p className="text-sm font-medium text-neutral-400">
                 {hasName ? `${draft.petName}'s photo goes here` : 'The photo lands here'}
@@ -144,7 +144,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
           }`}
         >
           <div className="mb-1 flex items-baseline gap-1.5">
-            <h3 className={`font-display text-2xl font-bold ${hasName ? 'text-white' : 'text-neutral-600'}`}>
+            <h3 className={`font-display text-2xl font-bold ${hasName ? 'text-white' : 'text-neutral-400'}`}>
               {hasName ? draft.petName : 'Name'}
             </h3>
             <AnimatePresence>
@@ -163,7 +163,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
             </AnimatePresence>
           </div>
 
-          <p className={`mb-2 text-sm ${draft.breed ? 'text-neutral-300' : 'text-neutral-600'}`}>
+          <p className={`mb-2 text-sm ${draft.breed ? 'text-neutral-300' : 'text-neutral-400'}`}>
             {draft.breed || `${speciesEmoji(draft.species)} Breed`}
           </p>
 

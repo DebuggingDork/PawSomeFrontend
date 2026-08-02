@@ -189,7 +189,7 @@ export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDi
                 <div className="mt-5 flex items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-950/40 p-3.5">
                   <PetAvatar name={pet.owner.full_name ?? 'Unknown'} photoUrl={pet.owner.profile_photo_url} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs uppercase tracking-wide text-neutral-500">Owner</p>
+                    <p className="truncate text-xs uppercase tracking-wide text-neutral-400">Owner</p>
                     <p className="truncate text-sm font-semibold text-white">{pet.owner.full_name ?? 'Anonymous'}</p>
                   </div>
                 </div>

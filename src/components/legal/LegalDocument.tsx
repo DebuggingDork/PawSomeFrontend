@@ -82,7 +82,7 @@ export function LegalDocument({ title, lede, lastUpdated, summary, sections }: L
           {title}
         </h1>
         <p className="mt-5 max-w-[62ch] text-pretty text-lg leading-relaxed text-neutral-300">{lede}</p>
-        <p className="mt-6 font-accent text-xs uppercase tracking-[0.14em] text-neutral-500">
+        <p className="mt-6 font-accent text-xs uppercase tracking-[0.14em] text-neutral-400">
           Last updated {lastUpdated}
         </p>
       </header>
@@ -100,7 +100,7 @@ export function LegalDocument({ title, lede, lastUpdated, summary, sections }: L
         <div className="mt-16 gap-16 lg:grid lg:grid-cols-[210px_minmax(0,1fr)]">
           <nav aria-label="On this page" className="mb-12 lg:mb-0">
             <div className="lg:sticky lg:top-28">
-              <p className="font-accent text-xs uppercase tracking-[0.14em] text-neutral-500">On this page</p>
+              <p className="font-accent text-xs uppercase tracking-[0.14em] text-neutral-400">On this page</p>
               <ul className="mt-4 space-y-1">
                 {sections.map((section, index) => (
                   <li key={section.id}>
@@ -114,7 +114,7 @@ export function LegalDocument({ title, lede, lastUpdated, summary, sections }: L
                           : 'text-neutral-400 hover:text-neutral-200',
                       )}
                     >
-                      <span className="mr-2 font-accent text-xs text-neutral-600">{index + 1}</span>
+                      <span className="mr-2 font-accent text-xs text-neutral-400">{index + 1}</span>
                       {section.title}
                     </a>
                   </li>
@@ -127,7 +127,7 @@ export function LegalDocument({ title, lede, lastUpdated, summary, sections }: L
             {sections.map((section, index) => (
               <section key={section.id} id={section.id} className="scroll-mt-28 border-t border-neutral-900 pt-10 first:border-t-0 first:pt-0 [&+&]:mt-14">
                 <h2 className="font-display text-2xl font-bold leading-snug text-white md:text-[1.75rem]">
-                  <span className="mr-3 font-accent text-base font-medium text-neutral-600">{index + 1}</span>
+                  <span className="mr-3 font-accent text-base font-medium text-neutral-400">{index + 1}</span>
                   {section.title}
                 </h2>
                 <div className="mt-5">{section.content}</div>

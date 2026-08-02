@@ -390,7 +390,7 @@ export function ImageCropper({
 
                 {!ready && !failed && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="h-5 w-5 animate-spin text-neutral-500" />
+                    <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
                   </div>
                 )}
                 {failed && !ready && (

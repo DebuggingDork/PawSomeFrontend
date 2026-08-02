@@ -93,7 +93,7 @@ function MatchesPage() {
                     </Link>
                   </h3>
                   <p className="truncate text-sm text-neutral-400">{conversation.otherPet.breed}</p>
-                  <p className="mt-1 text-xs text-neutral-500">
+                  <p className="mt-1 text-xs text-neutral-400">
                     {pets.length > 1 && petNameById.has(conversation.yourPetId) && (
                       <span className="text-brand-light">
                         {petNameById.get(conversation.yourPetId)} &middot;{' '}

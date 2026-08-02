@@ -150,7 +150,7 @@ export function PetForm({ initial, onSubmit, onCancel, submitting, submitLabel }
             value={pincode}
             onChange={(e) => setPincode(e.target.value)}
             placeholder="Auto-filled from location"
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:border-brand focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none"
           />
         </div>
       </div>
