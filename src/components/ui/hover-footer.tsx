@@ -143,7 +143,7 @@ export const TextHoverEffect = ({
         fontWeight="900"
         fontFamily="helvetica, Arial, sans-serif"
         strokeWidth="1"
-        stroke="#ff6b35"
+        stroke="var(--color-brand)"
         fill="transparent"
         letterSpacing="-2"
         style={{
@@ -186,7 +186,7 @@ export const FooterBackgroundGradient = () => {
       className="absolute inset-0 -z-10 pointer-events-none"
       style={{
         background:
-          "radial-gradient(ellipse 100% 60% at 50% 100%, rgba(255,107,53,0.12) 0%, transparent 70%)",
+          "radial-gradient(ellipse 100% 60% at 50% 100%, color-mix(in srgb, var(--color-brand) 12%, transparent) 0%, transparent 70%)",
       }}
     />
   );

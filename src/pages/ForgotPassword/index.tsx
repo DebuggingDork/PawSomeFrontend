@@ -111,7 +111,7 @@ function ForgotPasswordPage() {
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
       {/* Background gradients */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-1/3 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ff6b35]/20 blur-[120px]" />
+        <div className="absolute left-1/2 top-1/3 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/20 blur-[120px]" />
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-pink-500/10 blur-[100px]" />
       </div>
 
@@ -128,7 +128,7 @@ function ForgotPasswordPage() {
                 the auth page. A gradient tile with a stock paw glyph stood here,
                 on the screens where the brand most needs to be recognisable. */}
             <div className="relative mb-4">
-              <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-[#ff6b35]/30 blur-xl" />
+              <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/30 blur-xl" />
               <img src={logoIcon} alt="PawSome" className="h-14 w-14 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
             </div>
             <h2 className="font-display text-2xl font-bold text-white">
@@ -180,7 +180,7 @@ function ForgotPasswordPage() {
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none"
                     required
                     autoComplete="email"
                   />
@@ -191,7 +191,7 @@ function ForgotPasswordPage() {
                   disabled={submitting}
                   whileHover={{ scale: submitting ? 1 : 1.01 }}
                   whileTap={{ scale: submitting ? 1 : 0.99 }}
-                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3 font-semibold text-white shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {submitting ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -230,7 +230,7 @@ function ForgotPasswordPage() {
                     placeholder="000000"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 text-center text-2xl font-bold tracking-[0.5em] text-white placeholder:text-neutral-600 transition-colors focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 text-center text-2xl font-bold tracking-[0.5em] text-white placeholder:text-neutral-600 transition-colors focus:border-brand focus:outline-none"
                     required
                     maxLength={6}
                     autoComplete="one-time-code"
@@ -243,7 +243,7 @@ function ForgotPasswordPage() {
                   disabled={submitting || otp.length !== 6}
                   whileHover={{ scale: submitting || otp.length !== 6 ? 1 : 1.01 }}
                   whileTap={{ scale: submitting || otp.length !== 6 ? 1 : 0.99 }}
-                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3 font-semibold text-white shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {submitting ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -268,7 +268,7 @@ function ForgotPasswordPage() {
                     type="button"
                     onClick={handleResendOTP}
                     disabled={submitting}
-                    className="text-[#ff6b35] transition-colors hover:text-[#ff8c5c] disabled:opacity-50"
+                    className="text-brand transition-colors hover:text-brand-light disabled:opacity-50"
                   >
                     Resend code
                   </button>
@@ -292,7 +292,7 @@ function ForgotPasswordPage() {
                     placeholder="New password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-11 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none"
                     required
                     minLength={8}
                     autoComplete="new-password"
@@ -315,7 +315,7 @@ function ForgotPasswordPage() {
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-3 pl-11 pr-4 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none"
                     required
                     minLength={8}
                     autoComplete="new-password"
@@ -327,7 +327,7 @@ function ForgotPasswordPage() {
                   disabled={submitting}
                   whileHover={{ scale: submitting ? 1 : 1.01 }}
                   whileTap={{ scale: submitting ? 1 : 0.99 }}
-                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3 font-semibold text-white shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {submitting ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -354,7 +354,7 @@ function ForgotPasswordPage() {
                 <p className="text-sm text-neutral-300">Your password has been reset successfully. You can now sign in with your new password.</p>
                 <Link
                   to="/auth"
-                  className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40"
+                  className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl hover:shadow-brand/40"
                 >
                   Go to Sign In
                   <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />

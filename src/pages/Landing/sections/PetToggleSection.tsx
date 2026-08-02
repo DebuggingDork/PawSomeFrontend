@@ -171,11 +171,11 @@ export const PetToggleSection: React.FC = () => {
                     (isInView ? (
                       <motion.span
                         layoutId="toggle-pill"
-                        className="absolute inset-0 rounded-full bg-[#ff6b35] shadow-[0_0_20px_rgba(255,107,53,0.28)]"
+                        className="absolute inset-0 rounded-full bg-brand shadow-[0_0_20px_rgba(255,107,53,0.28)]"
                         transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                       />
                     ) : (
-                      <span className="absolute inset-0 rounded-full bg-[#ff6b35] shadow-[0_0_20px_rgba(255,107,53,0.28)]" />
+                      <span className="absolute inset-0 rounded-full bg-brand shadow-[0_0_20px_rgba(255,107,53,0.28)]" />
                     ))}
                   <span className="relative z-10">
                     {tab.label}
@@ -200,7 +200,7 @@ export const PetToggleSection: React.FC = () => {
               We could not load the community just now.{' '}
               <Link
                 to="/community"
-                className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline"
+                className="text-brand underline-offset-4 transition-colors hover:text-brand-light hover:underline"
               >
                 Try the full list
               </Link>
@@ -223,7 +223,7 @@ export const PetToggleSection: React.FC = () => {
           <ScrollReveal delay={0.1}>
             <Link
               to="/community"
-              className="group mt-12 inline-flex items-center gap-2 border-t border-neutral-800 pt-8 font-semibold text-white transition-colors duration-200 hover:text-[#ff6b35]"
+              className="group mt-12 inline-flex items-center gap-2 border-t border-neutral-800 pt-8 font-semibold text-white transition-colors duration-200 hover:text-brand"
             >
               See all {pets.total} pets
               <ArrowRight

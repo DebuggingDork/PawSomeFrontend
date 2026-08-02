@@ -195,14 +195,14 @@ function AboutPage() {
 
           <div className="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-2">
             <ScrollReveal direction="up" delay={0.05} className="flex gap-4">
-              <ShieldCheck className="h-6 w-6 shrink-0 text-[#ff6b35]" />
+              <ShieldCheck className="h-6 w-6 shrink-0 text-brand" />
               <div>
                 <h3 className="font-semibold text-white">Verification over vibes</h3>
                 <p className="mt-1.5 text-pretty leading-relaxed text-neutral-300">
                   Owners verify their email before they can message anyone. It is a low bar, we say so on the{' '}
                   <Link
                     to="/faq"
-                    className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline"
+                    className="text-brand underline-offset-4 transition-colors hover:text-brand-light hover:underline"
                   >
                     FAQ
                   </Link>
@@ -211,7 +211,7 @@ function AboutPage() {
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={0.1} className="flex gap-4">
-              <MapPin className="h-6 w-6 shrink-0 text-[#ff6b35]" />
+              <MapPin className="h-6 w-6 shrink-0 text-brand" />
               <div>
                 <h3 className="font-semibold text-white">Local, not global</h3>
                 <p className="mt-1.5 text-pretty leading-relaxed text-neutral-300">
@@ -221,7 +221,7 @@ function AboutPage() {
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={0.15} className="flex gap-4">
-              <MessageCircle className="h-6 w-6 shrink-0 text-[#ff6b35]" />
+              <MessageCircle className="h-6 w-6 shrink-0 text-brand" />
               <div>
                 <h3 className="font-semibold text-white">Conversations, not just swipes</h3>
                 <p className="mt-1.5 text-pretty leading-relaxed text-neutral-300">
@@ -230,7 +230,7 @@ function AboutPage() {
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={0.2} className="flex gap-4">
-              <Heart className="h-6 w-6 shrink-0 text-[#ff6b35]" />
+              <Heart className="h-6 w-6 shrink-0 text-brand" />
               <div>
                 <h3 className="font-semibold text-white">Built for the pet first</h3>
                 <p className="mt-1.5 text-pretty leading-relaxed text-neutral-300">
@@ -251,7 +251,7 @@ function AboutPage() {
           </h2>
           <Link
             to="/discover"
-            className="inline-flex items-center gap-2 rounded-full bg-[#ff6b35] px-7 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-[transform,background-color] duration-200 ease-out hover:bg-[#ff5722] active:scale-[0.97] motion-reduce:transition-none"
+            className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3 font-semibold text-white shadow-lg shadow-brand/25 transition-[transform,background-color] duration-200 ease-out hover:bg-brand-dark active:scale-[0.97] motion-reduce:transition-none"
           >
             <Heart className="h-4 w-4" />
             Find matches near you

@@ -285,7 +285,7 @@ export function PhotoUploader({
           whileHover={status === 'uploading' ? undefined : { scale: 1.01 }}
           whileTap={status === 'uploading' ? undefined : { scale: 0.99 }}
           aria-label={label}
-          className="group relative flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/40 transition-colors hover:border-[#ff6b35] hover:bg-neutral-900/70 disabled:cursor-wait"
+          className="group relative flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/40 transition-colors hover:border-brand hover:bg-neutral-900/70 disabled:cursor-wait"
         >
           {status === 'uploading' ? (
             <>
@@ -301,7 +301,7 @@ export function PhotoUploader({
             </>
           ) : (
             <>
-              <ImagePlus className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-[#ff6b35]" />
+              <ImagePlus className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-brand" />
               <span className="px-2 text-center text-xs font-medium text-neutral-300 group-hover:text-white">
                 {label}
               </span>
@@ -320,7 +320,7 @@ export function PhotoUploader({
               ? status === 'error'
                 ? 'border-red-500/40'
                 : 'border-white/10'
-              : 'border-dashed border-neutral-700 bg-neutral-900/60 hover:border-[#ff6b35]'
+              : 'border-dashed border-neutral-700 bg-neutral-900/60 hover:border-brand'
           }`}
         >
           <div
@@ -332,7 +332,7 @@ export function PhotoUploader({
               <img src={displayUrl} alt={photoAlt} className="h-full w-full object-cover" />
             ) : (
               <>
-                <Camera className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-[#ff6b35]" />
+                <Camera className="h-6 w-6 text-neutral-500 transition-colors group-hover:text-brand" />
                 <span className="text-sm font-medium text-neutral-300 group-hover:text-white">{label}</span>
               </>
             )}
@@ -397,7 +397,7 @@ export function PhotoUploader({
             disabled={status === 'uploading'}
             whileHover={{ scale: status === 'uploading' ? 1 : 1.02 }}
             whileTap={{ scale: status === 'uploading' ? 1 : 0.98 }}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/60 px-4 py-6 text-sm font-medium text-neutral-300 transition-colors hover:border-[#ff6b35] hover:text-white disabled:cursor-wait"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/60 px-4 py-6 text-sm font-medium text-neutral-300 transition-colors hover:border-brand hover:text-white disabled:cursor-wait"
           >
             {status === 'uploading' ? (
               <>

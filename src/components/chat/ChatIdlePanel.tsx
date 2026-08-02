@@ -45,7 +45,7 @@ const TIPS: Tip[] = [
   {
     key: 'likes',
     icon: Heart,
-    chip: 'bg-[#ff6b35]/15 text-[#ff8c5c] ring-[#ff6b35]/30',
+    chip: 'bg-brand/15 text-brand-light ring-brand/30',
     title: 'Liking is not shouting into the void.',
     body: 'They get notified as soon as you like them. If they like you back, the match happens on the spot and this chat opens itself.',
   },

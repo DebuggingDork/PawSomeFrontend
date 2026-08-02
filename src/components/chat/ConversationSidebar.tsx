@@ -59,7 +59,7 @@ export function ConversationSidebar({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search matches..."
-            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-2 pl-9 pr-3 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-2 pl-9 pr-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
           />
         </div>
       </div>
@@ -88,7 +88,7 @@ export function ConversationSidebar({
             action={
               <Link
                 to="/discover"
-                className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+                className="rounded-full bg-gradient-to-r from-brand to-pink-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
               >
                 Find matches
               </Link>
@@ -119,7 +119,7 @@ export function ConversationSidebar({
                     </div>
                     <p className="truncate text-xs text-neutral-500">
                       {yourPetName(conversation.yourPetId) && (
-                        <span className="text-[#ff8c5c]">{yourPetName(conversation.yourPetId)} · </span>
+                        <span className="text-brand-light">{yourPetName(conversation.yourPetId)} · </span>
                       )}
                       {conversation.otherPet.breed} · {timeAgo(conversation.createdAt)}
                     </p>

@@ -79,7 +79,7 @@ export const HeroSection = () => {
               </HeroEntranceItem>
               <HeroEntranceItem
                 as="span"
-                className="mt-1 flex whitespace-nowrap text-[#ff6b35] md:absolute md:right-8 md:top-[64%] md:mt-0 md:justify-end md:text-right lg:right-8 lg:top-[64%]"
+                className="mt-1 flex whitespace-nowrap text-brand md:absolute md:right-8 md:top-[64%] md:mt-0 md:justify-end md:text-right lg:right-8 lg:top-[64%]"
                 style={{
                   fontSize: 'clamp(2.5rem, 6vw, 4.75rem)',
                   textShadow: '0 2px 28px rgba(0,0,0,0.35)',
@@ -111,7 +111,7 @@ export const HeroSection = () => {
               <div className="flex flex-wrap items-center justify-center gap-3 md:justify-end">
                 <Link
                   to={isAuthenticated ? '/discover' : '/community'}
-                  className="inline-flex items-center gap-2.5 rounded-full bg-[#ff6b35] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#ff6b35]/35 transition-[transform,background-color] duration-200 ease-out hover:bg-[#ff5722] active:scale-[0.97] motion-reduce:transition-none sm:px-7 sm:text-[0.9375rem]"
+                  className="inline-flex items-center gap-2.5 rounded-full bg-brand px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/35 transition-[transform,background-color] duration-200 ease-out hover:bg-brand-dark active:scale-[0.97] motion-reduce:transition-none sm:px-7 sm:text-[0.9375rem]"
                 >
                   <MapPin className="h-[1.1em] w-[1.1em]" aria-hidden="true" />
                   Find matches near you
@@ -123,7 +123,7 @@ export const HeroSection = () => {
                   <Play className="h-[1em] w-[1em] fill-white" aria-hidden="true" />
                   See how it works
                 </a>
-                <HeartMark className="hidden h-7 w-7 rotate-12 text-[#ff6b35] md:block lg:h-8 lg:w-8" />
+                <HeartMark className="hidden h-7 w-7 rotate-12 text-brand md:block lg:h-8 lg:w-8" />
               </div>
             </HeroEntranceItem>
           </div>

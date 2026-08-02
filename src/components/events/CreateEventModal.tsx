@@ -16,7 +16,7 @@ const SPECIES_OPTIONS = [
 ]
 
 const FIELD =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
 
 function defaultDateTimeLocal(): string {
   const d = new Date(Date.now() + 24 * 60 * 60 * 1000)
@@ -198,7 +198,7 @@ export function CreateEventModal({ onClose }: CreateEventModalProps) {
               <button
                 type="submit"
                 disabled={!canSubmit || mutation.isPending}
-                className="w-full rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-[#ff6b35]/30 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-gradient-to-r from-brand to-pink-500 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-brand/30 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {mutation.isPending ? 'Posting…' : 'Post meetup'}
               </button>

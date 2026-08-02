@@ -83,7 +83,7 @@ export function PetsTab() {
         <button
           onClick={() => setMode({ kind: 'create' })}
           disabled={pets.length >= MAX_PETS}
-          className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#ff6b35]/30 transition-shadow hover:shadow-lg hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+          className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-brand/30 transition-shadow hover:shadow-lg hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
         >
           <Plus className="h-4 w-4" /> Add pet
         </button>

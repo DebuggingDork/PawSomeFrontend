@@ -17,27 +17,27 @@
   --font-accent: 'Space Grotesk', monospace;
   --font-serif: 'Playfair Display', serif;
   
-  --color-primary-50: #faf5ff;
-  --color-primary-100: #f3e8ff;
-  --color-primary-200: #e9d5ff;
-  --color-primary-300: #d8b4fe;
-  --color-primary-400: #c084fc;
-  --color-primary-500: #a855f7;
-  --color-primary-600: #9333ea;
-  --color-primary-700: #7e22ce;
-  --color-primary-800: #6b21a8;
-  --color-primary-900: #581c87;
-  
-  --color-accent-50: #fff1f2;
-  --color-accent-100: #ffe4e6;
-  --color-accent-200: #fecdd3;
-  --color-accent-300: #fda4af;
-  --color-accent-400: #fb7185;
-  --color-accent-500: #f43f5e;
-  --color-accent-600: #e11d48;
-  --color-accent-700: #be123c;
-  --color-accent-800: #9f1239;
-  --color-accent-900: #881337;
+  /* The brand orange, and the only place it is written down.
+   *
+   * It used to live as a literal `#ff6b35` in 386 places across 79 files, which
+   * meant the app had no single point of change: adjusting the orange, adding a
+   * pressed state, or introducing a second theme all meant a find-and-replace
+   * that would inevitably miss a few and leave the product with four slightly
+   * different oranges. Naming it here makes `bg-brand`, `text-brand`,
+   * `border-brand`, `shadow-brand/35` and friends fall out of Tailwind for free.
+   *
+   * The two neighbours are the states, and they move in opposite directions on
+   * purpose. A filled orange button is already bright, so it darkens on hover
+   * (-dark); an orange text link on near-black has nowhere to go but up, so it
+   * lightens (-light). Same interaction, opposite direction, because the
+   * background underneath is different.
+   *
+   * What is deliberately NOT here: the purple and rose ramps this block used to
+   * declare. They were referenced exactly zero times — leftovers from an early
+   * palette that the app had already grown out of. */
+  --color-brand: #ff6b35;
+  --color-brand-light: #ff8c5c;
+  --color-brand-dark: #ff5722;
 
   /* The built-in CSS easings are too weak to read as intentional — `ease-out`
      spends most of its curve nearly linear. These are the stronger variants:
@@ -117,7 +117,7 @@
 
 .datetime-field::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
-  background-color: rgba(255, 107, 53, 0.18);
+  background-color: color-mix(in srgb, var(--color-brand) 18%, transparent);
 }
 
 /* Autofilled fields. The browser repaints them with its own near-white
@@ -347,7 +347,7 @@ h1, h2, h3 {
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 107, 53, 0.8);
+  background: color-mix(in srgb, var(--color-brand) 80%, transparent);
 }
 
 .thin-scrollbar::-webkit-scrollbar-corner {
@@ -432,9 +432,9 @@ h1, h2, h3 {
   /* Centres the thumb on the 6px track. */
   margin-top: -10px;
   border-radius: 9999px;
-  background: #ff6b35;
+  background: var(--color-brand);
   border: 3px solid #0a0a0a;
-  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.45);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-brand) 45%, transparent);
 }
 
 .range-touch::-moz-range-track {
@@ -447,15 +447,15 @@ h1, h2, h3 {
   height: 26px;
   width: 26px;
   border-radius: 9999px;
-  background: #ff6b35;
+  background: var(--color-brand);
   border: 3px solid #0a0a0a;
-  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.45);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-brand) 45%, transparent);
 }
 
 .range-touch:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 30%, transparent);
 }
 
 .range-touch:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 30%, transparent);
 }

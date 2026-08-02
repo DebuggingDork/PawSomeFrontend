@@ -101,7 +101,7 @@ export const ClosingSection: React.FC = () => {
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               to="/auth"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff6b35] px-8 py-4 font-bold text-white shadow-lg shadow-[#ff6b35]/25 transition-[transform,background-color] duration-200 ease-out-quart hover:bg-[#ff5722] active:scale-[0.97] motion-reduce:transition-none"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 font-bold text-white shadow-lg shadow-brand/25 transition-[transform,background-color] duration-200 ease-out-quart hover:bg-brand-dark active:scale-[0.97] motion-reduce:transition-none"
             >
               <Heart className="h-4 w-4" aria-hidden="true" />
               Add your pet

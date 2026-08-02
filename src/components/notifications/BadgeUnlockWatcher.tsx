@@ -86,20 +86,20 @@ function BadgeToast({ badge, onDismiss, onOpen }: { badge: AchievementBadge; onD
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: 40, scale: 0.96 }}
       transition={{ duration: 0.45, ease: EASE_OUT }}
-      className="pointer-events-auto w-[19rem] overflow-hidden rounded-2xl border border-[#ff6b35]/30 bg-neutral-950/95 shadow-2xl shadow-black/60"
+      className="pointer-events-auto w-[19rem] overflow-hidden rounded-2xl border border-brand/30 bg-neutral-950/95 shadow-2xl shadow-black/60"
     >
       <div className="flex items-start gap-3 p-4">
         <motion.span
           initial={shouldReduceMotion ? false : { scale: 0.3, rotate: -25 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', bounce: 0.5, duration: 0.7, delay: 0.1 }}
-          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#ff6b35]/12 text-2xl"
+          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand/12 text-2xl"
         >
           {badge.icon}
         </motion.span>
 
         <button onClick={onOpen} className="min-w-0 flex-1 text-left">
-          <p className="text-[11px] font-semibold tracking-wide text-[#ff6b35]">Badge unlocked</p>
+          <p className="text-[11px] font-semibold tracking-wide text-brand">Badge unlocked</p>
           <p className="truncate font-display text-sm font-bold text-white">{badge.name}</p>
           <p className="mt-0.5 text-xs leading-snug text-neutral-400">{badge.description}</p>
         </button>
@@ -119,7 +119,7 @@ function BadgeToast({ badge, onDismiss, onOpen }: { badge: AchievementBadge; onD
           initial={{ scaleX: 1 }}
           animate={{ scaleX: 0 }}
           transition={{ duration: TOAST_DURATION_MS / 1000, ease: 'linear' }}
-          className="h-0.5 origin-left bg-gradient-to-r from-[#ff6b35] to-pink-500"
+          className="h-0.5 origin-left bg-gradient-to-r from-brand to-pink-500"
         />
       )}
     </motion.div>

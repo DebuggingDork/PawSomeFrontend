@@ -15,7 +15,7 @@ interface PlaydatePanelProps {
 }
 
 const FIELD =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
 
 /** `datetime-local` wants "YYYY-MM-DDTHH:mm" in *local* time, but toISOString
  * emits UTC — hence shifting by the offset before slicing. */
@@ -145,11 +145,11 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
       animate={{ height: 'auto', opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
       transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="thin-scrollbar lenis-prevent-scroll flex-shrink-0 max-h-80 overflow-y-auto border-b border-neutral-800/80 bg-gradient-to-b from-[#ff6b35]/5 to-transparent p-3"
+      className="thin-scrollbar lenis-prevent-scroll flex-shrink-0 max-h-80 overflow-y-auto border-b border-neutral-800/80 bg-gradient-to-b from-brand/5 to-transparent p-3"
     >
       <div className="mb-3 flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-white">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow shadow-[#ff6b35]/30">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-pink-500 text-white shadow shadow-brand/30">
             <CalendarHeart className="h-4 w-4" />
           </span>
           Playdates with {otherPetName}
@@ -158,7 +158,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="flex items-center gap-1 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+            className="flex items-center gap-1 rounded-lg bg-gradient-to-r from-brand to-pink-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
           >
             <Plus className="h-3.5 w-3.5" /> Propose
           </button>
@@ -189,7 +189,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
                   onClick={() => setWhen(slot.value)}
                   className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
                     slot.value === when
-                      ? 'border-[#ff6b35] bg-[#ff6b35]/15 text-[#ff6b35]'
+                      ? 'border-brand bg-brand/15 text-brand'
                       : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
                   }`}
                 >
@@ -212,7 +212,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
             {whenDate && (
               <p className="mt-1.5 text-xs text-neutral-500">
                 {WHEN_FORMAT.format(whenDate)}
-                {isSoon && <span className="ml-1.5 text-[#ff6b35]">· within 24 hours</span>}
+                {isSoon && <span className="ml-1.5 text-brand">· within 24 hours</span>}
               </p>
             )}
           </div>
@@ -267,7 +267,7 @@ export function PlaydatePanel({ matchId, yourPetId, otherPetName, onClose }: Pla
           <button
             type="submit"
             disabled={!canSubmit || proposeMutation.isPending}
-            className="w-full rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-[#ff6b35]/30 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full rounded-lg bg-gradient-to-r from-brand to-pink-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-brand/30 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {proposeMutation.isPending ? 'Sending…' : 'Send proposal'}
           </button>

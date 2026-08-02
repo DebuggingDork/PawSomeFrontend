@@ -60,7 +60,7 @@ function OwnerProfilePage() {
             type="button"
             onClick={() => setPreviewOpen(true)}
             aria-label={`View ${owner.full_name ?? 'this owner'}'s photo`}
-            className="flex-shrink-0 cursor-zoom-in rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/60 active:scale-95"
+            className="flex-shrink-0 cursor-zoom-in rounded-full ring-1 ring-transparent transition-all hover:ring-brand/60 active:scale-95"
           >
             <PetAvatar name={owner.full_name ?? 'Unknown'} photoUrl={owner.profile_photo_url} size="lg" />
           </button>
@@ -87,7 +87,7 @@ function OwnerProfilePage() {
             <Link
               key={pet.id}
               to={`/pets/${pet.id}`}
-              className="group overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/50 transition-all hover:border-[#ff6b35]"
+              className="group overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/50 transition-all hover:border-brand"
             >
               <div className="relative aspect-square overflow-hidden bg-neutral-800">
                 {pet.primary_photo_url ? (

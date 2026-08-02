@@ -33,7 +33,7 @@ function PetPanel({ pet }: { pet: Pet }) {
   return (
     <Link
       to={`/pets/${pet.id}`}
-      className={`group relative overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff6b35] ${PANEL_SIZE}`}
+      className={`group relative overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand ${PANEL_SIZE}`}
     >
       <PetPhoto
         src={pet.primary_photo_url}
@@ -145,7 +145,7 @@ export const FeaturedPetsSection: React.FC = () => {
         {/* Closing panel. Solid brand orange rather than the pink-to-violet
             gradient that used to sit here — one committed colour, and one that
             the rest of the product actually uses. */}
-        <div className="flex w-[85vw] min-h-[400px] max-w-xl shrink-0 flex-col justify-center rounded-3xl bg-[#ff6b35] p-8 md:h-[60dvh] md:w-[40vw] md:p-12">
+        <div className="flex w-[85vw] min-h-[400px] max-w-xl shrink-0 flex-col justify-center rounded-3xl bg-brand p-8 md:h-[60dvh] md:w-[40vw] md:p-12">
           <h3
             className="text-balance font-serif text-4xl font-medium leading-tight text-white md:text-5xl"
             style={{ letterSpacing: '-0.02em' }}

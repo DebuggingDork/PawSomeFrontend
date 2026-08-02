@@ -81,7 +81,7 @@ function EventsPage() {
     <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pb-20 pt-24 md:pt-28">
       {/* Decorative floating gradient blobs */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-16 -z-10 overflow-hidden">
-        <div className="animate-float absolute -left-16 h-64 w-64 rounded-full bg-[#ff6b35]/20 blur-3xl" />
+        <div className="animate-float absolute -left-16 h-64 w-64 rounded-full bg-brand/20 blur-3xl" />
         <div className="animate-float absolute right-0 top-10 h-72 w-72 rounded-full bg-pink-500/20 blur-3xl [animation-delay:-3s]" />
         <div className="animate-float absolute left-1/3 top-0 h-56 w-56 rounded-full bg-violet-500/10 blur-3xl [animation-delay:-1.5s]" />
       </div>
@@ -90,7 +90,7 @@ function EventsPage() {
       <div className="mb-10">
         <h1 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
           Get the pack{' '}
-          <span className="animate-gradient-pan bg-gradient-to-r from-[#ff6b35] via-pink-500 to-[#ff6b35] bg-[size:200%_auto] bg-clip-text text-transparent">
+          <span className="animate-gradient-pan bg-gradient-to-r from-brand via-pink-500 to-brand bg-[size:200%_auto] bg-clip-text text-transparent">
             together
           </span>
         </h1>
@@ -101,7 +101,7 @@ function EventsPage() {
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <button
             onClick={() => setShowCreate(true)}
-            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hoverable:hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/40"
+            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand/30 transition-all hoverable:hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/40"
           >
             <Plus className="h-4 w-4 transition-transform hoverable:group-hover:rotate-90" /> Post a meetup
           </button>
@@ -126,7 +126,7 @@ function EventsPage() {
           action={
             <button
               onClick={() => setShowCreate(true)}
-              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+              className="rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               Post a meetup
             </button>

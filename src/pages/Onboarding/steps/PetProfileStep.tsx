@@ -140,7 +140,7 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
                 // tiles are half again as wide as the first row's.
                 className={`flex flex-1 basis-[5rem] touch-manipulation flex-col items-center gap-1.5 rounded-2xl border px-3 py-3.5 transition-colors ${
                   selected
-                    ? 'border-[#ff6b35] bg-[#ff6b35]/12'
+                    ? 'border-brand bg-brand/12'
                     : 'border-neutral-800 bg-neutral-900/60 hoverable:hover:border-neutral-700'
                 }`}
               >
@@ -207,7 +207,7 @@ export function PetProfileStep({ initialLat, initialLng, initialAddress, onDraft
             // `range-touch` grows the thumb to a fingertip (see index.css).
             // `lenis-prevent-scroll` stops the smooth-scroll layer from claiming
             // the touch and scrolling the page instead of moving the handle.
-            className="range-touch lenis-prevent-scroll accent-[#ff6b35]"
+            className="range-touch lenis-prevent-scroll accent-brand"
           />
           <div className="mt-1.5 flex justify-between text-xs text-neutral-500">
             <span>1 month</span>

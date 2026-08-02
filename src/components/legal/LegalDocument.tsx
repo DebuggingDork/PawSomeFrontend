@@ -88,7 +88,7 @@ export function LegalDocument({ title, lede, lastUpdated, summary, sections }: L
       </header>
 
       <div className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="rounded-2xl bg-[#ff6b35]/[0.07] p-6 md:p-8">
+        <div className="rounded-2xl bg-brand/[0.07] p-6 md:p-8">
           <h2 className="font-display text-lg font-bold text-white">The short version</h2>
           <div className="mt-3 max-w-[68ch] space-y-3 leading-relaxed text-neutral-300">{summary}</div>
           <p className="mt-4 text-sm leading-relaxed text-neutral-400">
@@ -164,7 +164,7 @@ export function LI({ children }: { children: ReactNode }) {
     <li className="relative pl-6 leading-relaxed text-neutral-300">
       <span
         aria-hidden="true"
-        className="absolute left-0 top-[0.6em] h-1.5 w-1.5 rounded-full bg-[#ff6b35]"
+        className="absolute left-0 top-[0.6em] h-1.5 w-1.5 rounded-full bg-brand"
       />
       {children}
     </li>

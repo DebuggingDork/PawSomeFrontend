@@ -424,7 +424,7 @@ export function SwipeDeck({
             onClick={() => handleSwiped('like')}
             disabled={!top}
             aria-label="Like"
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hoverable:hover:scale-105"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand to-pink-500 text-white shadow-[0_0_32px_rgba(255,107,53,0.45)] transition duration-150 ease-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 motion-safe:hoverable:hover:scale-105"
           >
             <Heart className="h-7 w-7" fill="currentColor" />
           </button>

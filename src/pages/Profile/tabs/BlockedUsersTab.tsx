@@ -48,7 +48,7 @@ export function BlockedUsersTab() {
             <button
               onClick={() => removeMutation.mutate(block.id)}
               disabled={removeMutation.isPending}
-              className="rounded-full border border-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-300 hover:border-[#ff6b35] hover:text-white disabled:opacity-50"
+              className="rounded-full border border-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-300 hover:border-brand hover:text-white disabled:opacity-50"
             >
               Unblock
             </button>

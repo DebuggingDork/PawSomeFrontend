@@ -63,7 +63,7 @@ function MatchesPage() {
           action={
             <Link
               to="/discover"
-              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+              className="rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               Find matches
             </Link>
@@ -76,26 +76,26 @@ function MatchesPage() {
           {conversations.map((conversation) => (
             <div
               key={conversation.matchId}
-              className="group relative flex min-h-[180px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:border-[#ff6b35]/60 hover:shadow-xl"
+              className="group relative flex min-h-[180px] flex-col rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 shadow-black/20 transition-all hover:border-brand/60 hover:shadow-xl"
             >
               <div className="mb-4 flex items-start gap-4">
                 <Link
                   to={`/pets/${conversation.otherPet.id}`}
                   title={`View ${conversation.otherPet.name}'s profile`}
-                  className="flex-shrink-0 rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/60"
+                  className="flex-shrink-0 rounded-full ring-1 ring-transparent transition-all hover:ring-brand/60"
                 >
                   <PetAvatar name={conversation.otherPet.name} photoUrl={conversation.otherPet.primary_photo_url} size="xl" />
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                   <h3 className="truncate text-lg font-semibold">
-                    <Link to={`/pets/${conversation.otherPet.id}`} className="text-white hover:text-[#ff8c5c]">
+                    <Link to={`/pets/${conversation.otherPet.id}`} className="text-white hover:text-brand-light">
                       {conversation.otherPet.name}
                     </Link>
                   </h3>
                   <p className="truncate text-sm text-neutral-400">{conversation.otherPet.breed}</p>
                   <p className="mt-1 text-xs text-neutral-500">
                     {pets.length > 1 && petNameById.has(conversation.yourPetId) && (
-                      <span className="text-[#ff8c5c]">
+                      <span className="text-brand-light">
                         {petNameById.get(conversation.yourPetId)} &middot;{' '}
                       </span>
                     )}
@@ -117,7 +117,7 @@ function MatchesPage() {
 
               <Link
                 to={`/chat?match=${conversation.matchId}`}
-                className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#ff6b35] to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/20 transition-all hoverable:hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#ff6b35]/30"
+                className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-brand to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/20 transition-all hoverable:hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/30"
               >
                 <MessageCircle className="h-4 w-4" />
                 Send Message

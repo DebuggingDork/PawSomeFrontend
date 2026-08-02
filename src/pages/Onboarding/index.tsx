@@ -208,7 +208,7 @@ function OnboardingPage() {
           frame, and it was buying atmosphere the user could barely see behind
           the form anyway. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-[#ff6b35]/8 blur-[80px] sm:-left-32 sm:h-[30rem] sm:w-[30rem] sm:blur-[140px]" />
+        <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand/8 blur-[80px] sm:-left-32 sm:h-[30rem] sm:w-[30rem] sm:blur-[140px]" />
         <div className="absolute right-0 top-1/3 hidden h-[26rem] w-[26rem] rounded-full bg-pink-500/8 blur-[140px] sm:block" />
       </div>
 
@@ -365,7 +365,7 @@ function CompleteBlock({ petName, onContinue }: { petName: string; onContinue: (
         whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
         whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
         transition={{ duration: 0.2, ease: EASE_OUT }}
-        className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-8 py-4 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-[#ff6b35]/35 sm:w-auto sm:py-3.5"
+        className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand to-pink-500 px-8 py-4 font-semibold text-white shadow-lg shadow-brand/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-brand/35 sm:w-auto sm:py-3.5"
       >
         See who's nearby
         <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />

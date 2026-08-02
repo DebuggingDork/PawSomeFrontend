@@ -102,7 +102,7 @@ export function FavoritesTab() {
           action={
             <Link
               to="/community"
-              className="rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+              className="rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               Browse Community
             </Link>
@@ -132,7 +132,7 @@ export function FavoritesTab() {
                 }}
                 disabled={busy}
                 title={`Tell ${fav.target_pet.name}'s owner that ${selectedPet?.name} is interested`}
-                className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#ff6b35]/25 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-brand/25 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:opacity-50"
               >
                 <Heart className="h-3.5 w-3.5" />
                 Interested

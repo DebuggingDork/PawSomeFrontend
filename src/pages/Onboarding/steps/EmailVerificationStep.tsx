@@ -110,14 +110,14 @@ function CodeInput({
             // Six boxes have to share the width of a 320px screen, so they get
             // shorter and the digits smaller before the row is allowed to
             // overflow. The box is still 48px+ tall — a comfortable tap.
-            className={`h-14 w-full min-w-0 rounded-xl border text-center font-display text-xl font-bold text-white caret-[#ff6b35] transition-all duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 sm:h-16 sm:rounded-2xl sm:text-2xl ${
+            className={`h-14 w-full min-w-0 rounded-xl border text-center font-display text-xl font-bold text-white caret-brand transition-all duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 sm:h-16 sm:rounded-2xl sm:text-2xl ${
               invalid
                 ? 'border-red-500/60 bg-red-500/5 focus:border-red-500 focus:ring-red-500/25'
                 : filled
                   ? // A filled box holds its brand tint, so at a glance the row shows
                     // how much is done without having to read the digits.
-                    'border-[#ff6b35]/60 bg-[#ff6b35]/10 focus:border-[#ff6b35] focus:ring-[#ff6b35]/25'
-                  : 'border-neutral-800 bg-neutral-900/60 focus:border-[#ff6b35] focus:ring-[#ff6b35]/25'
+                    'border-brand/60 bg-brand/10 focus:border-brand focus:ring-brand/25'
+                  : 'border-neutral-800 bg-neutral-900/60 focus:border-brand focus:ring-brand/25'
             }`}
           />
         )
@@ -221,8 +221,8 @@ export function EmailVerificationStep({ email, onVerified }: Props) {
     <div className="space-y-6">
       {/* Destination */}
       <div className="flex items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/60 px-4 py-3.5">
-        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#ff6b35]/12">
-          <Mail className="h-4 w-4 text-[#ff6b35]" />
+        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand/12">
+          <Mail className="h-4 w-4 text-brand" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-xs text-neutral-500">Code sent to</p>

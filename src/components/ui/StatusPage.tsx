@@ -15,16 +15,16 @@ interface StatusPageProps {
 }
 
 const TONE_STYLES = {
-  brand: 'from-[#ff6b35] to-pink-500 shadow-[#ff6b35]/30',
+  brand: 'from-brand to-pink-500 shadow-brand/30',
   danger: 'from-red-500 to-orange-500 shadow-red-500/30',
   neutral: 'from-neutral-600 to-neutral-800 shadow-black/30',
 }
 
 /** Shared button classes so every state page's actions look consistent. */
 export const statusPagePrimaryButton =
-  'rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5'
+  'rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5'
 export const statusPageSecondaryButton =
-  'rounded-full border border-neutral-700 px-6 py-2.5 font-semibold text-neutral-300 transition-colors hover:border-[#ff6b35] hover:text-white'
+  'rounded-full border border-neutral-700 px-6 py-2.5 font-semibold text-neutral-300 transition-colors hover:border-brand hover:text-white'
 
 /** Shared full-page layout for app-level states (404, offline, session expired,
  * server error, maintenance, crash) so they all look and feel like one system. */

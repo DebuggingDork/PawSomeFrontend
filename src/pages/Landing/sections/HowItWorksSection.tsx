@@ -96,7 +96,7 @@ function MatchArt({ pets }: { pets: Pet[] }) {
             <PhotoOrGlyph pet={right} className="h-full w-full" />
           </div>
         </div>
-        <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#ff6b35] shadow-lg shadow-neutral-950/60">
+        <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand shadow-lg shadow-neutral-950/60">
           <PawPrint className="h-4 w-4 text-white" aria-hidden="true" />
         </span>
       </div>
@@ -169,7 +169,7 @@ export const HowItWorksSection: React.FC = () => {
                     <p className="mt-2 text-pretty leading-relaxed text-neutral-300">{step.body}</p>
                     <Link
                       to={step.cta.to}
-                      className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#ff6b35] transition-colors duration-200 hover:text-[#ff8c5c]"
+                      className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition-colors duration-200 hover:text-brand-light"
                     >
                       {step.cta.label}
                       <ArrowRight

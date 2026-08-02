@@ -56,14 +56,14 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
         onClick={() => setOpen((v) => !v)}
         className={`flex items-center gap-2 whitespace-nowrap rounded-full border py-1.5 pl-3 pr-2.5 text-sm font-medium transition-colors ${
           open || activeCount > 0
-            ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-white'
+            ? 'border-brand bg-brand/10 text-white'
             : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
         }`}
       >
         <SlidersHorizontal className="h-3.5 w-3.5" />
         Filters
         {activeCount > 0 && (
-          <span className="rounded-full bg-[#ff6b35]/20 px-1.5 py-0.5 text-xs font-medium text-[#ff8c5c]">
+          <span className="rounded-full bg-brand/20 px-1.5 py-0.5 text-xs font-medium text-brand-light">
             {activeCount}
           </span>
         )}
@@ -132,7 +132,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                   step={50}
                   value={filters.radius ?? 5000}
                   onChange={(e) => set({ radius: Number(e.target.value) })}
-                  className="w-full accent-[#ff6b35]"
+                  className="w-full accent-brand"
                 />
               </div>
 
@@ -142,7 +142,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                   <select
                     value={filters.species ?? ''}
                     onChange={(e) => set({ species: e.target.value || undefined, breed: undefined })}
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-brand focus:outline-none"
                   >
                     <option value="">Any</option>
                     <option value="dog">Dogs</option>
@@ -155,7 +155,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                   <select
                     value={filters.gender ?? ''}
                     onChange={(e) => set({ gender: e.target.value || undefined })}
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-brand focus:outline-none"
                   >
                     <option value="">Any</option>
                     <option value="male">Male</option>
@@ -184,7 +184,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                     placeholder="0"
                     value={filters.age_min ?? ''}
                     onChange={(e) => set({ age_min: e.target.value ? Number(e.target.value) : undefined })}
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-brand focus:outline-none"
                   />
                 </div>
                 <div>
@@ -195,7 +195,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                     placeholder="Any"
                     value={filters.age_max ?? ''}
                     onChange={(e) => set({ age_max: e.target.value ? Number(e.target.value) : undefined })}
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder-neutral-500 focus:border-brand focus:outline-none"
                   />
                 </div>
               </div>
@@ -212,7 +212,7 @@ export function BrowseFiltersPanel({ filters, onChange }: Props) {
                         onClick={() => set({ [key]: active ? undefined : true })}
                         className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                           active
-                            ? 'border-[#ff6b35] bg-[#ff6b35]/15 text-[#ff8c5c]'
+                            ? 'border-brand bg-brand/15 text-brand-light'
                             : 'border-neutral-700 text-neutral-400 hover:border-neutral-600'
                         }`}
                       >

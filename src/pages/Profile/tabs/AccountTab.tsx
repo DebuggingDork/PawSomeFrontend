@@ -38,7 +38,7 @@ const PROFILE_TIPS = [
 ]
 
 const inputClass =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-950/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30'
 const iconPrefixClass = 'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500'
 
 export function AccountTab() {
@@ -71,7 +71,7 @@ export function AccountTab() {
         <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/20">
+              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-pink-500 shadow-lg shadow-brand/20">
                 <Sparkles className="h-5 w-5 text-white" />
               </span>
               <div>
@@ -79,13 +79,13 @@ export function AccountTab() {
                 <p className="text-sm text-neutral-400">Complete your profile to get more matches</p>
               </div>
             </div>
-            <span className="font-display text-lg font-bold text-[#ff6b35]">
+            <span className="font-display text-lg font-bold text-brand">
               {completion.completion_percentage}% Complete
             </span>
           </div>
           <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-neutral-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-brand to-pink-500 transition-all duration-500"
               style={{ width: `${completion.completion_percentage}%` }}
             />
           </div>
@@ -202,13 +202,13 @@ function AccountForm({
 
             <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/60 p-4 sm:p-6">
               <p className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
-                <Sparkles className="h-4 w-4 text-[#ff6b35]" />
+                <Sparkles className="h-4 w-4 text-brand" />
                 Tips for a great profile
               </p>
               <ul className="space-y-4">
                 {PROFILE_TIPS.map((tip) => (
                   <li key={tip.title} className="flex items-start gap-3">
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#ff6b35]/10 text-[#ff6b35]">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
                       <tip.icon className="h-4 w-4" />
                     </span>
                     <div>
@@ -271,7 +271,7 @@ function AccountForm({
                     maxLength={BIO_MAX_LENGTH}
                     rows={4}
                     placeholder="Tell others about yourself and your pet…"
-                    className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 pb-6 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                    className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 pb-6 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
                   />
                   <span className="pointer-events-none absolute bottom-2.5 right-3.5 text-xs text-neutral-600">
                     {bio.length}/{BIO_MAX_LENGTH}
@@ -305,7 +305,7 @@ function AccountForm({
                     setDirty(true)
                   }}
                   placeholder="Auto-filled from location"
-                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
                 />
               </div>
             </div>
@@ -315,7 +315,7 @@ function AccountForm({
         <button
           type="submit"
           disabled={updateMutation.isPending || !dirty}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-all hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
           {updateMutation.isPending ? 'Saving…' : updateMutation.isSuccess && !dirty ? 'Saved' : 'Save changes'}
         </button>

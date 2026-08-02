@@ -101,7 +101,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
           className={cn(
-            "relative px-5 py-2 transition-colors hover:text-[#ff6b35]",
+            "relative px-5 py-2 transition-colors hover:text-brand",
             pathname === item.link ? "text-white" : "text-white/80",
           )}
           key={`link-${idx}`}
@@ -210,11 +210,11 @@ export const NavbarButton = ({
 
   const variantStyles = {
     primary:
-      "bg-[#ff6b35] hover:bg-[#ff5722] text-white shadow-lg shadow-[#ff6b35]/30",
-    secondary: "bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-[#ff6b35]/50",
+      "bg-brand hover:bg-brand-dark text-white shadow-lg shadow-brand/30",
+    secondary: "bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-brand/50",
     dark: "bg-neutral-950 hover:bg-neutral-900 text-white border border-white/20 shadow-lg",
     gradient:
-      "bg-gradient-to-r from-[#ff6b35] to-[#ff8c5c] hover:from-[#ff5722] hover:to-[#ff6b35] text-white shadow-lg shadow-[#ff6b35]/40",
+      "bg-gradient-to-r from-brand to-brand-light hover:from-brand-dark hover:to-brand text-white shadow-lg shadow-brand/40",
   };
 
   return (

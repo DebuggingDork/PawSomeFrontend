@@ -425,7 +425,7 @@ export function ImageCropper({
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
               aria-label="Zoom"
-              className="range-touch lenis-prevent-scroll min-w-0 flex-1 accent-[#ff6b35]"
+              className="range-touch lenis-prevent-scroll min-w-0 flex-1 accent-brand"
             />
             <button
               type="button"
@@ -466,7 +466,7 @@ export function ImageCropper({
               type="button"
               onClick={apply}
               disabled={!ready || exporting}
-              className="flex flex-1 touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5"
+              className="flex flex-1 touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition-shadow hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5"
             >
               {exporting ? (
                 <>

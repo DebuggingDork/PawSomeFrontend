@@ -55,7 +55,7 @@ function StatsView({ petId }: { petId: string }) {
               <div key={day.date} className="group relative flex-1" title={`${day.date}: ${day.likes} likes, ${day.skips} skips`}>
                 <div className="flex h-24 flex-col-reverse gap-px">
                   <div
-                    className="w-full rounded-b bg-[#ff6b35]"
+                    className="w-full rounded-b bg-brand"
                     style={{ height: `${(day.likes / maxDaily) * 100}%` }}
                   />
                   <div
@@ -102,7 +102,7 @@ function HistoryView({ petId }: { petId: string }) {
   const set = (patch: Partial<SwipeHistoryFilters>) => setFilters((f) => ({ ...f, ...patch, offset: 0 }))
 
   const filterInputClass =
-    'rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none'
+    'rounded-xl border border-neutral-800 bg-neutral-950/60 px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none'
 
   return (
     <div>
@@ -182,7 +182,7 @@ function HistoryView({ petId }: { petId: string }) {
               <button
                 disabled={(filters.offset ?? 0) === 0}
                 onClick={() => setFilters((f) => ({ ...f, offset: Math.max(0, (f.offset ?? 0) - PAGE_SIZE) }))}
-                className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-[#ff6b35] disabled:opacity-50"
+                className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-brand disabled:opacity-50"
               >
                 Previous
               </button>
@@ -193,7 +193,7 @@ function HistoryView({ petId }: { petId: string }) {
               <button
                 disabled={(filters.offset ?? 0) + PAGE_SIZE >= historyQuery.data.total}
                 onClick={() => setFilters((f) => ({ ...f, offset: (f.offset ?? 0) + PAGE_SIZE }))}
-                className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-[#ff6b35] disabled:opacity-50"
+                className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-brand disabled:opacity-50"
               >
                 Next
               </button>

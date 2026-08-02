@@ -55,7 +55,7 @@ export function CursorClickEffect() {
             transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
             style={{ position: 'fixed', left: s.x - 13, top: s.y - 13 }}
           >
-            <g fill="#ff6b35" stroke="#ffffff" strokeWidth="1.4" strokeLinejoin="round">
+            <g fill="var(--color-brand)" stroke="#ffffff" strokeWidth="1.4" strokeLinejoin="round">
               <ellipse cx="16" cy="22" rx="7.4" ry="6.4" />
               <circle cx="6.4" cy="13.2" r="3.4" />
               <circle cx="13" cy="7.2" r="3.6" />

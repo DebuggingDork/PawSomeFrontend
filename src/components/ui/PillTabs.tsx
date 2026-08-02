@@ -34,7 +34,7 @@ export function PillTabs<T extends string>({ tabs, active, onChange, layoutId, c
             {active === t.key && (
               <motion.span
                 layoutId={layoutId}
-                className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500"
+                className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-brand to-pink-500"
                 transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
               />
             )}

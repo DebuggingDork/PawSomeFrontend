@@ -163,12 +163,12 @@ function ChatPage() {
                 <Link
                   to={`/pets/${selected.otherPet.id}`}
                   title={`View ${selected.otherPet.name}'s profile`}
-                  className="flex-shrink-0 rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/60"
+                  className="flex-shrink-0 rounded-full ring-1 ring-transparent transition-all hover:ring-brand/60"
                 >
                   <PetAvatar name={selected.otherPet.name} photoUrl={selected.otherPet.primary_photo_url} online={otherOnline} />
                 </Link>
                 <div className="min-w-0 flex-1">
-                  <Link to={`/pets/${selected.otherPet.id}`} className="block w-fit max-w-full truncate font-semibold text-white hover:text-[#ff8c5c]">
+                  <Link to={`/pets/${selected.otherPet.id}`} className="block w-fit max-w-full truncate font-semibold text-white hover:text-brand-light">
                     {selected.otherPet.name}
                   </Link>
                   <p className="truncate text-xs text-neutral-500">
@@ -192,12 +192,12 @@ function ChatPage() {
                   title="Propose a playdate"
                   className={`group relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
                     playdatesOpen
-                      ? 'bg-[#ff6b35] text-white shadow-[0_0_0_1px_rgba(255,107,53,0.4)]'
-                      : 'bg-[#ff6b35]/10 text-[#ff9466] shadow-[0_0_14px_-2px_rgba(255,107,53,0.55)] hover:bg-[#ff6b35]/20 hover:text-white hover:shadow-[0_0_18px_0px_rgba(255,107,53,0.75)]'
+                      ? 'bg-brand text-white shadow-[0_0_0_1px_rgba(255,107,53,0.4)]'
+                      : 'bg-brand/10 text-[#ff9466] shadow-[0_0_14px_-2px_rgba(255,107,53,0.55)] hover:bg-brand/20 hover:text-white hover:shadow-[0_0_18px_0px_rgba(255,107,53,0.75)]'
                   }`}
                 >
                   {!playdatesOpen && !hasUnviewedPendingPlaydates && (
-                    <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-[#ff6b35]/25" />
+                    <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-brand/25" />
                   )}
                   <CalendarHeart className="h-4 w-4" />
                   <span className="hidden sm:inline">Plan a playdate</span>
@@ -301,12 +301,12 @@ function ChatPage() {
                   value={draft}
                   onChange={(e) => handleDraftChange(e.target.value)}
                   placeholder={`Message ${selected.otherPet.name}...`}
-                  className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+                  className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
                 />
                 <button
                   type="submit"
                   disabled={!draft.trim()}
-                  className="flex items-center justify-center rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                  className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand to-pink-500 px-5 text-white shadow-lg shadow-brand/30 transition-all hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                   aria-label="Send message"
                 >
                   <Send className="h-4 w-4" />

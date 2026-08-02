@@ -37,7 +37,7 @@ export function Field({
 }
 
 const INPUT_BASE =
-  'w-full rounded-xl border border-neutral-800 bg-neutral-900/60 text-white placeholder:text-neutral-500 transition-colors focus:border-[#ff6b35] focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/25'
+  'w-full rounded-xl border border-neutral-800 bg-neutral-900/60 text-white placeholder:text-neutral-500 transition-colors focus:border-brand focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand/25'
 
 /** `emphasis="lead"` is for the one field a step is really about. The scale jump is
  * the hierarchy: it tells you where to start typing without a "start here" label.
@@ -81,7 +81,7 @@ export function ChipGroup({
             aria-pressed={selected}
             className={`touch-manipulation rounded-full border px-4 py-2.5 text-sm transition-colors sm:px-3.5 sm:py-1.5 ${
               selected
-                ? 'border-[#ff6b35] bg-[#ff6b35]/15 font-medium text-white'
+                ? 'border-brand bg-brand/15 font-medium text-white'
                 : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hoverable:hover:border-neutral-700 hoverable:hover:text-white'
             }`}
           >
@@ -117,7 +117,7 @@ export function SegmentedChoice<T extends string>({
             aria-pressed={selected}
             className={`flex flex-1 touch-manipulation items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-colors sm:py-2.5 ${
               selected
-                ? 'border-[#ff6b35] bg-[#ff6b35]/12 text-white'
+                ? 'border-brand bg-brand/12 text-white'
                 : 'border-neutral-800 bg-neutral-900/60 text-neutral-400 hoverable:hover:border-neutral-700 hoverable:hover:text-neutral-200'
             }`}
           >
@@ -167,7 +167,7 @@ export function PrimaryAction({
       whileHover={disabled || shouldReduceMotion ? undefined : { scale: 1.01 }}
       whileTap={disabled || shouldReduceMotion ? undefined : { scale: 0.985 }}
       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-4 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-[#ff6b35]/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:py-3.5"
+      className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-4 font-semibold text-white shadow-lg shadow-brand/25 transition-shadow hoverable:hover:shadow-xl hoverable:hover:shadow-brand/35 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:py-3.5"
     >
       {pending ? (
         <>

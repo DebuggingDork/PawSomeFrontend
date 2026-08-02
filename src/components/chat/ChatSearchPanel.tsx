@@ -40,7 +40,7 @@ export function ChatSearchPanel({ matchId, onClose, onJumpToMessage }: ChatSearc
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search this conversation..."
-          className="flex-1 rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+          className="flex-1 rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
         />
         <button
           type="submit"

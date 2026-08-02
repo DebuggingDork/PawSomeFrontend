@@ -142,7 +142,7 @@ export const GlobalLoader = () => {
             aria-hidden="true"
             className="relative mt-1 h-[2px] w-24 overflow-hidden rounded-full bg-white/10"
           >
-            <div className="motion-safe:animate-rail-sweep absolute inset-y-0 left-0 w-[42%] rounded-full bg-gradient-to-r from-transparent via-[#ff6b35] to-transparent" />
+            <div className="motion-safe:animate-rail-sweep absolute inset-y-0 left-0 w-[42%] rounded-full bg-gradient-to-r from-transparent via-brand to-transparent" />
           </div>
         </div>
       </div>

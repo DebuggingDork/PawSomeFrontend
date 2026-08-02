@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { PawPrint } from 'lucide-react'
 
 const GRADIENTS = [
-  'from-[#ff6b35] to-pink-500',
+  'from-brand to-pink-500',
   'from-violet-500 to-fuchsia-500',
   'from-emerald-500 to-teal-500',
   'from-sky-500 to-indigo-500',

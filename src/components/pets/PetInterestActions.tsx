@@ -114,8 +114,8 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
 
   if (isOwnPet) {
     return (
-      <div className="rounded-xl border border-[#ff6b35]/30 bg-[#ff6b35]/5 p-3 text-sm text-neutral-300">
-        <span className="font-semibold text-[#ff6b35]">This is your pet.</span> Other owners see
+      <div className="rounded-xl border border-brand/30 bg-brand/5 p-3 text-sm text-neutral-300">
+        <span className="font-semibold text-brand">This is your pet.</span> Other owners see
         Interested and Save buttons here.
       </div>
     )
@@ -126,7 +126,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
       <Link
         to="/auth"
         onClick={onNavigate}
-        className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+        className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
       >
         <LogIn className="h-4 w-4" />
         Sign in to show interest
@@ -193,14 +193,14 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
                   aria-pressed={isSelected}
                   className={`flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-3 text-sm font-medium transition-colors ${
                     isSelected
-                      ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-white'
+                      ? 'border-brand bg-brand/10 text-white'
                       : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
                   }`}
                 >
                   <PetAvatar name={candidate.name} photoUrl={candidate.primary_photo_url} size="sm" />
                   {candidate.name}
                   {candidate.status === 'liked' && (
-                    <Check className="h-3.5 w-3.5 text-[#ff6b35]" aria-label="already interested" />
+                    <Check className="h-3.5 w-3.5 text-brand" aria-label="already interested" />
                   )}
                   {candidate.is_favorite && (
                     <BookmarkCheck className="h-3.5 w-3.5 text-sky-400" aria-label="saved" />
@@ -214,7 +214,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
 
       <div className="flex gap-2">
         {justLiked || alreadyLiked ? (
-          <span className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#ff6b35]/50 bg-[#ff6b35]/10 px-4 py-2.5 text-sm font-semibold text-[#ff6b35]">
+          <span className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-brand/50 bg-brand/10 px-4 py-2.5 text-sm font-semibold text-brand">
             <Check className="h-4 w-4" />
             Interest sent
           </span>
@@ -234,7 +234,7 @@ export function PetInterestActions({ pet, onChanged, onNavigate }: PetInterestAc
             type="button"
             onClick={() => likeMutation.mutate()}
             disabled={!selected || likeMutation.isPending}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Heart className="h-4 w-4" />
             {likeMutation.isPending ? 'Sending…' : 'Interested'}

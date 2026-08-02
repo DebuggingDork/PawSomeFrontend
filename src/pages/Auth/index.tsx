@@ -238,7 +238,7 @@ function AuthPage() {
             {/* Brand mark — the real PawSome logo */}
             <div className="mb-6 flex flex-col items-center text-center">
               <div className="relative mb-4">
-                <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-[#ff6b35]/30 blur-xl" />
+                <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/30 blur-xl" />
                 <img src={logoIcon} alt="PawSome" className="h-16 w-16 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
               </div>
               <h2 className="font-display text-2xl font-bold text-white">
@@ -294,7 +294,7 @@ function AuthPage() {
                 <button
                   type="button"
                   onClick={() => switchMode('signin')}
-                  className="text-sm font-medium text-[#ff6b35] hover:text-[#ff8c5c]"
+                  className="text-sm font-medium text-brand hover:text-brand-light"
                 >
                   Back to Sign In
                 </button>
@@ -308,7 +308,7 @@ function AuthPage() {
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:border-[#ff6b35] focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                    className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:border-brand focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand/30"
                     required
                     autoComplete="email"
                   />
@@ -322,7 +322,7 @@ function AuthPage() {
                       placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-11 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:border-[#ff6b35] focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/30"
+                      className="w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-11 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:border-brand focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand/30"
                       required
                       minLength={8}
                       autoComplete={isSignUp ? 'new-password' : 'current-password'}
@@ -351,7 +351,7 @@ function AuthPage() {
                         className={`w-full rounded-xl border bg-white/5 py-3 pl-11 pr-11 text-white placeholder:text-neutral-400 backdrop-blur-sm transition-colors focus:bg-white/10 focus:outline-none focus:ring-2 ${
                           passwordsMismatch
                             ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/30'
-                            : 'border-white/15 focus:border-[#ff6b35] focus:ring-[#ff6b35]/30'
+                            : 'border-white/15 focus:border-brand focus:ring-brand/30'
                         }`}
                         required
                         minLength={8}
@@ -378,7 +378,7 @@ function AuthPage() {
                     <button
                       type="button"
                       onClick={() => navigate('/forgot-password')}
-                      className="text-xs font-medium text-neutral-400 hover:text-[#ff6b35]"
+                      className="text-xs font-medium text-neutral-400 hover:text-brand"
                     >
                       Forgot password?
                     </button>
@@ -390,7 +390,7 @@ function AuthPage() {
                   disabled={submitting || passwordsMismatch}
                   whileHover={{ scale: submitting || passwordsMismatch ? 1 : 1.01 }}
                   whileTap={{ scale: submitting || passwordsMismatch ? 1 : 0.98 }}
-                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3 font-semibold text-white shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {submitting ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -419,11 +419,11 @@ function AuthPage() {
               giving them no way to read them is not a real agreement. */}
           <p className="mt-6 text-center text-xs text-neutral-400">
             By continuing you agree to PawSome's{' '}
-            <Link to="/terms" className="text-neutral-200 underline underline-offset-2 transition-colors hover:text-[#ff6b35]">
+            <Link to="/terms" className="text-neutral-200 underline underline-offset-2 transition-colors hover:text-brand">
               Terms of Use
             </Link>{' '}
             and{' '}
-            <Link to="/privacy" className="text-neutral-200 underline underline-offset-2 transition-colors hover:text-[#ff6b35]">
+            <Link to="/privacy" className="text-neutral-200 underline underline-offset-2 transition-colors hover:text-brand">
               Privacy Policy
             </Link>
             .

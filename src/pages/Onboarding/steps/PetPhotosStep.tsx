@@ -183,7 +183,7 @@ export function PetPhotosStep({ petId, petName, photos, onDraft, onPhotosChanged
         disabled={!hasPhotos}
         whileHover={hasPhotos ? { scale: 1.01 } : undefined}
         whileTap={hasPhotos ? { scale: 0.985 } : undefined}
-        className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-8 py-4 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition-shadow disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none hoverable:hover:shadow-xl hoverable:hover:shadow-[#ff6b35]/35 sm:py-3.5"
+        className="group flex w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand to-pink-500 px-8 py-4 font-semibold text-white shadow-lg shadow-brand/25 transition-shadow disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none hoverable:hover:shadow-xl hoverable:hover:shadow-brand/35 sm:py-3.5"
       >
         {hasPhotos ? 'Continue' : `Add at least one photo of ${petName}`}
         {hasPhotos && <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />}

@@ -239,7 +239,7 @@ function App() {
             <Link to="/" className="flex items-center gap-2 justify-self-start">
               <img src={logoIcon} alt="PawSome" className="h-10 w-10 drop-shadow-lg" />
               <span
-                className="text-2xl font-bold text-[#ff6b35] drop-shadow-sm"
+                className="text-2xl font-bold text-brand drop-shadow-sm"
                 style={{ fontFamily: 'Pacifico, cursive' }}
               >
                 PawSome
@@ -267,7 +267,7 @@ function App() {
                       to="/profile"
                       title="Profile"
                       aria-label="Profile"
-                      className="rounded-full ring-1 ring-transparent transition-all hover:ring-[#ff6b35]/50"
+                      className="rounded-full ring-1 ring-transparent transition-all hover:ring-brand/50"
                     >
                       <PetAvatar name={myProfile?.full_name ?? 'You'} photoUrl={myProfile?.profile_photo_url} size="sm" />
                     </Link>
@@ -277,7 +277,7 @@ function App() {
                     onClick={logout}
                     title="Sign out"
                     aria-label="Sign out"
-                    className="flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-[#ff6b35]"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-brand"
                   >
                     <LogOut className="h-5 w-5" />
                   </Link>
@@ -310,7 +310,7 @@ function App() {
                 {/* Wordmark drops off on narrow screens — the icon alone is enough
                     to identify the brand once space gets tight. */}
                 <span
-                  className="hidden min-[420px]:inline-block text-xl font-bold text-[#ff6b35]"
+                  className="hidden min-[420px]:inline-block text-xl font-bold text-brand"
                   style={{ fontFamily: 'Pacifico, cursive' }}
                 >
                   PawSome

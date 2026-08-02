@@ -100,7 +100,7 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
                 initial={{ scale: 0.5 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', duration: 0.6, bounce: 0.45 }}
-                className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 text-5xl shadow-xl shadow-[#ff6b35]/30"
+                className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-brand to-pink-500 text-5xl shadow-xl shadow-brand/30"
               >
                 <span aria-hidden="true">🐾</span>
               </motion.div>
@@ -129,13 +129,13 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
                     aria-pressed={selected}
                     className={`flex items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-sm font-medium transition-colors ${
                       selected
-                        ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-white'
+                        ? 'border-brand bg-brand/10 text-white'
                         : 'border-neutral-800 text-neutral-400 hover:border-neutral-600 hover:text-white'
                     }`}
                   >
                     <PetAvatar name={pet.name} photoUrl={pet.primary_photo_url} size="sm" />
                     {pet.name}
-                    {selected && <Check className="h-3.5 w-3.5 text-[#ff6b35]" />}
+                    {selected && <Check className="h-3.5 w-3.5 text-brand" />}
                   </button>
                 )
               })}
@@ -159,7 +159,7 @@ export function AttendEventDialog({ event, isSubmitting, error, onConfirm, onClo
             type="button"
             onClick={() => onConfirm(petId)}
             disabled={isSubmitting}
-            className="flex flex-[1.4] items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex flex-[1.4] items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <PawPrint className="h-4 w-4" />
             {isSubmitting ? 'Confirming…' : "Yes, we're in"}

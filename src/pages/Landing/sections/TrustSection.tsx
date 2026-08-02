@@ -60,7 +60,7 @@ export const TrustSection: React.FC = () => {
               </p>
               <Link
                 to="/faq#safety"
-                className="mt-6 inline-block font-semibold text-[#ff6b35] underline-offset-4 transition-colors duration-200 hover:text-[#ff8c5c] hover:underline"
+                className="mt-6 inline-block font-semibold text-brand underline-offset-4 transition-colors duration-200 hover:text-brand-light hover:underline"
               >
                 Read the safety and trust FAQ
               </Link>
@@ -71,7 +71,7 @@ export const TrustSection: React.FC = () => {
             {POINTS.map(({ icon: Icon, title, body }) => (
               <StaggerRevealItem key={title}>
                 <div className="flex gap-5 border-t border-neutral-900 py-8 first:border-t-0 first:pt-0 md:gap-7">
-                  <Icon className="mt-1 h-5 w-5 shrink-0 text-[#ff6b35]" aria-hidden="true" />
+                  <Icon className="mt-1 h-5 w-5 shrink-0 text-brand" aria-hidden="true" />
                   <div className="min-w-0">
                     <h3 className="font-display text-xl font-semibold text-white">{title}</h3>
                     <p className="mt-2.5 max-w-[62ch] text-pretty leading-relaxed text-neutral-300">

@@ -76,7 +76,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
           rather than a decorative blob parked behind the column. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] bg-[#ff6b35]/12 blur-[64px]"
+        className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] bg-brand/12 blur-[64px]"
       />
 
       <motion.div
@@ -117,7 +117,7 @@ export function LiveCardPreview({ draft, compact = false }: { draft: CardDraft; 
 
         {/* Top-left: the ribbon every genuinely new pet gets in Discover. */}
         <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
-          <div className="flex items-center gap-1 rounded-full bg-[#ff6b35] px-3 py-1 text-xs font-bold text-white shadow-lg shadow-[#ff6b35]/40">
+          <div className="flex items-center gap-1 rounded-full bg-brand px-3 py-1 text-xs font-bold text-white shadow-lg shadow-brand/40">
             <Sparkles className="h-3 w-3" />
             New here!
           </div>

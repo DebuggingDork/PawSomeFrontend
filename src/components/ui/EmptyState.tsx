@@ -24,7 +24,7 @@ export function EmptyState({ icon: Icon, title, description, action, size = 'sm'
       className={`flex flex-col items-center justify-center text-center ${isLarge ? 'py-20' : 'py-14'} ${className}`}
     >
       {isLarge ? (
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-[#ff6b35]/30">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-pink-500 shadow-lg shadow-brand/30">
           <Icon className="h-7 w-7 text-white" />
         </div>
       ) : (

@@ -88,7 +88,7 @@ function PetProfilePage() {
                 key={photo.id}
                 onClick={() => setActivePhoto(photo.url)}
                 className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
-                  heroPhoto === photo.url ? 'border-[#ff6b35]' : 'border-transparent hover:border-neutral-600'
+                  heroPhoto === photo.url ? 'border-brand' : 'border-transparent hover:border-neutral-600'
                 }`}
               >
                 <img src={photo.url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
@@ -107,7 +107,7 @@ function PetProfilePage() {
         </div>
 
         {pet.user_id === user?.id && (
-          <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-4 py-2 text-sm font-semibold text-[#ff6b35]">
+          <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-4 py-2 text-sm font-semibold text-brand">
             <PawPrint className="h-4 w-4" />
             My pet
           </span>
@@ -148,7 +148,7 @@ function PetProfilePage() {
       {pet.owner ? (
         <Link
           to={`/owners/${pet.owner.id}`}
-          className="mt-6 flex items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/50 p-4 transition-colors hover:border-[#ff6b35]"
+          className="mt-6 flex items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/50 p-4 transition-colors hover:border-brand"
         >
           <PetAvatar name={pet.owner.full_name ?? 'Unknown'} photoUrl={pet.owner.profile_photo_url} size="md" />
           <div className="flex-1 overflow-hidden">
@@ -160,7 +160,7 @@ function PetProfilePage() {
       ) : (
         <Link
           to="/auth"
-          className="mt-6 flex items-center gap-3 rounded-xl border border-dashed border-neutral-700 p-4 text-neutral-400 transition-colors hover:border-[#ff6b35] hover:text-white"
+          className="mt-6 flex items-center gap-3 rounded-xl border border-dashed border-neutral-700 p-4 text-neutral-400 transition-colors hover:border-brand hover:text-white"
         >
           <LogIn className="h-5 w-5 flex-shrink-0" />
           <span className="text-sm font-medium">Sign in to see the owner and start matching</span>

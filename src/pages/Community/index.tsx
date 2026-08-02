@@ -50,7 +50,7 @@ function PetCard({
       // and the badges floating off the top edge, while its neighbours sat flush.
       // A flex column stacks from the top instead, and the slack lands at the
       // bottom where mt-auto below can use it.
-      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 text-left backdrop-blur transition-all hoverable:hover:-translate-y-1 hover:border-[#ff6b35]/70 hover:shadow-xl hover:shadow-[#ff6b35]/10"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 text-left backdrop-blur transition-all hoverable:hover:-translate-y-1 hover:border-brand/70 hover:shadow-xl hover:shadow-brand/10"
     >
       {/* Pet Photo */}
       <div className="relative aspect-square shrink-0 overflow-hidden bg-neutral-800">
@@ -71,13 +71,13 @@ function PetCard({
             whether the card offers anything to act on, so it has to be legible
             from the grid rather than only after opening the card. */}
         {isMine ? (
-          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-bold text-[#ff6b35] shadow-lg backdrop-blur ring-1 ring-[#ff6b35]/50">
+          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-bold text-brand shadow-lg backdrop-blur ring-1 ring-brand/50">
             <PawPrint className="h-3 w-3" />
             My pet
           </div>
         ) : (
           isNewHere(pet.created_at) && (
-            <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-[#ff6b35] px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-[#ff6b35]/40">
+            <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-brand px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-brand/40">
               <Sparkles className="h-3 w-3" />
               {/* "New paw", not "New" — a bare "New" tag on a photo grid reads
                   like merchandise, and these are animals, not products. */}
@@ -214,7 +214,7 @@ function CommunityPage() {
             onChange={(e) =>
               setFilters((f) => ({ ...f, species: (e.target.value || undefined) as 'dog' | 'cat' | undefined }))
             }
-            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-brand focus:outline-none"
           >
             <option value="">All species</option>
             <option value="dog">Dogs</option>
@@ -231,7 +231,7 @@ function CommunityPage() {
             onChange={(e) =>
               setFilters((f) => ({ ...f, gender: (e.target.value || undefined) as 'male' | 'female' | undefined }))
             }
-            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-brand focus:outline-none"
           >
             <option value="">All genders</option>
             <option value="male">Male</option>

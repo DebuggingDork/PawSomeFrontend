@@ -101,7 +101,7 @@ export function NotificationBell() {
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
-          <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff6b35] px-1 text-[10px] font-bold text-white">
+          <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -124,7 +124,7 @@ export function NotificationBell() {
               <h3 className="flex shrink-0 items-center gap-2 font-display font-bold text-white">
                 Notifications
                 {unreadCount > 0 && (
-                  <span className="rounded-full bg-[#ff6b35]/15 px-1.5 py-px text-[11px] font-semibold leading-tight text-[#ff6b35]">
+                  <span className="rounded-full bg-brand/15 px-1.5 py-px text-[11px] font-semibold leading-tight text-brand">
                     {unreadCount}
                   </span>
                 )}
@@ -192,7 +192,7 @@ export function NotificationBell() {
                                 acceptMutation.mutate(n.id)
                               }}
                               disabled={respondingId === n.id}
-                              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-brand to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
                             >
                               <Heart className="h-3 w-3" fill="currentColor" /> Match back
                             </button>
@@ -216,7 +216,7 @@ export function NotificationBell() {
                               setOpen(false)
                               navigate(`/chat?match=${n.match_id}`)
                             }}
-                            className="mt-2 text-xs font-semibold text-[#ff8c5c] hover:text-[#ff6b35]"
+                            className="mt-2 text-xs font-semibold text-brand-light hover:text-brand"
                           >
                             Open chat →
                           </button>

@@ -113,7 +113,7 @@ export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDi
                 key={photo.id}
                 onClick={() => setActivePhoto(photo.url)}
                 className={`h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
-                  heroPhoto === photo.url ? 'border-[#ff6b35]' : 'border-transparent hover:border-neutral-600'
+                  heroPhoto === photo.url ? 'border-brand' : 'border-transparent hover:border-neutral-600'
                 }`}
               >
                 <img src={photo.url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
@@ -147,7 +147,7 @@ export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDi
                 </div>
 
                 {isOwnPet && (
-                  <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-4 py-2 text-sm font-semibold text-[#ff6b35]">
+                  <span className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-4 py-2 text-sm font-semibold text-brand">
                     <PawPrint className="h-4 w-4" />
                     My pet
                   </span>
@@ -197,7 +197,7 @@ export function PetCardDialog({ petId, onClose, hideActions = false }: PetCardDi
                 <Link
                   to="/auth"
                   onClick={onClose}
-                  className="mt-5 flex items-center gap-3 rounded-xl border border-dashed border-neutral-700 p-3.5 text-neutral-400 transition-colors hover:border-[#ff6b35] hover:text-white"
+                  className="mt-5 flex items-center gap-3 rounded-xl border border-dashed border-neutral-700 p-3.5 text-neutral-400 transition-colors hover:border-brand hover:text-white"
                 >
                   <LogIn className="h-4 w-4 flex-shrink-0" />
                   <span className="text-sm font-medium">Sign in to see the owner and start matching</span>

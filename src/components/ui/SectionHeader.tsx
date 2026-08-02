@@ -11,7 +11,7 @@ interface SectionHeaderProps {
 export function SectionHeader({ icon: Icon, title, subtitle, className = '' }: SectionHeaderProps) {
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#ff6b35]/10 text-[#ff6b35]">
+      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
         <Icon className="h-4 w-4" />
       </span>
       <div>

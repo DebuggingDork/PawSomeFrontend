@@ -106,15 +106,15 @@ function NotFoundPage() {
       >
         {/* 4 🐾 4 */}
         <div className="mb-2 flex items-center justify-center gap-2 font-display font-extrabold leading-none">
-          <span className="bg-gradient-to-br from-[#ff6b35] to-pink-500 bg-clip-text text-[7rem] text-transparent md:text-[9rem]">4</span>
+          <span className="bg-gradient-to-br from-brand to-pink-500 bg-clip-text text-[7rem] text-transparent md:text-[9rem]">4</span>
           <motion.span
             animate={{ rotate: [0, -12, 12, -6, 0], y: [0, -6, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="text-[#ff6b35] drop-shadow-[0_0_25px_rgba(255,107,53,0.5)]"
+            className="text-brand drop-shadow-[0_0_25px_rgba(255,107,53,0.5)]"
           >
             <PawPrint className="h-24 w-24 md:h-32 md:w-32" fill="currentColor" />
           </motion.span>
-          <span className="bg-gradient-to-br from-pink-500 to-[#ff6b35] bg-clip-text text-[7rem] text-transparent md:text-[9rem]">4</span>
+          <span className="bg-gradient-to-br from-pink-500 to-brand bg-clip-text text-[7rem] text-transparent md:text-[9rem]">4</span>
         </div>
 
         <h1 className="mb-3 font-display text-2xl font-bold text-white md:text-3xl">{headline}</h1>
@@ -138,13 +138,13 @@ function NotFoundPage() {
                 key={i}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className={i === ERROR_LOG.length - 1 ? 'font-bold text-[#ff8c5c]' : 'text-neutral-400'}
+                className={i === ERROR_LOG.length - 1 ? 'font-bold text-brand-light' : 'text-neutral-400'}
               >
                 {line}
               </motion.p>
             ))}
             {visibleLogLines >= ERROR_LOG.length && (
-              <span className="inline-block h-3 w-2 animate-pulse bg-[#ff6b35] align-middle" />
+              <span className="inline-block h-3 w-2 animate-pulse bg-brand align-middle" />
             )}
           </div>
         </div>
@@ -153,7 +153,7 @@ function NotFoundPage() {
         <p className="mb-8 flex flex-wrap items-center justify-center gap-2 text-sm text-neutral-500">
           <Ghost className="h-4 w-4 text-neutral-600" />
           Lost for{' '}
-          <span className="font-accent font-semibold text-[#ff8c5c]">{seconds}s</span>
+          <span className="font-accent font-semibold text-brand-light">{seconds}s</span>
           <span className="text-neutral-600">— {lostSnark(seconds)}</span>
         </p>
 
@@ -163,7 +163,7 @@ function NotFoundPage() {
             <Link
               to="/"
               onMouseEnter={dodge}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:-translate-y-0.5"
             >
               <Home className="h-4 w-4" />
               {DODGE_LABELS[Math.min(dodges, DODGE_LABELS.length - 1)]}

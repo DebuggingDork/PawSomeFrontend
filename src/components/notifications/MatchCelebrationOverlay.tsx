@@ -94,7 +94,7 @@ export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCe
             <div className="relative mx-auto mb-6 flex h-28 items-center justify-center">
               <motion.div
                 aria-hidden
-                className="absolute h-40 w-40 rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 blur-3xl"
+                className="absolute h-40 w-40 rounded-full bg-gradient-to-br from-brand to-pink-500 blur-3xl"
                 animate={shouldReduceMotion ? { opacity: 0.35 } : { opacity: [0.25, 0.5, 0.25] }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
               />
@@ -113,7 +113,7 @@ export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCe
                   initial={{ opacity: 0, scale: 0.4 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3, type: 'spring', duration: 0.5, bounce: 0.55 }}
-                  className="relative z-20 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-pink-500 shadow-lg shadow-pink-500/40 ring-4 ring-neutral-900"
+                  className="relative z-20 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-brand to-pink-500 shadow-lg shadow-pink-500/40 ring-4 ring-neutral-900"
                 >
                   <Heart className="h-5 w-5 text-white" fill="currentColor" />
                 </motion.div>
@@ -155,7 +155,7 @@ export function MatchCelebrationOverlay({ data, onDismiss, onOpenChat }: MatchCe
               <button
                 onClick={() => data?.matchId && onOpenChat(data.matchId)}
                 disabled={!data?.matchId}
-                className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-transform hoverable:hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-transform hoverable:hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <MessageCircle className="h-4 w-4" />
                 Send a message

@@ -5,7 +5,7 @@ import { SupportLink } from '@/components/support/SupportLink'
 
 /** Renders the support address as a Gmail compose link, subject already set. */
 const Contact = ({ subject }: { subject: string }) => (
-  <SupportLink subject={subject} className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline" />
+  <SupportLink subject={subject} className="text-brand underline-offset-4 transition-colors hover:text-brand-light hover:underline" />
 )
 
 const SECTIONS: LegalSection[] = [
@@ -263,7 +263,7 @@ const SECTIONS: LegalSection[] = [
         </P>
         <P>
           How we handle the data behind all of this is set out separately in the{' '}
-          <Link to="/privacy" className="text-[#ff6b35] underline-offset-4 transition-colors hover:text-[#ff8c5c] hover:underline">
+          <Link to="/privacy" className="text-brand underline-offset-4 transition-colors hover:text-brand-light hover:underline">
             Privacy Policy
           </Link>
           .

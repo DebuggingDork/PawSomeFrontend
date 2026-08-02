@@ -195,7 +195,7 @@ export function Combobox({
           aria-hidden="true"
           className={cn(
             'pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-150',
-            open ? 'text-[#ff6b35]' : 'text-neutral-500',
+            open ? 'text-brand' : 'text-neutral-500',
           )}
         />
 
@@ -222,7 +222,7 @@ export function Combobox({
             'w-full rounded-lg border bg-neutral-800 py-2 pl-10 pr-16 text-sm text-white',
             'placeholder-neutral-500 transition-colors duration-150 focus:outline-none',
             value && !open ? 'placeholder-white' : '',
-            open ? 'border-[#ff6b35]' : 'border-neutral-700 hover:border-neutral-600',
+            open ? 'border-brand' : 'border-neutral-700 hover:border-neutral-600',
             disabled && 'cursor-not-allowed opacity-50',
           )}
         />
@@ -317,15 +317,15 @@ export function Combobox({
                             'flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm',
                             'transition-colors duration-100',
                             active ? 'bg-white/[0.06] text-white' : 'text-neutral-300',
-                            selected && 'bg-[#ff6b35]/12 text-white',
+                            selected && 'bg-brand/12 text-white',
                           )}
                         >
                           <span className="truncate">
                             {before}
-                            {hit && <span className="font-semibold text-[#ff6b35]">{hit}</span>}
+                            {hit && <span className="font-semibold text-brand">{hit}</span>}
                             {after}
                           </span>
-                          {selected && <Check className="h-4 w-4 shrink-0 text-[#ff6b35]" />}
+                          {selected && <Check className="h-4 w-4 shrink-0 text-brand" />}
                         </button>
                       </li>
                     )

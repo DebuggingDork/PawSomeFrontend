@@ -11,7 +11,7 @@ interface ShowInMapProps {
 }
 
 const LINK =
-  'inline-flex items-center gap-1.5 rounded-lg border border-neutral-800 px-2.5 py-1.5 text-xs font-medium text-neutral-400 transition-colors hover:border-[#ff6b35]/50 hover:text-white'
+  'inline-flex items-center gap-1.5 rounded-lg border border-neutral-800 px-2.5 py-1.5 text-xs font-medium text-neutral-400 transition-colors hover:border-brand/50 hover:text-white'
 
 /**
  * "Show in map" for anywhere we hold a pinned location — playdates, events,
@@ -50,7 +50,7 @@ export function ShowInMap({ point, variant = 'inline', className = '' }: ShowInM
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className={`${LINK} ${open ? 'border-[#ff6b35]/50 text-white' : ''}`}
+          className={`${LINK} ${open ? 'border-brand/50 text-white' : ''}`}
         >
           <MapIcon className="h-3.5 w-3.5" />
           {open ? 'Hide map' : 'Show in map'}

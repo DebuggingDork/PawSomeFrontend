@@ -36,7 +36,7 @@ function VerifyEmailPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-1/3 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ff6b35]/20 blur-[120px]" />
+        <div className="absolute left-1/2 top-1/3 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/20 blur-[120px]" />
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-pink-500/10 blur-[100px]" />
       </div>
 
@@ -52,7 +52,7 @@ function VerifyEmailPage() {
                 the auth page. A gradient tile with a stock paw glyph stood here,
                 on the screens where the brand most needs to be recognisable. */}
             <div className="relative mb-4">
-              <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-[#ff6b35]/30 blur-xl" />
+              <div className="absolute inset-0 -z-10 scale-125 rounded-full bg-brand/30 blur-xl" />
               <img src={logoIcon} alt="PawSome" className="h-14 w-14 drop-shadow-[0_4px_16px_rgba(255,107,53,0.4)]" />
             </div>
             <h2 className="font-display text-2xl font-bold text-white">Verify your email</h2>
@@ -60,7 +60,7 @@ function VerifyEmailPage() {
 
           {status === 'verifying' && (
             <div className="flex flex-col items-center gap-4 py-4 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-[#ff6b35]" />
+              <Loader2 className="h-8 w-8 animate-spin text-brand" />
               <p className="text-sm text-neutral-400">Confirming your email address…</p>
             </div>
           )}
@@ -89,7 +89,7 @@ function VerifyEmailPage() {
               <button
                 type="button"
                 onClick={() => navigate('/onboarding')}
-                className="rounded-xl border border-neutral-800 px-5 py-2.5 text-sm font-medium text-neutral-300 hover:border-[#ff6b35] hover:text-white"
+                className="rounded-xl border border-neutral-800 px-5 py-2.5 text-sm font-medium text-neutral-300 hover:border-brand hover:text-white"
               >
                 Resend verification email
               </button>
@@ -105,7 +105,7 @@ function VerifyEmailPage() {
               <button
                 type="button"
                 onClick={() => navigate('/discover')}
-                className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-shadow hover:shadow-xl hover:shadow-[#ff6b35]/40"
+                className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl hover:shadow-brand/40"
               >
                 Start discovering pets
                 <ArrowRight className="h-4 w-4 transition-transform hoverable:group-hover:translate-x-0.5" />

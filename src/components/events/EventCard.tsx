@@ -121,7 +121,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
               into — offering "I'm going" on your own meetup only invited people
               to un-RSVP from an event they were running. */}
           {isAuthenticated && event.is_host && (
-            <span className="flex items-center gap-1 rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-3 py-1.5 text-xs font-semibold text-[#ff8c5c]">
+            <span className="flex items-center gap-1 rounded-full border border-brand/40 bg-brand/10 px-3 py-1.5 text-xs font-semibold text-brand-light">
               <Crown className="h-3.5 w-3.5" />
               You're hosting
             </span>
@@ -141,7 +141,7 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
             <button
               onClick={() => onToggleGoing(event)}
               disabled={togglingId === event.id}
-              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500 px-4 py-1.5 text-xs font-semibold text-white shadow-md shadow-[#ff6b35]/30 transition-all hoverable:hover:-translate-y-0.5 disabled:opacity-50"
+              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-brand to-pink-500 px-4 py-1.5 text-xs font-semibold text-white shadow-md shadow-brand/30 transition-all hoverable:hover:-translate-y-0.5 disabled:opacity-50"
             >
               I'm going
             </button>

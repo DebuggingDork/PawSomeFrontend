@@ -21,7 +21,7 @@ function BadgeCard({ badge, index }: { badge: AchievementBadge; index: number })
       transition={{ duration: 0.28, delay: (index % PAGE_SIZE) * 0.035, ease: [0.16, 1, 0.3, 1] }}
       className={`flex flex-col items-center gap-2 rounded-2xl border p-4 text-center transition-colors ${
         badge.earned
-          ? 'border-[#ff6b35]/40 bg-[#ff6b35]/5 shadow-lg shadow-[#ff6b35]/5'
+          ? 'border-brand/40 bg-brand/5 shadow-lg shadow-brand/5'
           : 'border-neutral-800/80 bg-neutral-900/60'
       }`}
     >
@@ -32,7 +32,7 @@ function BadgeCard({ badge, index }: { badge: AchievementBadge; index: number })
       <p className={`text-sm font-semibold ${badge.earned ? 'text-white' : 'text-neutral-300'}`}>{badge.name}</p>
       <p className="text-xs leading-snug text-neutral-400">{badge.description}</p>
       {badge.earned && badge.earned_at && (
-        <p className="text-[11px] text-[#ff6b35]">{new Date(badge.earned_at).toLocaleDateString()}</p>
+        <p className="text-[11px] text-brand">{new Date(badge.earned_at).toLocaleDateString()}</p>
       )}
     </motion.div>
   )
@@ -87,14 +87,14 @@ export function BadgesTab() {
             title="Badges"
             subtitle={`${data.total_earned} of ${data.total_available} earned`}
           />
-          <span className="font-display text-lg font-bold text-[#ff6b35]">{data.completion_percentage}%</span>
+          <span className="font-display text-lg font-bold text-brand">{data.completion_percentage}%</span>
         </div>
         <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-neutral-800">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${data.completion_percentage}%` }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="h-full rounded-full bg-gradient-to-r from-[#ff6b35] to-pink-500"
+            className="h-full rounded-full bg-gradient-to-r from-brand to-pink-500"
           />
         </div>
       </div>

@@ -37,7 +37,7 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
           out past the first and last one. */}
       <div aria-hidden className="absolute inset-x-5 top-1/2 h-px -translate-y-1/2 bg-neutral-800">
         <motion.div
-          className="h-full origin-left bg-[#ff6b35]/70"
+          className="h-full origin-left bg-brand/70"
           initial={false}
           animate={{ scaleX: progress }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: EASE_OUT }}
@@ -66,9 +66,9 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
                 // phone anyone is likely to arrive on.
                 className={`group relative flex h-10 w-10 touch-manipulation items-center justify-center rounded-full border transition-colors ${
                   isDone
-                    ? 'border-[#ff6b35] bg-[#ff6b35] text-white'
+                    ? 'border-brand bg-brand text-white'
                     : isActive
-                      ? 'border-[#ff6b35] bg-neutral-950 text-[#ff6b35]'
+                      ? 'border-brand bg-neutral-950 text-brand'
                       : 'border-neutral-800 bg-neutral-950 text-neutral-600'
                 } ${canVisit ? 'cursor-pointer hoverable:hover:brightness-110' : 'cursor-default'}`}
               >
@@ -78,7 +78,7 @@ export function PawTrail({ items, activeIndex, onSelect }: Props) {
                 {isActive && !shouldReduceMotion && (
                   <motion.span
                     aria-hidden
-                    className="absolute inset-0 rounded-full ring-2 ring-[#ff6b35]/40"
+                    className="absolute inset-0 rounded-full ring-2 ring-brand/40"
                     initial={{ scale: 1, opacity: 0.9 }}
                     animate={{ scale: 1.45, opacity: 0 }}
                     transition={{ duration: 1.1, ease: EASE_OUT }}

@@ -73,7 +73,7 @@ export function NearbyPlaces({ latitude, longitude, onPick, className = '' }: Ne
               key={`${place.latitude}-${place.longitude}-${place.name}`}
               type="button"
               onClick={() => onPick(place)}
-              className="flex max-w-full items-center gap-1.5 rounded-full border border-neutral-800 px-2.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:border-[#ff6b35] hover:text-white"
+              className="flex max-w-full items-center gap-1.5 rounded-full border border-neutral-800 px-2.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:border-brand hover:text-white"
             >
               <Icon className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate">{place.name}</span>

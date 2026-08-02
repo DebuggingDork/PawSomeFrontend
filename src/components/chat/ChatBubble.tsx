@@ -69,7 +69,7 @@ export function ChatBubble({
           <div
             className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
               isMine
-                ? 'rounded-br-md bg-gradient-to-br from-[#ff6b35] to-pink-500 text-white'
+                ? 'rounded-br-md bg-gradient-to-br from-brand to-pink-500 text-white'
                 : 'rounded-bl-md bg-neutral-800 text-neutral-100'
             }`}
           >
@@ -127,7 +127,7 @@ export function ChatBubble({
                           type="checkbox"
                           checked={dontAskAgain}
                           onChange={(e) => setDontAskAgain(e.target.checked)}
-                          className="h-3 w-3 rounded border-neutral-600 bg-neutral-800 accent-[#ff6b35]"
+                          className="h-3 w-3 rounded border-neutral-600 bg-neutral-800 accent-brand"
                         />
                         Don't ask again
                       </label>
@@ -187,7 +187,7 @@ export function ChatBubble({
                 onClick={() => handlePick(emoji)}
                 className={`rounded-full border px-1.5 py-0.5 text-xs ${
                   myReaction?.emoji === emoji
-                    ? 'border-[#ff6b35] bg-[#ff6b35]/15'
+                    ? 'border-brand bg-brand/15'
                     : 'border-neutral-700 bg-neutral-900/60 text-neutral-300'
                 }`}
               >
@@ -213,7 +213,7 @@ export function ChatBubble({
             <Clock className="h-3.5 w-3.5 text-neutral-500" aria-label="Sending" />
           )}
           {isMine && showSeen && !message.pending && !message.failed && (
-            <span className="text-[#ff8c5c]" title={message.is_read ? 'Seen' : 'Sent'}>
+            <span className="text-brand-light" title={message.is_read ? 'Seen' : 'Sent'}>
               {message.is_read ? <CheckCheck className="h-3.5 w-3.5" /> : <Check className="h-3.5 w-3.5" />}
             </span>
           )}

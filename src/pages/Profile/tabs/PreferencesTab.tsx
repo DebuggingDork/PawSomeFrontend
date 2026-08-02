@@ -50,7 +50,7 @@ export function PreferencesTab() {
           <select
             value={species}
             onChange={(e) => setSpecies(e.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none"
           >
             {SPECIES_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -64,7 +64,7 @@ export function PreferencesTab() {
           <select
             value={gender}
             onChange={(e) => setGender(e.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none"
           >
             {GENDER_OPTIONS.map((g) => (
               <option key={g} value={g}>
@@ -83,7 +83,7 @@ export function PreferencesTab() {
             min={0}
             value={ageMin}
             onChange={(e) => setAgeMin(e.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none"
           />
         </div>
         <div>
@@ -93,7 +93,7 @@ export function PreferencesTab() {
             min={0}
             value={ageMax}
             onChange={(e) => setAgeMax(e.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-[#ff6b35] focus:outline-none"
+            className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none"
           />
         </div>
       </div>
@@ -101,7 +101,7 @@ export function PreferencesTab() {
       <div>
         <label className="mb-1.5 flex items-center justify-between text-sm font-medium text-neutral-300">
           Search radius
-          <span className="font-semibold text-[#ff6b35]">{radius} km</span>
+          <span className="font-semibold text-brand">{radius} km</span>
         </label>
         <input
           type="range"
@@ -109,7 +109,7 @@ export function PreferencesTab() {
           max={500}
           value={radius}
           onChange={(e) => setRadius(Number(e.target.value))}
-          className="w-full accent-[#ff6b35]"
+          className="w-full accent-brand"
         />
       </div>
 
@@ -119,14 +119,14 @@ export function PreferencesTab() {
           value={breeds}
           onChange={(e) => setBreeds(e.target.value)}
           placeholder="Golden Retriever, Labrador (comma-separated)"
-          className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none"
+          className="w-full rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#ff6b35]/30 transition-all hover:shadow-xl hover:shadow-[#ff6b35]/40 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-pink-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-all hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {mutation.isPending ? 'Saving…' : mutation.isSuccess ? 'Saved' : 'Save preferences'}
       </button>

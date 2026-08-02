@@ -32,7 +32,7 @@ function LocationNeededPrompt() {
       action={
         <Link
           to="/profile"
-          className="rounded-full border border-neutral-800 px-5 py-2 text-sm font-semibold text-white hover:border-[#ff6b35]"
+          className="rounded-full border border-neutral-800 px-5 py-2 text-sm font-semibold text-white hover:border-brand"
         >
           Update location
         </Link>
@@ -78,7 +78,7 @@ function SwipingAsSelector({
             aria-pressed={isActive}
             className={`flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-3 text-sm font-medium transition-colors ${
               isActive
-                ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-white'
+                ? 'border-brand bg-brand/10 text-white'
                 : 'border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
             }`}
           >

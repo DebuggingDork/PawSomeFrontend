@@ -65,7 +65,7 @@ export function SwipeCardContent({ candidate, onPreview }: SwipeCardContentProps
           </div>
         )}
         {!previously_passed && isNewHere(pet.created_at) && (
-          <div className="flex items-center gap-1.5 rounded-full bg-[#ff6b35] px-3 py-1.5 text-xs font-bold text-white shadow-lg shadow-[#ff6b35]/40">
+          <div className="flex items-center gap-1.5 rounded-full bg-brand px-3 py-1.5 text-xs font-bold text-white shadow-lg shadow-brand/40">
             <Sparkles className="h-3 w-3" />
             New here!
           </div>

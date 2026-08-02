@@ -42,7 +42,7 @@ function PawsomeFooter() {
   // project does not own, so every support request went nowhere.
   const contactInfo = [
     {
-      icon: <Mail size={18} className="text-[#ff6b35]" />,
+      icon: <Mail size={18} className="text-brand" />,
       text: "Email support",
       subject: "PawSome support",
     },
@@ -73,7 +73,7 @@ function PawsomeFooter() {
                   navbar and the splash — the splash had already been fixed this
                   way for the same reason. */}
               <span
-                className="text-3xl font-bold text-[#ff6b35]"
+                className="text-3xl font-bold text-brand"
                 style={{ fontFamily: "Pacifico, cursive" }}
               >
                 PawSome
@@ -96,12 +96,12 @@ function PawsomeFooter() {
                   <li key={link.label} className="relative">
                     <Link
                       to={link.to}
-                      className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
+                      className="text-sm text-neutral-400 hover:text-brand transition-colors"
                     >
                       {link.label}
                     </Link>
                     {link.pulse && (
-                      <span className="absolute top-0 right-[-10px] w-2 h-2 rounded-full bg-[#ff6b35] animate-pulse"></span>
+                      <span className="absolute top-0 right-[-10px] w-2 h-2 rounded-full bg-brand animate-pulse"></span>
                     )}
                   </li>
                 ))}
@@ -119,7 +119,7 @@ function PawsomeFooter() {
                 <li key={i} className="flex items-center space-x-3">
                   <SupportLink
                     subject={item.subject}
-                    className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
+                    className="text-sm text-neutral-400 hover:text-brand transition-colors"
                   >
                     {item.text}
                   </SupportLink>
@@ -128,7 +128,7 @@ function PawsomeFooter() {
               <li>
                 <Link
                   to="/faq"
-                  className="text-sm text-neutral-400 hover:text-[#ff6b35] transition-colors"
+                  className="text-sm text-neutral-400 hover:text-brand transition-colors"
                 >
                   Help and FAQ
                 </Link>

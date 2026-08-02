@@ -89,7 +89,7 @@ function ProfileIdentityHeader() {
           {profile.created_at && (
             <span
               title={`Joined ${new Date(profile.created_at).toLocaleDateString()}`}
-              className="inline-flex items-center gap-1 rounded-full bg-[#ff6b35]/10 px-2 py-0.5 text-xs font-medium text-[#ff6b35]"
+              className="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand"
             >
               <PawPrint className="h-3.5 w-3.5" />
               {membershipLine(profile.created_at)}

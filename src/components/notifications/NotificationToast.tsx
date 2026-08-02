@@ -17,7 +17,7 @@ export const NOTIFICATION_TYPE_ICON = {
 }
 
 export const NOTIFICATION_TYPE_ACCENT = {
-  new_like: 'text-[#ff6b35]',
+  new_like: 'text-brand',
   new_match: 'text-pink-400',
   new_message: 'text-sky-400',
   playdate_proposed: 'text-amber-400',

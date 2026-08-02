@@ -9,7 +9,7 @@ interface AddToCalendarProps {
 }
 
 const ACTION =
-  'inline-flex items-center gap-1.5 rounded-lg border border-neutral-800 px-2.5 py-1.5 text-xs font-medium text-neutral-400 transition-colors hover:border-[#ff6b35]/50 hover:text-white'
+  'inline-flex items-center gap-1.5 rounded-lg border border-neutral-800 px-2.5 py-1.5 text-xs font-medium text-neutral-400 transition-colors hover:border-brand/50 hover:text-white'
 
 /** Slugify for a filename — anything but letters, digits and dashes goes. */
 function safeName(value: string): string {

@@ -164,7 +164,7 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
           autoComplete="off"
           // 16px until `sm` — anything smaller makes iOS zoom the page in on
           // focus and never zoom back out. See index.css.
-          className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-3 pl-10 pr-9 text-base text-white placeholder:text-neutral-500 focus:border-[#ff6b35] focus:outline-none sm:py-2.5 sm:text-sm"
+          className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-3 pl-10 pr-9 text-base text-white placeholder:text-neutral-500 focus:border-brand focus:outline-none sm:py-2.5 sm:text-sm"
         />
         {searching && (
           <Loader2 className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-neutral-500" />
@@ -198,9 +198,9 @@ export function LocationPicker({ latitude, longitude, address, onChange, classNa
         // Full width on a phone: on touch this is the path almost everyone
         // takes, and a shrink-to-fit button is the smallest thing on the screen
         // at the moment it should be the most obvious.
-        className="mt-3 flex w-full touch-manipulation items-center justify-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm font-medium text-neutral-200 transition-colors hover:border-[#ff6b35] hover:text-white disabled:cursor-wait disabled:opacity-70 sm:w-auto sm:justify-start sm:py-2.5"
+        className="mt-3 flex w-full touch-manipulation items-center justify-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950/60 px-4 py-3 text-sm font-medium text-neutral-200 transition-colors hover:border-brand hover:text-white disabled:cursor-wait disabled:opacity-70 sm:w-auto sm:justify-start sm:py-2.5"
       >
-        <LocateFixed className={`h-4 w-4 ${locating ? 'animate-pulse text-[#ff6b35]' : ''}`} />
+        <LocateFixed className={`h-4 w-4 ${locating ? 'animate-pulse text-brand' : ''}`} />
         {locating ? 'Locating…' : 'Use my current location'}
       </button>
 
