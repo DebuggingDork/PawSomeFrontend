@@ -61,7 +61,14 @@ export function EventCard({ event, onToggleGoing, togglingId }: EventCardProps) 
 
         {/* Calendar tear-off */}
         <div className="absolute -bottom-5 left-5 flex w-14 flex-col overflow-hidden rounded-xl bg-neutral-950 shadow-lg ring-1 ring-white/10">
-          <div className="py-0.5 text-center text-[10px] font-extrabold tracking-wide text-white" style={{ background: g.css }}>
+          {/* Ink comes from the palette, not a fixed text-white. These bands run
+              from marigold to wine, so white was legible on some and nearly
+              invisible on others — on the brightest it measured 1.6:1, which for
+              a 10px label is decorative at best. */}
+          <div
+            className="py-0.5 text-center text-[10px] font-extrabold tracking-wide"
+            style={{ background: g.css, color: g.ink }}
+          >
             {when.month}
           </div>
           <div className="py-1 text-center text-xl font-extrabold leading-none text-white">{when.day}</div>
