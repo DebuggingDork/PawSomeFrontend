@@ -47,4 +47,7 @@ export const siteImages = {
    *  rewrite behind an unchanged URL is invisible to exactly the people most
    *  likely to look. Bump the suffix rather than overwriting. */
   porchCats: `${R2_BASE}/porchCats-v2.jpg`,
+  /** Poster frame for the product-demo video player, cropped from the demo
+   *  recording itself at the moment it pans across How It Works. */
+  videoDemoThumbnail: `${R2_BASE}/video-demo-thumbnail.jpg`,
 } as const

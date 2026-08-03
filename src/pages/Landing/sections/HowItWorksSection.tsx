@@ -15,8 +15,10 @@ import type { Pet } from '@/lib/api/types'
  *
  * This is a real sequence — profile, then browse, then talk — so it is one of
  * the few places numbered markers earn their keep rather than being scaffolding.
- * It also gives the hero's "See how it works" link somewhere to land: #how-it-works
- * was referenced from the hero and did not exist anywhere on the page.
+ * The hero's "See how it works" link no longer points here — it goes to
+ * ProductDemoSection's video instead — but this keeps its own #how-it-works
+ * anchor and its normal place in the scroll for anyone who reads on past the
+ * demo.
  *
  * The illustrations are the actual pets on PawSome, arranged differently per
  * step so the artwork carries the meaning of the step (one profile, a grid to

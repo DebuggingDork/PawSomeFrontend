@@ -123,7 +123,7 @@ export const HeroSection = () => {
                   Find matches near you
                 </Link>
                 <a
-                  href="#how-it-works"
+                  href="#demo"
                   className="inline-flex items-center gap-2.5 rounded-full border border-white/80 bg-transparent px-6 py-3.5 text-sm font-semibold text-white transition-[transform,background-color,border-color] duration-200 ease-out hover:border-white hover:bg-white/10 active:scale-[0.97] motion-reduce:transition-none sm:px-7 sm:text-[0.9375rem]"
                   onMouseEnter={() => playerRef.current?.startAnimation()}
                   onMouseLeave={() => playerRef.current?.stopAnimation()}
