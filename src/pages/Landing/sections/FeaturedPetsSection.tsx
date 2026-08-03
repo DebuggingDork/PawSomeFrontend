@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router'
 import { ArrowNarrowRightIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { ScrollPinnedSlider } from '@/components/animations/ScrollPinnedSlider'
 import { GenderBadge } from '@/components/ui/GenderBadge'
 import { activeHealthTags } from '@/lib/petBadges'
@@ -29,11 +30,14 @@ const PANEL_SIZE = 'w-[85vw] md:w-[60vw] max-w-4xl shrink-0 h-[60dvh] min-h-[400
 
 function PetPanel({ pet }: { pet: Pet }) {
   const tags = activeHealthTags(pet)
+  const arrowRef = useRef<AnimatedIconHandle>(null)
 
   return (
     <Link
       to={`/pets/${pet.id}`}
       className={`group relative overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand ${PANEL_SIZE}`}
+      onMouseEnter={() => arrowRef.current?.startAnimation()}
+      onMouseLeave={() => arrowRef.current?.stopAnimation()}
     >
       <PetPhoto
         src={pet.primary_photo_url}
@@ -90,7 +94,7 @@ function PetPanel({ pet }: { pet: Pet }) {
         <span className="mt-8 inline-flex items-center gap-2 font-semibold text-white">
           See {pet.name}'s profile
           <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
-            <ArrowNarrowRightIcon size={20} aria-hidden="true" />
+            <ArrowNarrowRightIcon ref={arrowRef} size={20} aria-hidden="true" />
           </span>
         </span>
       </div>
@@ -117,6 +121,7 @@ function PanelSkeleton() {
 
 export const FeaturedPetsSection: React.FC = () => {
   const { pets, isLoading, isError } = useLandingPets()
+  const addPetArrowRef = useRef<AnimatedIconHandle>(null)
 
   // Interleave dogs and cats rather than taking the API's newest-first order,
   // which currently opens on four dogs in a row. Alternating makes the strip
@@ -158,9 +163,11 @@ export const FeaturedPetsSection: React.FC = () => {
           <Link
             to="/auth"
             className="mt-8 inline-flex w-fit items-center gap-2 rounded-full bg-neutral-950 px-7 py-3.5 font-bold text-white transition-[transform,background-color] duration-200 ease-out-quart hover:bg-neutral-900 active:scale-[0.97] motion-reduce:transition-none"
+            onMouseEnter={() => addPetArrowRef.current?.startAnimation()}
+            onMouseLeave={() => addPetArrowRef.current?.stopAnimation()}
           >
             Add your pet
-            <ArrowNarrowRightIcon size={16} aria-hidden="true" />
+            <ArrowNarrowRightIcon ref={addPetArrowRef} size={16} aria-hidden="true" />
           </Link>
         </div>
       </ScrollPinnedSlider>

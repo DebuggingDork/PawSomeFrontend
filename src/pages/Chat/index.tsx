@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, CalendarHeart, ArrowLeft } from 'lucide-react'
-import { SendIcon } from '@/components/icons'
+import { CalendarHeart, ArrowLeft } from 'lucide-react'
+import { MagnifierIcon, SendIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CONVERSATIONS_QUERY_KEY, getConversations, getPlaydates } from '@/lib/api/matches'
@@ -29,6 +30,8 @@ function ChatPage() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [playdatesOpen, setPlaydatesOpen] = useState(false)
   const [playdatesViewed, setPlaydatesViewed] = useState(false)
+  const chatSearchIconRef = useRef<AnimatedIconHandle>(null)
+  const sendIconRef = useRef<AnimatedIconHandle>(null)
 
   const scrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -216,8 +219,10 @@ function ChatPage() {
                   className={`rounded-full p-2 transition-colors ${
                     searchOpen ? 'bg-neutral-800 text-white' : 'text-neutral-400 hover:text-white'
                   }`}
+                  onMouseEnter={() => chatSearchIconRef.current?.startAnimation()}
+                  onMouseLeave={() => chatSearchIconRef.current?.stopAnimation()}
                 >
-                  <Search className="h-4 w-4" />
+                  <MagnifierIcon ref={chatSearchIconRef} className="h-4 w-4" />
                 </button>
                 {selected.otherPet.owner?.id && (
                   <SafetyMenu
@@ -309,8 +314,10 @@ function ChatPage() {
                   disabled={!draft.trim()}
                   className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand to-pink-500 px-5 text-white shadow-lg shadow-brand/30 transition-all hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                   aria-label="Send message"
+                  onMouseEnter={() => sendIconRef.current?.startAnimation()}
+                  onMouseLeave={() => sendIconRef.current?.stopAnimation()}
                 >
-                  <SendIcon className="h-4 w-4" />
+                  <SendIcon ref={sendIconRef} className="h-4 w-4" />
                 </button>
               </form>
             </>

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { ArrowNarrowRightIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
 import { AnimatedToggle } from '@/components/animations/AnimatedToggle'
@@ -115,6 +116,7 @@ export const PetToggleSection: React.FC = () => {
   const isInView = useInView(toggleRef, { once: true, amount: 0.5 })
 
   const { pets, isLoading, isError } = useLandingPets()
+  const seeAllArrowRef = useRef<AnimatedIconHandle>(null)
 
   const handleToggle = (tab: Species) => {
     setActiveTab((prev) => (prev === tab ? null : tab))
@@ -224,10 +226,12 @@ export const PetToggleSection: React.FC = () => {
             <Link
               to="/community"
               className="group mt-12 inline-flex items-center gap-2 border-t border-neutral-800 pt-8 font-semibold text-white transition-colors duration-200 hover:text-brand"
+              onMouseEnter={() => seeAllArrowRef.current?.startAnimation()}
+              onMouseLeave={() => seeAllArrowRef.current?.stopAnimation()}
             >
               See all {pets.total} pets
               <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
-                <ArrowNarrowRightIcon size={16} aria-hidden="true" />
+                <ArrowNarrowRightIcon ref={seeAllArrowRef} size={16} aria-hidden="true" />
               </span>
             </Link>
           </ScrollReveal>

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router'
 import { ArrowNarrowRightIcon, PawPrintIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
 import { formatAge } from '@/lib/formatAge'
@@ -104,6 +105,23 @@ function MatchArt({ pets }: { pets: Pet[] }) {
   )
 }
 
+function StepCtaLink({ to, label }: { to: string; label: string }) {
+  const arrowRef = useRef<AnimatedIconHandle>(null)
+  return (
+    <Link
+      to={to}
+      className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition-colors duration-200 hover:text-brand-light"
+      onMouseEnter={() => arrowRef.current?.startAnimation()}
+      onMouseLeave={() => arrowRef.current?.stopAnimation()}
+    >
+      {label}
+      <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
+        <ArrowNarrowRightIcon ref={arrowRef} size={16} aria-hidden="true" />
+      </span>
+    </Link>
+  )
+}
+
 export const HowItWorksSection: React.FC = () => {
   const { pets } = useLandingPets()
 
@@ -167,15 +185,7 @@ export const HowItWorksSection: React.FC = () => {
                   <div className="min-w-0">
                     <h3 className="font-display text-xl font-semibold text-white">{step.title}</h3>
                     <p className="mt-2 text-pretty leading-relaxed text-neutral-300">{step.body}</p>
-                    <Link
-                      to={step.cta.to}
-                      className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition-colors duration-200 hover:text-brand-light"
-                    >
-                      {step.cta.label}
-                      <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
-                        <ArrowNarrowRightIcon size={16} aria-hidden="true" />
-                      </span>
-                    </Link>
+                    <StepCtaLink to={step.cta.to} label={step.cta.label} />
                   </div>
                 </div>
               </article>

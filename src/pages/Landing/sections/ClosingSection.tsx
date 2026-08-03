@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { Link } from 'react-router'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { HeartIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { ParallaxImage } from '@/components/animations/ParallaxImage'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
@@ -21,6 +22,7 @@ import { siteImages } from '@/lib/siteImages'
 export const ClosingSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
+  const heartRef = useRef<AnimatedIconHandle>(null)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -102,8 +104,10 @@ export const ClosingSection: React.FC = () => {
             <Link
               to="/auth"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 font-bold text-white shadow-lg shadow-brand/25 transition-[transform,background-color] duration-200 ease-out-quart hover:bg-brand-dark active:scale-[0.97] motion-reduce:transition-none"
+              onMouseEnter={() => heartRef.current?.startAnimation()}
+              onMouseLeave={() => heartRef.current?.stopAnimation()}
             >
-              <HeartIcon className="h-4 w-4" aria-hidden="true" />
+              <HeartIcon ref={heartRef} className="h-4 w-4" aria-hidden="true" />
               Add your pet
             </Link>
             <Link

@@ -10,6 +10,7 @@ import {
   TrashIcon,
   XIcon,
 } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { useAuthStore } from '@/store/useAuthStore'
 import {
   acceptLike,
@@ -24,6 +25,52 @@ import { PetAvatar } from '@/components/chat/PetAvatar'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
 import { useNotificationsStore } from '@/store/useNotificationsStore'
 import { NOTIFICATION_TYPE_ACCENT, NOTIFICATION_TYPE_ICON } from './NotificationToast'
+
+function MatchBackButton({ disabled, onClick }: { disabled: boolean; onClick: () => void }) {
+  const heartRef = useRef<AnimatedIconHandle>(null)
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="flex items-center gap-1 rounded-full bg-gradient-to-r from-brand to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+      onMouseEnter={() => heartRef.current?.startAnimation()}
+      onMouseLeave={() => heartRef.current?.stopAnimation()}
+    >
+      <HeartIcon ref={heartRef} className="h-3 w-3" /> Match back
+    </button>
+  )
+}
+
+function PassButton({ disabled, onClick }: { disabled: boolean; onClick: () => void }) {
+  const xRef = useRef<AnimatedIconHandle>(null)
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="flex items-center gap-1 rounded-full border border-neutral-700 px-3 py-1 text-xs font-medium text-neutral-400 disabled:opacity-50"
+      onMouseEnter={() => xRef.current?.startAnimation()}
+      onMouseLeave={() => xRef.current?.stopAnimation()}
+    >
+      <XIcon ref={xRef} className="h-3 w-3" /> Pass
+    </button>
+  )
+}
+
+function DismissButton({ onClick }: { onClick: () => void }) {
+  const xRef = useRef<AnimatedIconHandle>(null)
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Dismiss notification"
+      title="Dismiss"
+      className="absolute right-2 top-2 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-neutral-400 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 hoverable:top-3 hoverable:h-6 hoverable:w-6 hoverable:opacity-0 hoverable:group-hover:opacity-100"
+      onMouseEnter={() => xRef.current?.startAnimation()}
+      onMouseLeave={() => xRef.current?.stopAnimation()}
+    >
+      <XIcon ref={xRef} className="h-3.5 w-3.5" />
+    </button>
+  )
+}
 
 function timeAgo(iso: string) {
   const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000)
@@ -47,6 +94,9 @@ export function NotificationBell() {
   const setOpen = useNotificationsStore((s) => s.setOpen)
   const [respondingId, setRespondingId] = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
+  const bellIconRef = useRef<AnimatedIconHandle>(null)
+  const readAllIconRef = useRef<AnimatedIconHandle>(null)
+  const clearAllIconRef = useRef<AnimatedIconHandle>(null)
 
   // This component is mounted twice (desktop + mobile nav) but shares one `open`
   // flag via the store, so each copy has to treat the *other* copy's subtree as
@@ -105,8 +155,10 @@ export function NotificationBell() {
         onClick={() => setOpen(!open)}
         aria-label="Notifications"
         className="relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10"
+        onMouseEnter={() => bellIconRef.current?.startAnimation()}
+        onMouseLeave={() => bellIconRef.current?.stopAnimation()}
       >
-        <FilledBellIcon className="h-5 w-5" />
+        <FilledBellIcon ref={bellIconRef} className="h-5 w-5" />
         {unreadCount > 0 && (
           <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -143,8 +195,10 @@ export function NotificationBell() {
                     disabled={markAllReadMutation.isPending}
                     title="Mark all as read"
                     className="flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                    onMouseEnter={() => readAllIconRef.current?.startAnimation()}
+                    onMouseLeave={() => readAllIconRef.current?.stopAnimation()}
                   >
-                    <DoubleCheckIcon size={14} className="shrink-0" />
+                    <DoubleCheckIcon ref={readAllIconRef} size={14} className="shrink-0" />
                     Read all
                   </button>
                 )}
@@ -154,8 +208,10 @@ export function NotificationBell() {
                     disabled={clearAllMutation.isPending}
                     title="Clear all notifications"
                     className="flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-red-400 disabled:opacity-50"
+                    onMouseEnter={() => clearAllIconRef.current?.startAnimation()}
+                    onMouseLeave={() => clearAllIconRef.current?.stopAnimation()}
                   >
-                    <TrashIcon className="h-3.5 w-3.5 shrink-0" />
+                    <TrashIcon ref={clearAllIconRef} className="h-3.5 w-3.5 shrink-0" />
                     Clear
                   </button>
                 )}
@@ -193,26 +249,20 @@ export function NotificationBell() {
 
                         {n.notification_type === 'new_like' && !n.is_read && (
                           <div className="mt-2 flex gap-2">
-                            <button
+                            <MatchBackButton
+                              disabled={respondingId === n.id}
                               onClick={() => {
                                 setRespondingId(n.id)
                                 acceptMutation.mutate(n.id)
                               }}
+                            />
+                            <PassButton
                               disabled={respondingId === n.id}
-                              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-brand to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
-                            >
-                              <HeartIcon className="h-3 w-3" /> Match back
-                            </button>
-                            <button
                               onClick={() => {
                                 setRespondingId(n.id)
                                 rejectMutation.mutate(n.id)
                               }}
-                              disabled={respondingId === n.id}
-                              className="flex items-center gap-1 rounded-full border border-neutral-700 px-3 py-1 text-xs font-medium text-neutral-400 disabled:opacity-50"
-                            >
-                              <XIcon className="h-3 w-3" /> Pass
-                            </button>
+                            />
                           </div>
                         )}
 
@@ -238,14 +288,7 @@ export function NotificationBell() {
                         alone dismiss a notification. Also a 24px target became
                         36px on touch, which is the difference between hitting it
                         and opening the notification underneath it. */}
-                    <button
-                      onClick={() => deleteMutation.mutate(n.id)}
-                      aria-label="Dismiss notification"
-                      title="Dismiss"
-                      className="absolute right-2 top-2 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-neutral-400 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 hoverable:top-3 hoverable:h-6 hoverable:w-6 hoverable:opacity-0 hoverable:group-hover:opacity-100"
-                    >
-                      <XIcon className="h-3.5 w-3.5" />
-                    </button>
+                    <DismissButton onClick={() => deleteMutation.mutate(n.id)} />
                   </motion.li>
                   )
                 })}

@@ -1,5 +1,7 @@
+import { useRef } from 'react'
 import { Link } from 'react-router'
 import { MapPinIcon, PlayerIcon, SparklesIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { HeroEntranceContainer, HeroEntranceItem } from '@/components/animations/HeroEntrance'
 import { siteImages } from '@/lib/siteImages'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -37,6 +39,8 @@ function HeartMark({ className }: { className?: string }) {
 export const HeroSection = () => {
   const { isAuthenticated } = useAuthStore()
   const { pets, isLoading } = useLandingPets()
+  const mapPinRef = useRef<AnimatedIconHandle>(null)
+  const playerRef = useRef<AnimatedIconHandle>(null)
 
   return (
     <section className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-neutral-950">
@@ -112,15 +116,19 @@ export const HeroSection = () => {
                 <Link
                   to={isAuthenticated ? '/discover' : '/community'}
                   className="inline-flex items-center gap-2.5 rounded-full bg-brand px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/35 transition-[transform,background-color] duration-200 ease-out hover:bg-brand-dark active:scale-[0.97] motion-reduce:transition-none sm:px-7 sm:text-[0.9375rem]"
+                  onMouseEnter={() => mapPinRef.current?.startAnimation()}
+                  onMouseLeave={() => mapPinRef.current?.stopAnimation()}
                 >
-                  <MapPinIcon className="h-[1.1em] w-[1.1em]" aria-hidden="true" />
+                  <MapPinIcon ref={mapPinRef} className="h-[1.1em] w-[1.1em]" aria-hidden="true" />
                   Find matches near you
                 </Link>
                 <a
                   href="#how-it-works"
                   className="inline-flex items-center gap-2.5 rounded-full border border-white/80 bg-transparent px-6 py-3.5 text-sm font-semibold text-white transition-[transform,background-color,border-color] duration-200 ease-out hover:border-white hover:bg-white/10 active:scale-[0.97] motion-reduce:transition-none sm:px-7 sm:text-[0.9375rem]"
+                  onMouseEnter={() => playerRef.current?.startAnimation()}
+                  onMouseLeave={() => playerRef.current?.stopAnimation()}
                 >
-                  <PlayerIcon size={14} aria-hidden="true" />
+                  <PlayerIcon ref={playerRef} size={14} aria-hidden="true" />
                   See how it works
                 </a>
                 <HeartMark className="hidden h-7 w-7 rotate-12 text-brand md:block lg:h-8 lg:w-8" />
