@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { ArrowRight, PawPrint } from 'lucide-react'
+import { ArrowNarrowRightIcon, PawPrintIcon } from '@/components/icons'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
 import { formatAge } from '@/lib/formatAge'
@@ -39,7 +39,7 @@ function PhotoOrGlyph({ pet, className = '' }: { pet: Pet | undefined; className
   if (!pet?.primary_photo_url) {
     return (
       <div className={`flex items-center justify-center bg-neutral-900 ${className}`}>
-        <PawPrint className="h-7 w-7 text-neutral-700" aria-hidden="true" />
+        <PawPrintIcon className="h-7 w-7 text-neutral-700" aria-hidden="true" />
       </div>
     )
   }
@@ -97,7 +97,7 @@ function MatchArt({ pets }: { pets: Pet[] }) {
           </div>
         </div>
         <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand shadow-lg shadow-neutral-950/60">
-          <PawPrint className="h-4 w-4 text-white" aria-hidden="true" />
+          <PawPrintIcon className="h-4 w-4 text-white" aria-hidden="true" />
         </span>
       </div>
     </Frame>
@@ -172,10 +172,9 @@ export const HowItWorksSection: React.FC = () => {
                       className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition-colors duration-200 hover:text-brand-light"
                     >
                       {step.cta.label}
-                      <ArrowRight
-                        className="h-4 w-4 transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none"
-                        aria-hidden="true"
-                      />
+                      <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
+                        <ArrowNarrowRightIcon size={16} aria-hidden="true" />
+                      </span>
                     </Link>
                   </div>
                 </div>

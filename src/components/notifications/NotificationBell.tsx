@@ -2,7 +2,14 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Bell, BellOff, CheckCheck, Heart, Trash2, X } from 'lucide-react'
+import {
+  FilledBellIcon,
+  BellOffIcon,
+  DoubleCheckIcon,
+  HeartIcon,
+  TrashIcon,
+  XIcon,
+} from '@/components/icons'
 import { useAuthStore } from '@/store/useAuthStore'
 import {
   acceptLike,
@@ -99,7 +106,7 @@ export function NotificationBell() {
         aria-label="Notifications"
         className="relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10"
       >
-        <Bell className="h-5 w-5" />
+        <FilledBellIcon className="h-5 w-5" />
         {unreadCount > 0 && (
           <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -137,7 +144,7 @@ export function NotificationBell() {
                     title="Mark all as read"
                     className="flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
                   >
-                    <CheckCheck className="h-3.5 w-3.5 shrink-0" />
+                    <DoubleCheckIcon size={14} className="shrink-0" />
                     Read all
                   </button>
                 )}
@@ -148,7 +155,7 @@ export function NotificationBell() {
                     title="Clear all notifications"
                     className="flex items-center gap-1 whitespace-nowrap rounded-lg px-1.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-red-400 disabled:opacity-50"
                   >
-                    <Trash2 className="h-3.5 w-3.5 shrink-0" />
+                    <TrashIcon className="h-3.5 w-3.5 shrink-0" />
                     Clear
                   </button>
                 )}
@@ -157,7 +164,7 @@ export function NotificationBell() {
 
             {(!notifications || notifications.length === 0) && (
               <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
-                <BellOff className="h-6 w-6 text-neutral-700" />
+                <BellOffIcon className="h-6 w-6 text-neutral-700" />
                 <p className="text-sm text-neutral-400">You're all caught up.</p>
               </div>
             )}
@@ -194,7 +201,7 @@ export function NotificationBell() {
                               disabled={respondingId === n.id}
                               className="flex items-center gap-1 rounded-full bg-gradient-to-r from-brand to-pink-500 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
                             >
-                              <Heart className="h-3 w-3" fill="currentColor" /> Match back
+                              <HeartIcon className="h-3 w-3" /> Match back
                             </button>
                             <button
                               onClick={() => {
@@ -204,7 +211,7 @@ export function NotificationBell() {
                               disabled={respondingId === n.id}
                               className="flex items-center gap-1 rounded-full border border-neutral-700 px-3 py-1 text-xs font-medium text-neutral-400 disabled:opacity-50"
                             >
-                              <X className="h-3 w-3" /> Pass
+                              <XIcon className="h-3 w-3" /> Pass
                             </button>
                           </div>
                         )}
@@ -237,7 +244,7 @@ export function NotificationBell() {
                       title="Dismiss"
                       className="absolute right-2 top-2 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-neutral-400 transition-all hover:bg-white/10 hover:text-white focus-visible:opacity-100 hoverable:top-3 hoverable:h-6 hoverable:w-6 hoverable:opacity-0 hoverable:group-hover:opacity-100"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <XIcon className="h-3.5 w-3.5" />
                     </button>
                   </motion.li>
                   )

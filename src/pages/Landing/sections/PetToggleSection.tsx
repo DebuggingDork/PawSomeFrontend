@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { motion, useInView, useReducedMotion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowNarrowRightIcon } from '@/components/icons'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
 import { AnimatedToggle } from '@/components/animations/AnimatedToggle'
@@ -226,10 +226,9 @@ export const PetToggleSection: React.FC = () => {
               className="group mt-12 inline-flex items-center gap-2 border-t border-neutral-800 pt-8 font-semibold text-white transition-colors duration-200 hover:text-brand"
             >
               See all {pets.total} pets
-              <ArrowRight
-                className="h-4 w-4 transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none"
-                aria-hidden="true"
-              />
+              <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
+                <ArrowNarrowRightIcon size={16} aria-hidden="true" />
+              </span>
             </Link>
           </ScrollReveal>
         )}

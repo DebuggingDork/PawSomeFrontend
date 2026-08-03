@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { MailCheck, ShieldOff, UserX } from 'lucide-react'
+import { ShieldOff } from 'lucide-react'
+import { RosetteDiscountCheckIcon, UnlinkIcon } from '@/components/icons'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
 import {
@@ -25,12 +26,12 @@ import {
 
 const POINTS = [
   {
-    icon: MailCheck,
+    icon: RosetteDiscountCheckIcon,
     title: 'A verified badge means one specific thing',
     body: 'That the person clicked a link in an email we sent to the address they signed up with. It filters out throwaway accounts. It is not an identity check and it is not an endorsement.',
   },
   {
-    icon: UserX,
+    icon: UnlinkIcon,
     title: 'You can end it from your side, at any point',
     body: "Block someone and they disappear from your matches, your chats and your browsing. Report them and it reaches a person, not a queue. Anything about an animal's welfare goes to the front of it.",
   },
@@ -71,7 +72,7 @@ export const TrustSection: React.FC = () => {
             {POINTS.map(({ icon: Icon, title, body }) => (
               <StaggerRevealItem key={title}>
                 <div className="flex gap-5 border-t border-neutral-900 py-8 first:border-t-0 first:pt-0 md:gap-7">
-                  <Icon className="mt-1 h-5 w-5 shrink-0 text-brand" aria-hidden="true" />
+                  <Icon size={20} className="mt-1 h-5 w-5 shrink-0 text-brand" aria-hidden="true" />
                   <div className="min-w-0">
                     <h3 className="font-display text-xl font-semibold text-white">{title}</h3>
                     <p className="mt-2.5 max-w-[62ch] text-pretty leading-relaxed text-neutral-300">

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { ArrowRight } from 'lucide-react'
+import { ArrowNarrowRightIcon } from '@/components/icons'
 import { ScrollPinnedSlider } from '@/components/animations/ScrollPinnedSlider'
 import { GenderBadge } from '@/components/ui/GenderBadge'
 import { activeHealthTags } from '@/lib/petBadges'
@@ -89,10 +89,9 @@ function PetPanel({ pet }: { pet: Pet }) {
 
         <span className="mt-8 inline-flex items-center gap-2 font-semibold text-white">
           See {pet.name}'s profile
-          <ArrowRight
-            className="h-5 w-5 transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none"
-            aria-hidden="true"
-          />
+          <span className="inline-flex transition-transform duration-200 ease-out-quart motion-safe:hoverable:group-hover:translate-x-1 motion-reduce:transition-none">
+            <ArrowNarrowRightIcon size={20} aria-hidden="true" />
+          </span>
         </span>
       </div>
     </Link>
@@ -161,7 +160,7 @@ export const FeaturedPetsSection: React.FC = () => {
             className="mt-8 inline-flex w-fit items-center gap-2 rounded-full bg-neutral-950 px-7 py-3.5 font-bold text-white transition-[transform,background-color] duration-200 ease-out-quart hover:bg-neutral-900 active:scale-[0.97] motion-reduce:transition-none"
           >
             Add your pet
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowNarrowRightIcon size={16} aria-hidden="true" />
           </Link>
         </div>
       </ScrollPinnedSlider>

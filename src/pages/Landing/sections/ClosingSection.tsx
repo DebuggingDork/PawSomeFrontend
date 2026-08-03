@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { Link } from 'react-router'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { Heart } from 'lucide-react'
+import { HeartIcon } from '@/components/icons'
 import { ParallaxImage } from '@/components/animations/ParallaxImage'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { MaskReveal } from '@/components/animations/MaskReveal'
@@ -103,7 +103,7 @@ export const ClosingSection: React.FC = () => {
               to="/auth"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 font-bold text-white shadow-lg shadow-brand/25 transition-[transform,background-color] duration-200 ease-out-quart hover:bg-brand-dark active:scale-[0.97] motion-reduce:transition-none"
             >
-              <Heart className="h-4 w-4" aria-hidden="true" />
+              <HeartIcon className="h-4 w-4" aria-hidden="true" />
               Add your pet
             </Link>
             <Link

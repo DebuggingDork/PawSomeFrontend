@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { Search, Heart } from 'lucide-react'
+import { Heart } from 'lucide-react'
+import { MagnifierIcon } from '@/components/icons'
+import type { AnimatedIconHandle } from '@/components/icons'
 import { PetAvatar } from './PetAvatar'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -33,6 +35,7 @@ export function ConversationSidebar({
   className = '',
 }: ConversationSidebarProps) {
   const [query, setQuery] = useState('')
+  const magnifierRef = useRef<AnimatedIconHandle>(null)
   // With one pet the answer is never in doubt, so the label would just be
   // repeated noise on every row.
   const pets = useAuthStore((s) => s.pets)
@@ -54,10 +57,15 @@ export function ConversationSidebar({
       <div className="flex-shrink-0 border-b border-neutral-800/80 p-4">
         <h1 className="mb-3 font-display text-xl font-bold text-white">Messages</h1>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <MagnifierIcon
+            ref={magnifierRef}
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400"
+          />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => magnifierRef.current?.startAnimation()}
+            onBlur={() => magnifierRef.current?.stopAnimation()}
             placeholder="Search matches..."
             className="w-full rounded-lg border border-neutral-800 bg-neutral-950/60 py-2 pl-9 pr-3 text-sm text-white placeholder:text-neutral-400 focus:border-brand focus:outline-none"
           />

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Search, CalendarHeart, ArrowLeft } from 'lucide-react'
+import { Search, CalendarHeart, ArrowLeft } from 'lucide-react'
+import { SendIcon } from '@/components/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CONVERSATIONS_QUERY_KEY, getConversations, getPlaydates } from '@/lib/api/matches'
@@ -309,7 +310,7 @@ function ChatPage() {
                   className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand to-pink-500 px-5 text-white shadow-lg shadow-brand/30 transition-all hover:shadow-xl hover:shadow-brand/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                   aria-label="Send message"
                 >
-                  <Send className="h-4 w-4" />
+                  <SendIcon className="h-4 w-4" />
                 </button>
               </form>
             </>
