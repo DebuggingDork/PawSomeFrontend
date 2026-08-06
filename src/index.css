@@ -212,6 +212,28 @@ select:autofill {
   }
 }
 
+/* Fixed bottom tab bar (mobile, signed-in only — see BottomTabBar.tsx).
+ *
+ * Plain custom properties, not a --spacing-* key in @theme: every consumer
+ * needs this value *inside* a calc() alongside env() in its own
+ * arbitrary-value utility (page bottom-padding, toast offsets), and a
+ * generated Tailwind utility name can't be referenced from inside another
+ * utility's square brackets — a raw var() can.
+ *
+ * --tab-bar-h is the icon+label row on its own: 4rem is comfortably past the
+ * 44px touch-target floor before the safe-area strip below it is even
+ * counted, with room for a 22px icon, a small gap and an 11px label without
+ * crowding the row or dwarfing the top navbar's own ~64px height.
+ *
+ * --tab-bar-total-h folds in env(safe-area-inset-bottom) so every caller
+ * that needs "how much space does the bar actually occupy" reads one
+ * number instead of re-deriving the same calc() at each call site.
+ */
+:root {
+  --tab-bar-h: 4rem;
+  --tab-bar-total-h: calc(var(--tab-bar-h) + env(safe-area-inset-bottom));
+}
+
 /* Page scrolls on html (Lenis). Never allow horizontal overflow. */
 html {
   font-family: var(--font-sans);
