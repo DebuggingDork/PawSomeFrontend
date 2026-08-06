@@ -43,13 +43,16 @@ const VideoPlayer = React.forwardRef<HTMLDivElement, VideoPlayerProps>(
     }, [])
 
     React.useEffect(() => {
-      if (isModalOpen) {
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = 'auto'
+      if (!isModalOpen) {
         // Stop playback (and any audio) the instant the modal closes rather
         // than leaving it running behind a torn-down iframe/video element.
         videoRef.current?.pause()
+        return
+      }
+      const previousOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = previousOverflow
       }
     }, [isModalOpen])
 
