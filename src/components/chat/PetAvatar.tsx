@@ -18,12 +18,16 @@ function gradientFor(seed: string) {
 interface PetAvatarProps {
   name: string
   photoUrl?: string | null
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   online?: boolean
   className?: string
 }
 
 const SIZE_CLASSES = {
+  // Only used by BottomTabBar: 22px icon glyphs sit either side of the
+  // Profile tab's avatar, and `sm` (36px, plus its ring) reads oversized
+  // wedged between them at that scale.
+  xs: 'h-6 w-6 text-[10px]',
   sm: 'h-9 w-9 text-xs',
   md: 'h-12 w-12 text-sm',
   lg: 'h-16 w-16 text-lg',

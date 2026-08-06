@@ -32,6 +32,7 @@ import {
   NavbarButton,
 } from './components/ui/resizable-navbar'
 import { GlobalLoader } from './components/ui/GlobalLoader'
+import { BottomTabBar } from './components/ui/BottomTabBar'
 import { ScrollToHash } from './components/routing/ScrollToHash'
 import { CursorClickEffect } from './components/ui/CursorClickEffect'
 // 256px master-derived logo (icon.png is the 1254px original, kept as the source
@@ -436,6 +437,8 @@ function App() {
             </MobileNavMenu>
           </MobileNav>
         </Navbar>
+
+        <BottomTabBar />
 
         <ScrollToHash />
 
