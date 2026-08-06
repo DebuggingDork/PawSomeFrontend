@@ -346,7 +346,7 @@ function App() {
           {/* Mobile Navigation */}
           <MobileNav>
             <MobileNavHeader>
-              <Link to="/" className="flex items-center gap-2">
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
                 <img src={logoIcon} alt="PawSome" width={40} height={40} decoding="async" className="h-10 w-10 drop-shadow-lg" />
                 {/* Wordmark drops off on narrow screens — the icon alone is enough
                     to identify the brand once space gets tight. */}
