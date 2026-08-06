@@ -218,16 +218,21 @@ html {
   background-color: #0a0a0a;
   overflow-x: clip;
   cursor: url('/cursor-paw.svg') 4 4, auto;
-  /* Thin brand-orange scrollbar. Dim at rest so it doesn't compete with the
-   * page — `.is-scrolling` (toggled by useSmoothScroll off Lenis's scroll
-   * event) lifts it to full strength only while the wheel/trackpad is
-   * actually moving, then it settles back down. */
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--color-brand) 25%, transparent) transparent;
 }
 
-html.is-scrolling {
-  scrollbar-color: color-mix(in srgb, var(--color-brand) 75%, transparent) transparent;
+/* Firefox only — Chromium/Edge/Safari use the ::-webkit-scrollbar rules below.
+ * Setting both standard and -webkit- scrollbar styling on the same element at
+ * once is what produced the "double scrollbar" (native track rendered behind
+ * our custom thumb) on Chrome/Windows, so this block is gated to Firefox. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-brand) 25%, transparent) transparent;
+  }
+
+  html.is-scrolling {
+    scrollbar-color: color-mix(in srgb, var(--color-brand) 75%, transparent) transparent;
+  }
 }
 
 /* Paw cursor for anything clickable — same hotspot as the default paw above so
@@ -255,6 +260,12 @@ html::-webkit-scrollbar {
 
 html::-webkit-scrollbar-track {
   background: transparent;
+}
+
+html::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
 }
 
 html::-webkit-scrollbar-thumb {
