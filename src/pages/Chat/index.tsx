@@ -133,8 +133,9 @@ function ChatPage() {
           fell off the bottom was the composer, on the one screen people use
           every day. Paired with `interactive-widget=resizes-content` in the
           viewport meta, so the keyboard shortens this box instead of covering
-          it. */}
-      <div className="mx-auto flex h-[calc(100dvh-7.5rem)] max-w-6xl overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/40 shadow-2xl shadow-black/30">
+          it. Below `lg` the height also subtracts the fixed BottomTabBar, or
+          the composer would render underneath it instead of above it. */}
+      <div className="mx-auto flex h-[calc(100dvh-7.5rem-var(--tab-bar-total-h))] max-w-6xl overflow-hidden rounded-2xl border border-neutral-800/80 bg-neutral-900/40 shadow-2xl shadow-black/30 lg:h-[calc(100dvh-7.5rem)]">
         {/* One pane at a time on mobile, both side by side from md up. The
             sidebar is `w-full` below md, so leaving both mounted there left
             the thread squeezed to almost no width — a conversation opened on a

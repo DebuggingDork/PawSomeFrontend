@@ -258,11 +258,12 @@ function DiscoverPage() {
        the fold, height the card could not use on a page where height is the
        scarce axis. */
     /* px-4 on a phone rather than px-6: the deck is width-bound at that size, so
-       every pixel of gutter comes straight out of the photo. The bottom padding
-       clears the home indicator on phones that have one — the action row sits
-       flush against the bottom of a viewport-height column, which is exactly
-       where an inset would otherwise cut through it. */
-    <div className="mx-auto flex h-[100dvh] max-w-2xl flex-col px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-20 sm:px-6 md:pt-24">
+       every pixel of gutter comes straight out of the photo. Below `lg` the
+       bottom padding also clears the fixed BottomTabBar, not just the home
+       indicator — the action row sits flush against the bottom of a
+       viewport-height column, which is exactly where the bar would otherwise
+       sit on top of it. */
+    <div className="mx-auto flex h-[100dvh] max-w-2xl flex-col px-4 pb-[calc(var(--tab-bar-total-h)+0.75rem)] pt-20 sm:px-6 md:pt-24 lg:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="mb-2 flex flex-shrink-0 items-center justify-between gap-3">
         {/* The heading and the tab strip together overrun a 360px row at the
             desktop size, and PillTabs' own overflow-x-auto absorbs that by

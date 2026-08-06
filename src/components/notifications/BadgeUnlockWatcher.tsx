@@ -174,7 +174,7 @@ export function BadgeUnlockWatcher() {
   if (!isAuthenticated || queue.length === 0) return null
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+    <div className="pointer-events-none fixed bottom-[calc(var(--tab-bar-total-h)+1rem)] right-4 z-50 flex flex-col items-end gap-2 lg:bottom-4">
       <AnimatePresence initial={false}>
         {queue.map((badge) => (
           <BadgeToast

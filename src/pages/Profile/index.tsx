@@ -131,7 +131,7 @@ function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-[calc(var(--tab-bar-total-h)+1rem)] pt-24 md:pt-28 lg:pb-16">
       <ProfileIdentityHeader />
 
       <PillTabs layoutId="profile-tab-pill" active={tab} onChange={setTab} tabs={TABS} className="mb-6 w-full" />

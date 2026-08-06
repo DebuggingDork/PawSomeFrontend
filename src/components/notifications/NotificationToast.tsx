@@ -81,7 +81,7 @@ function Toast({ toast, onDismiss, onClick }: { toast: ToastItem; onDismiss: (id
  * connection and feeds events in here). */
 export function NotificationToastStack({ toasts, onDismiss, onClick }: NotificationToastStackProps) {
   return (
-    <div className="pointer-events-none fixed bottom-6 right-6 z-[100] flex flex-col-reverse gap-3">
+    <div className="pointer-events-none fixed bottom-[calc(var(--tab-bar-total-h)+1.5rem)] right-6 z-[100] flex flex-col-reverse gap-3 lg:bottom-6">
       <AnimatePresence>
         {toasts.map((toast) => (
           <div key={toast.id} className="pointer-events-auto">

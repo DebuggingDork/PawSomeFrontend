@@ -38,7 +38,7 @@ function PetProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-[calc(var(--tab-bar-total-h)+1rem)] pt-24 md:pt-28 lg:pb-16">
         <Skeleton className="mb-6 aspect-square w-full rounded-2xl md:aspect-[16/9]" />
         <Skeleton className="h-8 w-1/2 rounded-lg" />
       </div>
@@ -47,7 +47,7 @@ function PetProfilePage() {
 
   if (isError || !pet) {
     return (
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-[calc(var(--tab-bar-total-h)+1rem)] pt-24 md:pt-28 lg:pb-16">
         <EmptyState icon={PawPrint} title="Pet not found" description="This pet's profile may have been removed." />
       </div>
     )
@@ -57,7 +57,7 @@ function PetProfilePage() {
   const heroPhoto = activePhoto ?? pet.primary_photo_url ?? null
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-16 pt-24 md:pt-28">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 pb-[calc(var(--tab-bar-total-h)+1rem)] pt-24 md:pt-28 lg:pb-16">
       <Link to="/community" className="mb-6 inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white">
         <ArrowLeft className="h-4 w-4" />
         Back to Community
