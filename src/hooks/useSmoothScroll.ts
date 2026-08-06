@@ -60,6 +60,18 @@ export function useSmoothScroll() {
     })
     activeLenis = lenis
 
+    // Thin orange scrollbar (see index.css) only lights up while a scroll is
+    // actually in flight, so it doesn't sit on screen competing with the UI.
+    let scrollbarTimeout: number | undefined
+    const handleScroll = () => {
+      document.documentElement.classList.add('is-scrolling')
+      if (scrollbarTimeout !== undefined) clearTimeout(scrollbarTimeout)
+      scrollbarTimeout = window.setTimeout(() => {
+        document.documentElement.classList.remove('is-scrolling')
+      }, 300)
+    }
+    lenis.on('scroll', handleScroll)
+
     function raf(time: number) {
       lenis.raf(time)
       requestAnimationFrame(raf)
@@ -140,6 +152,9 @@ export function useSmoothScroll() {
         if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
         window.removeEventListener('beforeunload', handleBeforeUnload)
         cancelAnimationFrame(rafId)
+        if (scrollbarTimeout !== undefined) clearTimeout(scrollbarTimeout)
+        document.documentElement.classList.remove('is-scrolling')
+        lenis.off('scroll', handleScroll)
         if (activeLenis === lenis) activeLenis = null
         lenis.destroy()
       }
@@ -152,6 +167,9 @@ export function useSmoothScroll() {
       if (revealTimeoutId !== undefined) clearTimeout(revealTimeoutId)
       window.removeEventListener('beforeunload', handleBeforeUnload)
       cancelAnimationFrame(rafId)
+      if (scrollbarTimeout !== undefined) clearTimeout(scrollbarTimeout)
+      document.documentElement.classList.remove('is-scrolling')
+      lenis.off('scroll', handleScroll)
       if (activeLenis === lenis) activeLenis = null
       lenis.destroy()
     }
