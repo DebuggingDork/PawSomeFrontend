@@ -244,6 +244,15 @@ function App() {
       : []),
   ]
 
+  // Once BottomTabBar is up (mobile, signed in), the hamburger doesn't need
+  // to repeat every primary destination — Discover, Matches, Chat and
+  // Community are a thumb-tap away down there, and Profile has its own
+  // avatar tab too. What's left is what isn't a tab: Home, Events, and
+  // sign-out. Signed-out visitors keep the full list, since they never get
+  // the tab bar to fall back on.
+  const TAB_BAR_COVERED = new Set(['Discover', 'Matches', 'Chat', 'Community'])
+  const mobileNavItems = isAuthenticated ? navItems.filter((item) => !TAB_BAR_COVERED.has(item.name)) : navItems
+
   if (!isOnline) {
     return (
       <div className="min-h-screen bg-neutral-950 text-white">
@@ -371,7 +380,7 @@ function App() {
               isOpen={isMobileMenuOpen}
               onClose={() => setIsMobileMenuOpen(false)}
             >
-              {navItems.map((item, idx) => (
+              {mobileNavItems.map((item, idx) => (
                 <Link
                   key={`mobile-link-${idx}`}
                   to={item.link}
@@ -381,15 +390,6 @@ function App() {
                   <span className="block text-lg font-medium">{item.name}</span>
                 </Link>
               ))}
-              {isAuthenticated && (
-                <Link
-                  to="/profile"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="relative text-neutral-300"
-                >
-                  <span className="block text-lg font-medium">Profile</span>
-                </Link>
-              )}
               <div className="flex w-full flex-col gap-4">
                 {isHydrating ? (
                   <>
@@ -417,8 +417,9 @@ function App() {
                         'Sign In'
                       )}
                     </NavbarButton>
-                    {/* Chat is already listed above as a nav link once signed in —
-                        this CTA is only needed to give logged-out visitors a next step. */}
+                    {/* Signed-in visitors reach Discover/Matches/Chat from
+                        BottomTabBar now — this CTA is only useful as a next
+                        step for someone who hasn't signed up yet. */}
                     {!isAuthenticated && (
                       <NavbarButton
                         onClick={() => setIsMobileMenuOpen(false)}
