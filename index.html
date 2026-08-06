@@ -22,10 +22,12 @@
          under the keys. Chrome on Android honours it; iOS ignores it and keeps
          scrolling the focused field into view as before, which is why the
          layouts are capped in `dvh` and scrollable rather than relying on it.
-         Deliberately no `viewport-fit=cover`: that would push content under the
-         notch and home indicator app-wide, and every bottom-docked element
-         needs its safe-area padding audited first. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+         `viewport-fit=cover` is now on: the fixed bottom tab bar (see
+         BottomTabBar.tsx) needs `env(safe-area-inset-bottom)` to resolve to a
+         real value on notched/home-indicator devices, or it sits flush against
+         the indicator with its icons underneath it. Every other bottom-docked
+         element in the app was audited for safe-area padding first. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover" />
     <meta name="theme-color" content="#0a0a0a" />
 
     <!-- ── Search ──────────────────────────────────────────────────────────────
